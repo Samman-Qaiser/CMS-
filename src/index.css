@@ -1,72 +1,147 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-dark: var(--primary-dark);
+  --color-secondary: var(--secondary);
+  --color-secondary-dark: var(--secondary-dark);
+  --color-nav-headbg: var(--nav-headbg);
+  --color-headerbg: var(--headerbg);
+  --color-sidebar-bg: var(--sidebar-bg);
+  --color-bg-main: var(--bg-main);
+  --color-content-text: var(--content-text);
+}
 
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --primary: #FF6A59;
+  --primary-hover: #ff3c26;
+  --primary-dark: #bf1400;
+  --secondary: #4CBC9A;
+  --secondary-dark: #3a9b7e;
+  --nav-headbg: #FFFFFF;
+  --headerbg: #E2E2E2;
+  --sidebar-bg: #FFFFFF;
+  --bg-main: #F0F0F0;
+  --content-text: #737B8B;
+}
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+/* demo colours are defined in themeConfig.js, I added here only for visualization */
+.demo1 {
+  --primary: #40a7e2;
+  --primary-hover: #208fcf;
+  --primary-dark: #125277;
+  --secondary: #6759d1;
+  --secondary-dark: #4636c1;
+  --nav-headbg: #40a7e2;
+  --sidebar-bg: #40a7e2;
+  --headerbg: #ffffff;
+  --bg-main: #F0F0F0;
+  --content-text: #ffffff;
+}
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.demo2 {
+  --primary: #3250ff;
+  --primary-hover: #0025fe;
+  --primary-dark: #001698;
+  --secondary: #ff965f;
+  --secondary-dark: #ff752c;
+  --nav-headbg: #3250ff;
+  --sidebar-bg: #3250ff;
+  --headerbg: #E2E2E2;
+  --bg-main: #F0F0F0;
+  --content-text: #777777;
+}
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
+.demo3 {
+  --primary: #c6164f;
+  --primary-hover: #98113d;
+  --primary-dark: #3c0718;
+  --secondary: #6759d1;
+  --secondary-dark: #4636c1;
+  --nav-headbg: #c6164f;
+  --sidebar-bg: #FFFFFF;
+  --headerbg: #E2E2E2;
+  --bg-main: #F0F0F0;
+  --content-text: #777777;
+}
+
+.demo4 {
+  --primary: #88a67e;
+  --primary-hover: #6d8f62;
+  --primary-dark: #3f5239;
+  --secondary: #b65fbd;
+  --secondary-dark: #9e44a5;
+  --nav-headbg: #FFFFFF;
+  --sidebar-bg: #88a67e;
+  --headerbg: #E2E2E2;
+  --bg-main: #F0F0F0;
+  --content-text: #777777;
+}
+
+.demo5 {
+  --primary: #3f8cff;
+  --primary-hover: #0c6dff;
+  --primary-dark: #0042a5;
+  --secondary: #3250ff;
+  --secondary-dark: #0025fe;
+  --nav-headbg: #3f8cff;
+  --sidebar-bg: #FFFFFF;
+  --headerbg: #3f8cff;
+  --bg-main: #F0F0F0;
+  --content-text: #777777;
+}
+
+.demo6 {
+  --primary: #c6164f;
+  --primary-hover: #98113d;
+  --primary-dark: #3c0718;
+  --secondary: #6759d1;
+  --secondary-dark: #4636c1;
+  --nav-headbg: #c6164f;
+  --sidebar-bg: #c6164f;
+  --headerbg: #E2E2E2;
+  --bg-main: #F0F0F0;
+  --content-text: #777777;
+}
+
+.demo7 {
+  --primary: #343a40;
+  --primary-hover: #1d2124;
+  --primary-dark: black;
+  --secondary: #88a67e;
+  --secondary-dark: #6d8f62;
+  --sidebar-bg: #343a40;
+  --nav-headbg: #343a40;
+  --headerbg: #E2E2E2;
+  --bg-main: #F0F0F0;
+  --content-text: #777777;
+}
+
+.demo8 {
+  --primary: #6759d1;
+  --primary-hover: #4636c1;
+  --primary-dark: #291f72;
+  --secondary: #3f8cff;
+  --secondary-dark: #0c6dff;
+  --nav-headbg: #FFFFFF;
+  --sidebar-bg: #FFFFFF;
+  --headerbg: #E2E2E2;
+  --bg-main: #F0F0F0;
+  --content-text: #777777;
+}
+
+.dark {
+  --bg-main: #20203c;
+  --content-text: #828690;
+  --sidebar-bg: #292d4a;
+  --headerbg: #292d4a;
+}
+
+@layer base {
+  body {
+    @apply bg-bg-main text-content-text transition-colors duration-300;
   }
 }
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-body {
-  margin: 0;
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-

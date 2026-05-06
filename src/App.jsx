@@ -1,15 +1,25 @@
-import { useState } from 'react'
+import { BrowserRouter, Routes, Route } from "react-router";
+import { ThemeProvider } from "./context/ThemeProvider";
+import Dashboard from "./pages/Dashboard";
+import DashboardLayout from "./layouts/DashboardLayout";
 
-import './App.css'
-
-function App() {
-  const [count, setCount] = useState(0)
-
+const App = () => {
   return (
-    <>
-   <div >CMS</div>
-    </>
-  )
-}
+    <ThemeProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <DashboardLayout>
+                <Dashboard />
+              </DashboardLayout>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
+  );
+};
 
-export default App
+export default App;
