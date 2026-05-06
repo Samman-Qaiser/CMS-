@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Login from './auth/Login'
 import SignUp from './auth/SignUp'
 import ForgotPassword from './auth/ForgotPassword'
+import DashboardRoutes from './features/Dashboard/routes/DashboardRoutes'
 
 function App() {
 
@@ -13,6 +14,7 @@ function App() {
         <Route path='/signup' element={<SignUp />} />
         <Route path='/forgot-password' element={<ForgotPassword />} />
       </Routes>
+      <DashboardRoutes />
     </BrowserRouter>
   )
 }

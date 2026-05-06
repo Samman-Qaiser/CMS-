@@ -4,10 +4,11 @@ import { useDispatch } from 'react-redux';
 import { setCredentials } from '../redux/Slice/authSlice';
 import LoginIllustration from '../../public/login.png'
 import logo from '../../public/logo-full.png'
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import video from '../../public/video.jpg'
 import documentation from '../../public/doc.jpg'
 const Login = () => {
+  const navigate=useNavigate()
   const dispatch = useDispatch();
   const { register, handleSubmit, setValue, formState: { errors } } = useForm({
     defaultValues: { email: '', password: '', role: 'Customer' }
@@ -29,7 +30,9 @@ const Login = () => {
   const onSubmit = (data) => {
     console.log("Form Data:", data);
     dispatch(setCredentials({ user: data.email, role: data.role }));
-    alert(`Logged in as ${data.role}`);
+
+    navigate('/dashboard');
+
   };
 
   return (
@@ -99,10 +102,8 @@ const Login = () => {
 Forgot Password?
               </Link>
             </div>
-
-            <button type="submit" className="w-full py-3 bg-[#FF6D52] text-white font-bold rounded-lg cursor-pointer hover:bg-[#ff5a3d] shadow-lg transition-all active:scale-[0.98]">
-              Sign Me In
-            </button>
+            <button type='submit' className="w-full py-3 bg-[#FF6D52] text-white font-bold rounded-lg cursor-pointer hover:bg-[#ff5a3d] shadow-lg transition-all active:scale-[0.98] flex items-center justify-center">Sign Me In</button>
+          
           </form>
 
           {/* Quick Login Buttons (The 3 Buttons at bottom) */}
