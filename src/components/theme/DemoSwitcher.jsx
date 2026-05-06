@@ -31,8 +31,8 @@ const DemoSwitcher = ({ onClose }) => {
   const savedTheme = JSON.parse(localStorage.getItem("user-theme-custom"));
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-[#111111] w-full max-w-7xl h-[90vh] flex flex-col rounded-2xl p-8 relative shadow-2xl">
+    <div className=" fixed inset-0 overflow-auto z-50 bg-black/60 h-screen backdrop-blur-sm flex  p-4">
+      <div className="bg-[#111111] w-full max-w-7xl flex flex-col rounded-2xl p-8  shadow-2xl">
         {/* 1. Header Section (Static) */}
         <button
           onClick={onClose}
@@ -57,7 +57,7 @@ const DemoSwitcher = ({ onClose }) => {
         </div>
 
         {/* 2. Scrollable Demos Section (Only this part scrolls) */}
-        <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+        <div className="flex-    pr-2 custom-scrollbar">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
             {demoKeys.map((key) => {
               const isActive =
