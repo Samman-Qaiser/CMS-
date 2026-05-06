@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router";
 import { ThemeProvider } from "./context/ThemeProvider";
-import Dashboard from "./pages/Dashboard";
-import DashboardLayout from "./layouts/DashboardLayout";
+
 import Login from './auth/Login'
 import SignUp from './auth/SignUp'
 import ForgotPassword from './auth/ForgotPassword'
@@ -13,11 +12,9 @@ const App = () => {
       <BrowserRouter>
       <Routes>
         <Route
-            path="/"
+            path="/dashboard/*"
             element={
-              <DashboardLayout>
-                <Dashboard />
-              </DashboardLayout>
+        <DashboardRoutes />
             }
           />
         <Route path='/' element={<Login />} />
