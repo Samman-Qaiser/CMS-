@@ -31,9 +31,10 @@ const DemoSwitcher = ({ onClose }) => {
   const savedTheme = JSON.parse(localStorage.getItem("user-theme-custom"));
 
   return (
-    <div className=" fixed inset-0 overflow-auto z-50 bg-black/60 h-screen backdrop-blur-sm flex  p-4">
-      <div className="bg-[#111111] w-full max-w-7xl flex flex-col rounded-2xl p-8  shadow-2xl">
-        {/* 1. Header Section (Static) */}
+    <div className="min-h-screen w-full flex items-center justify-center p-4">
+      <div className="bg-[#111111] w-full max-w-7xl flex flex-col rounded-2xl p-8 shadow-2xl relative">
+        
+        {/* Close Button */}
         <button
           onClick={onClose}
           className="absolute top-6 right-6 w-10 h-10 flex items-center justify-center bg-white rounded-lg text-black hover:bg-slate-200 transition-colors cursor-pointer z-10"
@@ -41,6 +42,7 @@ const DemoSwitcher = ({ onClose }) => {
           <IoClose size={24} />
         </button>
 
+        {/* Header Section */}
         <div className="mb-10 flex-none">
           <button
             onClick={() => {
@@ -56,69 +58,58 @@ const DemoSwitcher = ({ onClose }) => {
           </h2>
         </div>
 
-        {/* 2. Scrollable Demos Section (Only this part scrolls) */}
-        <div className="flex-    pr-2 custom-scrollbar">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
-            {demoKeys.map((key) => {
-              const isActive =
-                savedTheme &&
-                JSON.stringify(savedTheme) === JSON.stringify(presets[key]);
+        {/* Demos Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10 pr-2">
+          {demoKeys.map((key) => {
+            const isActive =
+              savedTheme &&
+              JSON.stringify(savedTheme) === JSON.stringify(presets[key]);
 
-              return (
-                <div key={key} className="group">
-                  <div
-                    onClick={() => {
-                      applyPreset(key);
-                      onClose();
-                    }}
-                    className={`relative aspect-[16/10] rounded-lg overflow-hidden border-4 transition-all cursor-pointer shadow-lg 
-                      ${isActive ? "border-[#5EEAD4]" : "border-transparent hover:border-[#5EEAD4]"}`}
-                  >
-                    <img
-                      src={
-                        thumbMap[key] ||
-                        "https://placehold.co/600x400?text=No+Preview"
-                      }
-                      alt={key}
-                      className="w-full h-full object-cover"
-                    />
+            return (
+              <div key={key} className="group">
+                <div
+                  onClick={() => {
+                    applyPreset(key);
+                    onClose();
+                  }}
+                  className={`relative aspect-[16/10] rounded-lg overflow-hidden border-4 transition-all cursor-pointer shadow-lg 
+                    ${isActive ? "" : "border-transparent "}`}
+                >
+                  <img
+                    src={thumbMap[key] || "https://placehold.co/600x400?text=No+Preview"}
+                    alt={key}
+                    className="w-full h-full object-cover"
+                  />
 
-                    {isActive && (
-                      <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                        <span className="bg-[#5EEAD4] text-[#111111] px-6 py-2 rounded-lg text-sm font-black uppercase shadow-xl">
-                          {key === "default" ? "Default" : key}
-                        </span>
-                      </div>
-                    )}
+                  {isActive && (
+                    <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                      <span className="bg-[#5EEAD4]  px-6 py-2 rounded-lg text-sm font-black uppercase shadow-xl">
+                        {key === "default" ? "Default" : key}
+                      </span>
+                    </div>
+                  )}
 
-                    {!isActive && (
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <span className="bg-[#5EEAD4] text-[#111111] px-6 py-2 rounded-lg text-sm font-black uppercase">
-                          Apply {key}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  <p className="mt-4 text-base font-bold text-white capitalize tracking-wide">
-                    {key === "default"
-                      ? "Default"
-                      : key.replace("demo", "Demo ")}
-                  </p>
+                  {!isActive && (
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <span className="bg-[#5EEAD4]  py-2 px-4 rounded-sm text-[11px] text-white capitalize font-semibold">
+                       {key}
+                      </span>
+                    </div>
+                  )}
                 </div>
-              );
-            })}
-          </div>
+
+                <p className="mt-4 text-base text-white capitalize tracking-wide">
+                  {key === "default" ? "Default" : key.replace("demo", "Demo ")}
+                </p>
+              </div>
+            );
+          })}
         </div>
 
-        {/* 3. Footer Section (Static) */}
+        {/* Footer */}
         <p className="mt-12 text-[13px] text-white/60 font-medium flex-none">
           <span className="text-[#FF4D4D] font-bold">*Note :</span> This theme
-          switcher is not part of product. It is only for demo. you will get all
-          guideline in documentation. please check{" "}
-          <span className="text-[#FF4D4D] cursor-pointer hover:underline">
-            documentation.
-          </span>
+          switcher is not part of product...
         </p>
       </div>
     </div>
