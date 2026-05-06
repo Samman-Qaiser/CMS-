@@ -36,11 +36,11 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#FDF2F2] p-4 ">
+    <div className="min-h-screen flex items-center justify-center bg-bg-main p-4 ">
       <div className="flex flex-col md:flex-row bg-white rounded-2xl shadow-xl overflow-hidden max-w-5xl w-full">
         
         {/* Left Side: Branding & Illustration (Hidden on mobile) */}
-        <div className="hidden md:flex flex-col items-center pt-13 w-1/2 bg-[#FFF0EE] space-y-8">
+        <div className="hidden md:flex flex-col items-center pt-13 w-1/2 bg-bg-main space-y-8">
           <img src={logo} alt="Logo" className='w-60' />
           <div className="flex gap-4">
              <div className=" rounded-xl shadow-sm text-center border border-orange-100 w-32 cursor-pointer">
@@ -79,7 +79,8 @@ const Login = () => {
                 {...register("email", { required: true })}
                 type="email" 
                 placeholder="Email"
-                className="w-full mt-1 px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-400 outline-none transition"
+  
+                className="w-full mt-1 px-4 py-3 text-zinc-700  border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-400 outline-none transition"
               />
             </div>
 
@@ -89,7 +90,7 @@ const Login = () => {
                 {...register("password", { required: true })}
                 type="password" 
                 placeholder="Password"
-                className="w-full mt-1 px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-400 outline-none transition"
+                className="w-full mt-1 px-4 py-3 text-zinc-700 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-400 outline-none transition"
               />
             </div>
 

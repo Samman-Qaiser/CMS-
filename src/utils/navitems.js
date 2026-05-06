@@ -560,10 +560,10 @@ export const ALL_NAV_ITEMS = [
 // ============================================================
 export const getNavItemsByRole = (role) => {
   if (!role) return []
-
+  const normalizedRole = role.toLowerCase()
   const filterItems = (items) => {
     return items
-      .filter((item) => item.roles.includes(role))
+    .filter((item) => item.roles.includes(normalizedRole)) 
       .map((item) => ({
         ...item,
         ...(item.children && {

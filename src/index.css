@@ -7,6 +7,8 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
+   --color-sidebar-text: var(--sidebar-text);  /* ← NEW */
+  --color-header-text: var(--header-text);  
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-primary-dark: var(--primary-dark);
@@ -36,6 +38,8 @@ body {
   --sidebar-bg: #FFFFFF;
   --bg-main: #F0F0F0;
   --content-text: #737B8B;
+  --sidebar-text: #737B8B;  /* ← NEW */
+  --header-text: #333333;   /* ← NEW */
 }
 
 .dark {
@@ -43,6 +47,8 @@ body {
   --content-text: #828690;
   --sidebar-bg: #292d4a;
   --headerbg: #292d4a;
+  --sidebar-text: #a0a4b8;  /* ← NEW */
+  --header-text: #e0e0e0;   /* ← NEW */
 }
 
 @layer base {
