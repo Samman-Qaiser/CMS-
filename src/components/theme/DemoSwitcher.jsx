@@ -49,7 +49,7 @@ const DemoSwitcher = ({ onClose }) => {
               localStorage.removeItem("user-theme-custom");
               window.location.reload();
             }}
-            className="bg-[#FF4D4D] text-white px-4 py-1.5 rounded-md text-sm font-semibold mb-4 text-[10px] hover:brightness-110 transition-all cursor-pointer"
+            className="bg-primary text-white px-4 py-1.5 rounded-md text-sm font-semibold mb-4 text-[10px] hover:brightness-110 transition-all cursor-pointer"
           >
             Delete All Cookie
           </button>

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { IoSunnyOutline, IoMoonOutline, IoDesktopOutline, IoClose } from "react-icons/io5";
 import { useTheme } from "../../context/ThemeProvider";
 import { presets } from "../../context/ThemeConfig";
+import SidebarSelector from "../../layout/Sidebars/SidebarSelector";
 
 const ThemeSwitcher = ({ onClose }) => {
   const { updateSingleColor, toggleDarkMode, isDarkMode } = useTheme();
@@ -49,13 +50,13 @@ const ThemeSwitcher = ({ onClose }) => {
             localStorage.clear();
             window.location.reload();
           }}
-          className="bg-[#2D3139] text-white px-4 py-2 rounded-md text-[11px] font-bold hover:bg-black transition-all cursor-pointer uppercase tracking-tight"
+          className="bg-primary text-white px-4 py-2 rounded-md text-[11px] font-bold hover:bg-black transition-all cursor-pointer uppercase tracking-tight"
         >
           Delete All Cookie
         </button>
           <button
       onClick={onClose}
-      className="text-slate-400 p-2 cursor-pointer bottom-[83%] z-777 fixed right-6 bg-black text-white transition-colors p-1"
+      className="text-slate-400 p-2 cursor-pointer bottom-[83%] z-777 fixed right-6 bg-primary text-white transition-colors p-1"
     >
       <IoClose size={22} />
     </button>
@@ -68,7 +69,7 @@ const ThemeSwitcher = ({ onClose }) => {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`flex-1 py-3 text-[14px] font-bold transition-all cursor-pointer
+            className={`flex-1 py-3 text-[16px]  transition-all cursor-pointer
               ${activeTab === tab 
                 ? "bg-white dark:bg-[#333] text-black dark:text-white shadow-sm" 
                 : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"}`}
@@ -121,8 +122,8 @@ const ThemeSwitcher = ({ onClose }) => {
         )}
 
         {activeTab === "Header" && (
-          <div className="flex flex-col items-center justify-center py-20 text-slate-400">
-             <p className="font-medium italic">Header layout settings will appear here.</p>
+          <div className="grid grid-cols-2 py-20 text-slate-400">
+             <SidebarSelector />
           </div>
         )}
 
