@@ -10,7 +10,7 @@ import SidebarCompact   from '../Sidebars/CompactSidebar'
 import SidebarOverlay   from '../Sidebars/OverlaySidebar'
 import SidebarModern    from '../Sidebars/ModernSidebar'
 import SidebarIconHover from '../Sidebars/IconHoverSidebar'
-import Sidebar from '../../layouts/Sidebar'
+
 
 const SIDEBAR_MAP = {
   [SIDEBAR_TYPES.FULL]:       SidebarFull,
