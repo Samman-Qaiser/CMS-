@@ -1,3 +1,7 @@
+/* Pehle Google Fonts import */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+/* Phir Tailwind */
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -26,111 +30,6 @@
   --sidebar-bg: #FFFFFF;
   --bg-main: #F0F0F0;
   --content-text: #737B8B;
-}
-
-/* demo colours are defined in themeConfig.js, I added here only for visualization */
-.demo1 {
-  --primary: #40a7e2;
-  --primary-hover: #208fcf;
-  --primary-dark: #125277;
-  --secondary: #6759d1;
-  --secondary-dark: #4636c1;
-  --nav-headbg: #40a7e2;
-  --sidebar-bg: #40a7e2;
-  --headerbg: #ffffff;
-  --bg-main: #F0F0F0;
-  --content-text: #ffffff;
-}
-
-.demo2 {
-  --primary: #3250ff;
-  --primary-hover: #0025fe;
-  --primary-dark: #001698;
-  --secondary: #ff965f;
-  --secondary-dark: #ff752c;
-  --nav-headbg: #3250ff;
-  --sidebar-bg: #3250ff;
-  --headerbg: #E2E2E2;
-  --bg-main: #F0F0F0;
-  --content-text: #777777;
-}
-
-.demo3 {
-  --primary: #c6164f;
-  --primary-hover: #98113d;
-  --primary-dark: #3c0718;
-  --secondary: #6759d1;
-  --secondary-dark: #4636c1;
-  --nav-headbg: #c6164f;
-  --sidebar-bg: #FFFFFF;
-  --headerbg: #E2E2E2;
-  --bg-main: #F0F0F0;
-  --content-text: #777777;
-}
-
-.demo4 {
-  --primary: #88a67e;
-  --primary-hover: #6d8f62;
-  --primary-dark: #3f5239;
-  --secondary: #b65fbd;
-  --secondary-dark: #9e44a5;
-  --nav-headbg: #FFFFFF;
-  --sidebar-bg: #88a67e;
-  --headerbg: #E2E2E2;
-  --bg-main: #F0F0F0;
-  --content-text: #777777;
-}
-
-.demo5 {
-  --primary: #3f8cff;
-  --primary-hover: #0c6dff;
-  --primary-dark: #0042a5;
-  --secondary: #3250ff;
-  --secondary-dark: #0025fe;
-  --nav-headbg: #3f8cff;
-  --sidebar-bg: #FFFFFF;
-  --headerbg: #3f8cff;
-  --bg-main: #F0F0F0;
-  --content-text: #777777;
-}
-
-.demo6 {
-  --primary: #c6164f;
-  --primary-hover: #98113d;
-  --primary-dark: #3c0718;
-  --secondary: #6759d1;
-  --secondary-dark: #4636c1;
-  --nav-headbg: #c6164f;
-  --sidebar-bg: #c6164f;
-  --headerbg: #E2E2E2;
-  --bg-main: #F0F0F0;
-  --content-text: #777777;
-}
-
-.demo7 {
-  --primary: #343a40;
-  --primary-hover: #1d2124;
-  --primary-dark: black;
-  --secondary: #88a67e;
-  --secondary-dark: #6d8f62;
-  --sidebar-bg: #343a40;
-  --nav-headbg: #343a40;
-  --headerbg: #E2E2E2;
-  --bg-main: #F0F0F0;
-  --content-text: #777777;
-}
-
-.demo8 {
-  --primary: #6759d1;
-  --primary-hover: #4636c1;
-  --primary-dark: #291f72;
-  --secondary: #3f8cff;
-  --secondary-dark: #0c6dff;
-  --nav-headbg: #FFFFFF;
-  --sidebar-bg: #FFFFFF;
-  --headerbg: #E2E2E2;
-  --bg-main: #F0F0F0;
-  --content-text: #777777;
 }
 
 .dark {
