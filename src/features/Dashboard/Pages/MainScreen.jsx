@@ -51,6 +51,7 @@ const MainScreen = () => {
         <div className="col1"></div>
         <div className="col2"></div>
       </div>
+      <div className="row5 h-[100vh]"></div>
     </div>
   );
 }
