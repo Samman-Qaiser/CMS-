@@ -230,7 +230,7 @@ function ModernSidebar() {
     >
       <div className="flex items-center justify-center py-5 border-b
                       border-black/5 dark:border-white/5 shrink-0">
-        <img src="./logo-half.png" alt="Logo" className="h-8 w-8 object-contain" />
+        <img src="./logo-half.png" alt="Logo" className="h-16 w-16 object-contain" />
       </div>
 
       <nav className="flex-1 overflow-y-auto overflow-x-hidden py-3 px-2
