@@ -3,6 +3,8 @@ import { IoSunnyOutline, IoMoonOutline, IoDesktopOutline, IoClose } from "react-
 import { useTheme } from "../../context/ThemeProvider";
 import { presets } from "../../context/ThemeConfig";
 import SidebarSelector from "../../layout/Sidebars/SidebarSelector";
+import FontSelector from "../selectors/FontSelector";
+import ContainerSelector from "../selectors/ContainerSelector";
 
 const ThemeSwitcher = ({ onClose }) => {
   const { updateSingleColor, toggleDarkMode, isDarkMode } = useTheme();
@@ -128,8 +130,10 @@ const ThemeSwitcher = ({ onClose }) => {
         )}
 
         {activeTab === "Content" && (
-          <div className="flex flex-col items-center justify-center py-20 text-slate-400">
-             <p className="font-medium italic">Content customization settings will appear here.</p>
+          <div className="grid grid-cols-2">
+         
+          <ContainerSelector />
+           <FontSelector />
           </div>
         )}
       </div>

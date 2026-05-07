@@ -1,71 +1,93 @@
-
-import { Outlet } from 'react-router-dom'
-import { useSelector } from 'react-redux'
-import { SIDEBAR_TYPES } from '../../redux/Slice/uiSlice'
-import ControlPanel     from '../../components/theme/ControlPanel'
-import Header           from '../Header/Header'
-import SidebarFull      from '../Sidebars/FullSidebar'
-import SidebarMini      from '../Sidebars/MiniSidebar'
-import SidebarCompact   from '../Sidebars/CompactSidebar'
-import SidebarOverlay   from '../Sidebars/OverlaySidebar'
-import SidebarModern    from '../Sidebars/ModernSidebar'
-import SidebarIconHover from '../Sidebars/IconHoverSidebar'
+import { Outlet } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { SIDEBAR_TYPES } from "../../redux/Slice/uiSlice";
+import ControlPanel from "../../components/theme/ControlPanel";
+import Header from "../Header/Header";
+import SidebarFull from "../Sidebars/FullSidebar";
+import SidebarMini from "../Sidebars/MiniSidebar";
+import SidebarCompact from "../Sidebars/CompactSidebar";
+import SidebarOverlay from "../Sidebars/OverlaySidebar";
+import SidebarModern from "../Sidebars/ModernSidebar";
+import SidebarIconHover from "../Sidebars/IconHoverSidebar";
+import { useEffect } from "react";
 
 const SIDEBAR_MAP = {
-  [SIDEBAR_TYPES.FULL]:       SidebarFull,
-  [SIDEBAR_TYPES.MINI]:       SidebarMini,
-  [SIDEBAR_TYPES.COMPACT]:    SidebarCompact,
-  [SIDEBAR_TYPES.OVERLAY]:    SidebarOverlay,
-  [SIDEBAR_TYPES.MODERN]:     SidebarModern,
-  [SIDEBAR_TYPES.ICON_HOVER]: SidebarIconHover,
-}
+  [SIDEBAR_TYPES.FULL]: SidebarFull,
+  [SIDEBAR_TYPES.MINI]: SidebarMini,
+  [SIDEBAR_TYPES.COMPACT]: SidebarCompact,
+  [SIDEBAR_TYPES.OVERLAY]: SidebarOverlay,
+  [SIDEBAR_TYPES.MODERN]: SidebarModern,
+  [SIDEBAR_TYPES.ICON_HOVER]: SidebarIconHover,
+};
 
 function MainLayout() {
-  const { sidebarType, sidebarOpen } = useSelector((state) => state.ui)
-  const ActiveSidebar = SIDEBAR_MAP[sidebarType] || SidebarFull
-  const isOverlay     = sidebarType === SIDEBAR_TYPES.OVERLAY
+  const { sidebarType, fontFamily, containerLayout } = useSelector((state) => state.ui);
+  
+  // Font change logic
+  useEffect(() => {
+    document.body.style.fontFamily = `${fontFamily}, sans-serif`;
+  }, [fontFamily]);
 
-  return (
-    <div className="flex h-screen overflow-hidden">
+  const getContainerClass = () => {
+  switch (containerLayout) {
+    case 'boxed':
+      // Image 1 jaisa — centered box, shadow, rounded, limited width
+      return 'max-w-[1000px] mx-auto w-full shadow-2xl overflow-hidden';
+    
+    case 'wide_boxed':
+      // Image 2 jaisa — full height, thoda side margin
+      return 'max-w-[1600px] mx-auto w-full';
+    
+    default:
+      // Completely full width
+      return 'w-full';
+  }
+};
 
-      {isOverlay ? (
-        // Overlay: sidebar fixed hai, content full width lega
-        <div className="flex flex-col flex-1 overflow-hidden">
-          {/* Header — full width, upar fixed rahega */}
-          <div className="flex items-center border-b border-gray-100 dark:border-white/5 bg-white dark:bg-gray-900 z-30 relative">
-            <div className="flex items-center px-6 py-5 shrink-0">
-              <img src="./logo-full.png" alt="Logo" className="h-10 object-contain" />
-            </div>
-            <div className="flex-1">
-              <Header />
-            </div>
-          </div>
+  const ActiveSidebar = SIDEBAR_MAP[sidebarType] || SidebarFull;
+  const isOverlay = sidebarType === SIDEBAR_TYPES.OVERLAY;
 
-          {/* Overlay Sidebar — header ke neeche fixed overlay karega */}
-          <ActiveSidebar />
+  return (
+    // Main Wrapper: Iska background color header ke glass effect ke liye zaroori hai
+  <div className={`
+  flex overflow-hidden bg-bg-main transition-colors duration-300
+  ${containerLayout === 'boxed' ? '' : 'h-screen'}
+  ${getContainerClass()}
+`}>
+      
+      {/* Sidebar - Overlay mode mein ye fixed ho jata hai */}
+      {!isOverlay && <ActiveSidebar />}
 
-          {/* Main content — full width */}
-          <main className="flex-1 overflow-y-auto p-6 bg-gray-100">
-            <Outlet />
-          </main>
+      <div className={`flex flex-col flex-1 overflow-hidden transition-all duration-500`}>
+        
+        {/* Container Logic wrapper */}
+        <div className={`flex flex-col flex-1 overflow-hidden $bg-sidebar-bg/50`}>
+          
+          {/* Header - Glassmorphism logic ab iske andar window scroll detect karegi */}
+          {isOverlay ? (
+            <div className="flex items-center border-b border-gray-100 dark:border-white/5 bg-white dark:bg-gray-900 z-30 relative shrink-0">
+               <div className="flex items-center px-6 py-5 shrink-0">
+                <img src="./logo-full.png" alt="Logo" className="h-10 object-contain" />
+              </div>
+              <div className="flex-1">
+                <Header />
+              </div>
+              <ActiveSidebar /> 
+            </div>
+          ) : (
+            <Header />
+          )}
 
-          <ControlPanel />
-        </div>
-      ) : (
-        <>
-          <ActiveSidebar />
-          <div className="flex flex-col flex-1 overflow-hidden">
-            <Header />
-            <main className="flex-1 overflow-y-auto p-6 ">
-              <Outlet />
-            </main>
-            <ControlPanel />
-          </div>
-        </>
-      )}
+          {/* Main Content Area: Yahan scrollable hona zaroori hai taake glass effect trigger ho */}
+          <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 custom-scrollbar">
+            <Outlet />
+          </main>
 
-    </div>
-  )
+          <ControlPanel />
+        </div>
+      </div>
+    </div>
+  );
 }
 
-export default MainLayout
+export default MainLayout;

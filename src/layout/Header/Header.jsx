@@ -17,9 +17,9 @@ function Header() {
 
   return (
     <header className="
-      h-[70px] flex items-center px-6 gap-4 shrink-0
+      h-[70px] flex items-center  px-6 gap-4 shrink-0
       /* Glassmorphism Effect */
-     bg-transparent
+  bg-transparent
       backdrop-blur-lg 
       border-b border-white/30 dark:border-white/10
       sticky top-0 z-50
@@ -63,10 +63,10 @@ function Header() {
       bg-transparent
                       dark:bg-sidebar-bg
                       backdrop-blur-xl
-                      border border-white/40 dark:border-white/10
+                      border border-primary/40 dark:border-white/10
                       rounded-sm px-4 py-2
                       shadow-[0_4px_12px_rgba(0,0,0,0.05)]
-                      focus-within:ring-2 focus-within:ring-blue-500/20
+                      focus-within:ring-2 focus-within:ring-primary
                       transition-all duration-300">
         <BsSearch className="w-4 h-4 text-primary dark:text-sidebar-icon font-bold " />
         <input
