@@ -83,7 +83,7 @@ const DemoSwitcher = ({ onClose }) => {
 
                   {isActive && (
                     <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                      <span className="bg-[#5EEAD4]  px-6 py-2 rounded-lg text-sm font-black uppercase shadow-xl">
+                      <span className="bg-[#5EEAD4]  px-6 py-2 rounded-lg text-sm text-white font-[500] shadow-xl">
                         {key === "default" ? "Default" : key}
                       </span>
                     </div>
@@ -91,7 +91,7 @@ const DemoSwitcher = ({ onClose }) => {
 
                   {!isActive && (
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <span className="bg-[#5EEAD4]  py-2 px-4 rounded-sm text-[11px] text-white capitalize font-semibold">
+                      <span className="bg-[#5EEAD4]  py-2 px-4 rounded-sm text-[14px] text-white capitalize font-semibold">
                        {key}
                       </span>
                     </div>
