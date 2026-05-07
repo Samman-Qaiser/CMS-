@@ -3,6 +3,7 @@ import MainScreen from "../Pages/MainScreen";
 import ProtectedRoute from "../../../route/ProtectedRoute";
 import MainLayout from "../../../layout/Main/MainLayout";
 import Users from "../Pages/Users";
+import AddUsers from "../Pages/AddUsers";
 function DashboardRoutes() {
   return (
     <Routes>
@@ -21,6 +22,14 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <Users />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="add-user"
+          element={
+            <ProtectedRoute>
+              <AddUsers />
             </ProtectedRoute>
           }
         />

@@ -6,6 +6,7 @@ import {
   BsPlusLg,
 } from "react-icons/bs";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
+import { Link } from "react-router-dom";
 
 const UserTable = ({ users }) => {
  
@@ -23,12 +24,15 @@ const UserTable = ({ users }) => {
           <button className="px-6 py-2 rounded-lg border border-primary text-primary font-semibold hover:bg-red-50 transition-colors">
             Delete
           </button>
-          <button className="flex items-center rounded-lg overflow-hidden shadow-lg shadow-primary/20">
-            <span className="bg-primary flex gap-2 items-center text-white px-4 py-2 font-semibold">
+          <Link
+            to="/dashboard/add-user"
+            className="flex items-center rounded-lg overflow-hidden bg-primary shadow-lg shadow-primary/20"
+          >
+            <span className=" flex gap-2 items-center text-white px-4 py-2 font-semibold">
               ADD USER
               <BsPlusLg />
             </span>
-          </button>
+          </Link>
         </div>
       </div>
 
