@@ -26,9 +26,9 @@ const CustomSelector = ({
   const selectedOption = options.find(opt => opt.value === value)
 
   return (
-    <div className="w-full max-w-[300px]" ref={dropdownRef}>
+    <div className="w-full  max-w-[300px]" ref={dropdownRef}>
       {label && (
-        <label className="block text-content-text dark:text-white font-semibold mb-2 text-sm transition-colors duration-300">
+        <label className="block py-2 text-content-text dark:text-white font-semibold mb-2 text-sm transition-colors duration-300">
           {label}
         </label>
       )}
@@ -37,10 +37,10 @@ const CustomSelector = ({
         <button
           onClick={() => setIsOpen(!isOpen)}
           className={`
-            w-full flex items-center justify-between px-4 py-3 bg-sidebar-bg
+            w-full flex items-center justify-between px-4 py-3 
             border-2 rounded-xl transition-all duration-300
             ${isOpen 
-              ? 'border-primary ring-1 ring-primary/10 shadow-lg' 
+              ? 'border-primary border-[1px] ring-1 ring-primary/10 shadow-lg' 
               : 'border-primary hover:border-primary-hover'}
           `}
         >
@@ -54,7 +54,7 @@ const CustomSelector = ({
 
         {isOpen && (
           <ul className="
-            absolute z-50 w-full mt-2 bg-sidebar-bg
+            absolute z-50 w-full mt-2 
             shadow-[0_10px_40px_rgba(0,0,0,0.15)] dark:shadow-[0_10px_40px_rgba(0,0,0,0.4)]
             rounded-xl overflow-hidden border border-primary/20
             animate-in fade-in slide-in-from-top-2 duration-200

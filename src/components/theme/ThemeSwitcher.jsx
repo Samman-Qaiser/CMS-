@@ -30,7 +30,15 @@ const ThemeSwitcher = ({ onClose }) => {
     "#3EB88F", "#FF6A59", "#FF9F59", "#3459FF", "#348FFF", "#34B3FF", "#B359FF",
     "#86A373", "#6259FF", "#C11A4D", "#30363D"
   ];
+const currentFont = useSelector((state) => state.ui.fontFamily);
 
+  // Selector ke liye options
+  const fontOptions = [
+    { label: 'Roboto', value: 'Roboto' },
+    { label: 'Poppins', value: 'Poppins' },
+    { label: 'Open Sans', value: 'Open Sans' },
+    { label: 'Helvetica', value: 'HelveticaNeue' }
+  ];
   const currentThemeSetting = localStorage.getItem("theme") || "system";
 
   // Reusable Color Grid Component
@@ -138,7 +146,7 @@ const ThemeSwitcher = ({ onClose }) => {
         )}
 
         {activeTab === "Header" && (
-          <div className="grid grid-cols-2 py-20 text-slate-400">
+          <div className="grid grid-cols-2  text-slate-400">
           <CustomSelector 
             label="Layout"
       options={layoutOptions}
@@ -158,14 +166,25 @@ const ThemeSwitcher = ({ onClose }) => {
       onChange={(val) => dispatch(setSidebarPosition(val))}
           />
              <SidebarSelector />
+          
           </div>
         )}
 
         {activeTab === "Content" && (
           <div className="grid grid-cols-2">
          
-          <ContainerSelector />
-           <FontSelector />
+    <CustomSelector 
+            label="Container Layout"
+      options={layoutOptions}
+      value={currentLayout}
+      onChange={(val) => dispatch(setContainerLayout(val))}
+          />
+          <CustomSelector 
+            label="Font Family"
+      options={fontOptions}
+      value={currentFont}
+      onChange={(val) => dispatch(setFontFamily(val))}
+          />
           </div>
         )}
       </div>
