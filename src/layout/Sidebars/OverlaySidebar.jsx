@@ -194,7 +194,7 @@ function OverlaySidebar() {
           border-r border-gray-100 dark:border-white/5
           overflow-hidden
           transition-all duration-300 ease-in-out
-          ${sidebarOpen ? "w-[260px]" : "w-0"}
+          ${sidebarOpen ? "w-[20%]" : "w-0"}
         `}
         style={{ top: '72px' }} // header height match karo
       >
