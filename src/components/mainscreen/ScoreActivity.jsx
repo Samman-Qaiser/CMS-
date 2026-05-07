@@ -66,7 +66,7 @@ const ScoreActivity = () => {
       data: [75, 50, 18, 70, 40, 70, 100, 50, 18, 40, 55, 100],
     },
   ];
- 
+
   const chartSeries = rawData.map((s) => ({
     name: s.name,
     data: activeSeries[s.id] ? s.data : Array(12).fill(0),
