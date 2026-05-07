@@ -16,7 +16,7 @@ const MiniSidebar = () => {
 
   return (
     <div
-      className="fixed left-0 top-0 h-screen w-20 flex flex-col items-center border-r border-gray-200/10 z-50 shadow-lg transition-all duration-300"
+      className="h-screen w-20 flex flex-col items-center border-r border-gray-200/10 z-50 shadow-lg transition-all duration-300"
       style={{ backgroundColor: "var(--sidebar-bg)" }}
     >
       {/*  Sidebar Header */}
