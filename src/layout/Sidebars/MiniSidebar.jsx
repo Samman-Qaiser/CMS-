@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom"; 
 import { BsChevronRight } from "react-icons/bs";
 import { ALL_NAV_ITEMS } from "../../utils/navitems";
 import logo from "/public/images/logo.png";
@@ -12,14 +13,14 @@ const MiniSidebar = () => {
         .getPropertyValue("--sidebar-bg")
         .trim()
         .toUpperCase(),
-    ) || !activeItem; 
+    ) || !activeItem;
 
   return (
     <div
       className="h-screen w-20 flex flex-col items-center border-r border-gray-200/10 z-50 shadow-lg transition-all duration-300"
       style={{ backgroundColor: "var(--sidebar-bg)" }}
     >
-      {/*  Sidebar Header */}
+      {/* Sidebar Header */}
       <div
         className="mb-10 w-full flex items-center justify-center py-4"
         style={{ backgroundColor: "var(--nav-headbg)" }}
@@ -64,8 +65,9 @@ const MiniSidebar = () => {
                 >
                   {item.children.map((child) => (
                     <div key={child.id} className="relative group/sub">
-                      <a
-                        href={child.path || "#"}
+                      {/* Changed <a> to <Link> and href to to */}
+                      <Link
+                        to={child.path || "#"}
                         className="flex items-center justify-between px-4 py-2.5 text-sm transition-all duration-200"
                         style={{
                           color: "var(--sidebar-text)",
@@ -96,7 +98,7 @@ const MiniSidebar = () => {
                             className="ml-2 opacity-50"
                           />
                         )}
-                      </a>
+                      </Link>
 
                       {/* Second Level Dropdown */}
                       {child.children && (
@@ -105,9 +107,10 @@ const MiniSidebar = () => {
                           style={{ backgroundColor: "var(--sidebar-bg)" }}
                         >
                           {child.children.map((subChild) => (
-                            <a
+                            /* Changed <a> to <Link> and href to to */
+                            <Link
                               key={subChild.id}
-                              href={subChild.path}
+                              to={subChild.path || "#"}
                               className="block px-4 py-2 text-sm transition-all duration-200"
                               style={{ color: "var(--sidebar-text)" }}
                               onMouseEnter={(e) => {
@@ -127,7 +130,7 @@ const MiniSidebar = () => {
                               }}
                             >
                               {subChild.label}
-                            </a>
+                            </Link>
                           ))}
                         </div>
                       )}
