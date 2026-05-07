@@ -10,7 +10,8 @@ import SidebarOverlay from "../Sidebars/OverlaySidebar";
 import SidebarModern from "../Sidebars/ModernSidebar";
 import SidebarIconHover from "../Sidebars/IconHoverSidebar";
 import { useEffect } from "react";
-
+import RightPanel from "./SidePannel";
+import { LANGUAGES } from '../../redux/Slice/languageSlice'
 const SIDEBAR_MAP = {
   [SIDEBAR_TYPES.FULL]: SidebarFull,
   [SIDEBAR_TYPES.MINI]: SidebarMini,
@@ -22,7 +23,12 @@ const SIDEBAR_MAP = {
 
 function MainLayout() {
   const { sidebarType, fontFamily, containerLayout } = useSelector((state) => state.ui);
-  
+  const savedCode = localStorage.getItem('ui-language') || 'en'
+const lang = LANGUAGES.find(l => l.code === savedCode)
+if (lang) {
+  document.documentElement.dir  = lang.dir
+  document.documentElement.lang = lang.code
+}
   // Font change logic
   useEffect(() => {
     document.body.style.fontFamily = `${fontFamily}, sans-serif`;
@@ -57,7 +63,7 @@ function MainLayout() {
  
       {!isOverlay && <ActiveSidebar />}
 
-      <div className={`flex flex-col flex-1 overflow-hidden transition-all duration-500`}>
+      <div  className={`flex flex-col flex-1 overflow-hidden transition-all duration-500`}>
         
      
         <div className={`flex flex-col flex-1 overflow-hidden $bg-sidebar-bg/50`}>
@@ -83,6 +89,7 @@ function MainLayout() {
           <ControlPanel />
         </div>
       </div>
+      <RightPanel />
     </div>
   );
 }

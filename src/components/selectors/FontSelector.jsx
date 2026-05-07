@@ -29,7 +29,7 @@ const FontSelector = () => {
 
   return (
     <div className="w-full max-w-[300px]" ref={dropdownRef}>
-      <label className="block text-content-text dark:text-white font-semibold mb-2 text-sm transition-colors duration-300">
+      <label className="block py-2 text-content-text dark:text-white font-semibold mb-2 text-sm transition-colors duration-300">
         Body Font
       </label>
       

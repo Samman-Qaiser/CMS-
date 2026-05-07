@@ -17,7 +17,7 @@ function Header() {
 
   return (
     <header className="
-      h-[70px] flex items-center  px-6 gap-4 shrink-0
+      h-[70px] flex items-center w-[90vw] px-6 gap-4 shrink-0
       /* Glassmorphism Effect */
   bg-transparent
       backdrop-blur-lg 
