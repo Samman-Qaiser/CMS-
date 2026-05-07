@@ -1,8 +1,8 @@
 const VoucherCard = () => {
   return (
     <div
-      className="relative overflow-hidden rounded-2xl p-8 flex items-center min-h-[280px] group"
-      style={{ backgroundColor: "var(--secondary)" }}
+      className="relative bg-secondary overflow-hidden rounded-2xl p-8 flex items-center min-h-[280px] group"
+  
     >
       {/* Background Decorative Icons */}
       <div className="absolute top-4 right-20 group-hover:scale-150 ease-linear transition">

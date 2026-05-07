@@ -31,11 +31,11 @@ function MainLayout() {
   const getContainerClass = () => {
   switch (containerLayout) {
     case 'boxed':
-      // Image 1 jaisa — centered box, shadow, rounded, limited width
+    
       return 'max-w-[1000px] mx-auto w-full shadow-2xl overflow-hidden';
     
     case 'wide_boxed':
-      // Image 2 jaisa — full height, thoda side margin
+
       return 'max-w-[1600px] mx-auto w-full';
     
     default:
@@ -48,22 +48,20 @@ function MainLayout() {
   const isOverlay = sidebarType === SIDEBAR_TYPES.OVERLAY;
 
   return (
-    // Main Wrapper: Iska background color header ke glass effect ke liye zaroori hai
+  
   <div className={`
   flex overflow-hidden bg-bg-main transition-colors duration-300
   ${containerLayout === 'boxed' ? '' : 'h-screen'}
   ${getContainerClass()}
 `}>
-      
-      {/* Sidebar - Overlay mode mein ye fixed ho jata hai */}
+ 
       {!isOverlay && <ActiveSidebar />}
 
       <div className={`flex flex-col flex-1 overflow-hidden transition-all duration-500`}>
         
-        {/* Container Logic wrapper */}
+     
         <div className={`flex flex-col flex-1 overflow-hidden $bg-sidebar-bg/50`}>
-          
-          {/* Header - Glassmorphism logic ab iske andar window scroll detect karegi */}
+     
           {isOverlay ? (
             <div className="flex items-center border-b border-gray-100 dark:border-white/5 bg-white dark:bg-gray-900 z-30 relative shrink-0">
                <div className="flex items-center px-6 py-5 shrink-0">
@@ -78,7 +76,6 @@ function MainLayout() {
             <Header />
           )}
 
-          {/* Main Content Area: Yahan scrollable hona zaroori hai taake glass effect trigger ho */}
           <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 custom-scrollbar">
             <Outlet />
           </main>

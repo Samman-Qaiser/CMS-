@@ -5,11 +5,25 @@ import { presets } from "../../context/ThemeConfig";
 import SidebarSelector from "../../layout/Sidebars/SidebarSelector";
 import FontSelector from "../selectors/FontSelector";
 import ContainerSelector from "../selectors/ContainerSelector";
-
+import CustomSelector from "../selectors/CustomSelector";
+import { setContainerLayout, setHeaderPosition, setSidebarPosition } from "../../redux/Slice/uiSlice";
+import { useDispatch, useSelector } from "react-redux";
 const ThemeSwitcher = ({ onClose }) => {
   const { updateSingleColor, toggleDarkMode, isDarkMode } = useTheme();
   const [activeTab, setActiveTab] = useState("Theme");
-
+ const dispatch = useDispatch();
+  const currentLayout = useSelector((state) => state.ui.layoutType);
+  const headerPosition = useSelector((state) => state.ui.headerPosition);
+    const sidebarPosition = useSelector((state) => state.ui.sidebarPosition);
+  const layoutOptions = [
+    { label: 'Wide', value: 'wide' },
+    { label: 'Boxed', value: 'boxed' },
+    { label: 'Wide Boxed', value: 'wide_boxed' }
+  ];
+  const positionOptions = [
+    {label:"Fixed",value:"fixed"}
+    ,{label:"Static",value:"static"}
+  ]
   // Screenshot ke mutabiq exact colors
   const colorOptions = [
     "none", // Slashed icon (Reset/None)
@@ -125,6 +139,24 @@ const ThemeSwitcher = ({ onClose }) => {
 
         {activeTab === "Header" && (
           <div className="grid grid-cols-2 py-20 text-slate-400">
+          <CustomSelector 
+            label="Layout"
+      options={layoutOptions}
+      value={currentLayout}
+      onChange={(val) => dispatch(setContainerLayout(val))}
+          />
+           <CustomSelector 
+            label="Header Position"
+      options={positionOptions}
+      value={headerPosition}
+      onChange={(val) => dispatch(setHeaderPosition(val))}
+          />
+            <CustomSelector 
+            label="Sidebar Position"
+      options={positionOptions}
+      value={sidebarPosition}
+      onChange={(val) => dispatch(setSidebarPosition(val))}
+          />
              <SidebarSelector />
           </div>
         )}
