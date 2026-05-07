@@ -165,21 +165,26 @@ const currentFont = useSelector((state) => state.ui.fontFamily);
       value={sidebarPosition}
       onChange={(val) => dispatch(setSidebarPosition(val))}
           />
-            <CustomSelector
-      label="Body Font"
-      options={fontOptions}
-      value={currentFont}
-      onChange={(selectedVal) => dispatch(setFontFamily(selectedVal))}
-    />
-    
+             <SidebarSelector />
+          
           </div>
         )}
 
         {activeTab === "Content" && (
           <div className="grid grid-cols-2">
          
-          <ContainerSelector />
-           <FontSelector />
+    <CustomSelector 
+            label="Container Layout"
+      options={layoutOptions}
+      value={currentLayout}
+      onChange={(val) => dispatch(setContainerLayout(val))}
+          />
+          <CustomSelector 
+            label="Font Family"
+      options={fontOptions}
+      value={currentFont}
+      onChange={(val) => dispatch(setFontFamily(val))}
+          />
           </div>
         )}
       </div>
