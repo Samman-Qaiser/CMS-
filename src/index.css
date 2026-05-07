@@ -7,7 +7,8 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-   --color-sidebar-text: var(--sidebar-text);  /* ← NEW */
+   --color-sidebar-icon: var(--sidebar-icon); 
+     --color-sidebar-text: var(--sidebar-text);  /* ← NEW */
   --color-header-text: var(--header-text);  
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
@@ -38,7 +39,9 @@ body {
   --sidebar-bg: #FFFFFF;
   --bg-main: #F0F0F0;
   --content-text: #737B8B;
-  --sidebar-text: #737B8B;  /* ← NEW */
+  --sidebar-icon: #737B8B;
+  --sidebar-text: #737B8B; 
+  --sidebar-icon:#FF6A59; /* ← NEW */
   --header-text: #333333;   /* ← NEW */
 }
 

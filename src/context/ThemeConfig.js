@@ -10,7 +10,8 @@ export const presets = {
     "--headerbg":       "#E2E2E2",
     "--bg-main":        "#F0F0F0",
     "--content-text":   "#737B8B",   // page body text
-    "--sidebar-text":   "#737B8B",   // sidebar nav text  ← NEW
+    "--sidebar-text":   "#737B8B", 
+    "--sidebar-icon":   "#FF6A59",  // sidebar icon color  ← NEW
     "--header-text":    "#333333",   // header text       ← NEW
   },
 
@@ -25,7 +26,8 @@ export const presets = {
     "--headerbg":       "#ffffff",
     "--bg-main":        "#F0F0F0",
     "--content-text":   "#777777",
-    "--sidebar-text":   "#FFFFFF",   // white — colored sidebar
+    "--sidebar-text":   "#FFFFFF",  
+      "--sidebar-icon":   "#FFFFFF",  // white — colored sidebar
     "--header-text":    "#333333",
   },
 
@@ -40,7 +42,8 @@ export const presets = {
     "--headerbg":       "#E2E2E2",
     "--bg-main":        "#F0F0F0",
     "--content-text":   "#777777",
-    "--sidebar-text":   "#FFFFFF",   // white — dark sidebar
+    "--sidebar-text":   "#FFFFFF",  
+      "--sidebar-icon":   "#FFFFFF",  // white — colored sidebar
     "--header-text":    "#333333",
   },
 
@@ -55,7 +58,8 @@ export const presets = {
     "--headerbg":       "#E2E2E2",
     "--bg-main":        "#F0F0F0",
     "--content-text":   "#777777",
-    "--sidebar-text":   "#777777",   // dark text — white sidebar
+     "--sidebar-text":   "#FFFFFF",  
+      "--sidebar-icon":   "#FFFFFF",
     "--header-text":    "#333333",
   },
 
@@ -71,6 +75,7 @@ export const presets = {
     "--bg-main":        "#F0F0F0",
     "--content-text":   "#777777",
     "--sidebar-text":   "#FFFFFF",   // white — colored sidebar
+    "--sidebar-icon":   "#FFFFFF",   // white — colored sidebar
     "--header-text":    "#333333",
   },
 
@@ -86,6 +91,7 @@ export const presets = {
     "--bg-main":        "#F0F0F0",
     "--content-text":   "#777777",
     "--sidebar-text":   "#777777",   // dark — white sidebar
+    "--sidebar-icon":   "#777777",   // dark — white sidebar
     "--header-text":    "#FFFFFF",   // white — colored header ← KEY FIX
   },
 
@@ -101,6 +107,7 @@ export const presets = {
     "--bg-main":        "#F0F0F0",
     "--content-text":   "#777777",
     "--sidebar-text":   "#FFFFFF",   // white — dark sidebar
+    "--sidebar-icon":   "#FFFFFF",   // white — colored sidebar
     "--header-text":    "#333333",
   },
 
@@ -116,6 +123,7 @@ export const presets = {
     "--bg-main":        "#F0F0F0",
     "--content-text":   "#777777",
     "--sidebar-text":   "#FFFFFF",   // white — very dark sidebar
+    "--sidebar-icon":   "#FFFFFF",   // white — very dark sidebar
     "--header-text":    "#333333",
   },
 
@@ -131,6 +139,7 @@ export const presets = {
     "--bg-main":        "#F0F0F0",
     "--content-text":   "#777777",
     "--sidebar-text":   "#777777",   // dark — white sidebar
+    "--sidebar-icon":   "#777777",   // dark — white sidebar
     "--header-text":    "#333333",
   },
 };
