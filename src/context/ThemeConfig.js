@@ -53,14 +53,14 @@ export const presets = {
     "--primary-dark": "#3c0718",
     "--secondary": "#6759d1",
     "--secondary-dark": "#4636c1",
-    "--sidebar-bg":     "#FFFFFF",   // white sidebar, colored accents
-    "--nav-headbg":     "#c6164f",
-    "--headerbg":       "#E2E2E2",
-    "--bg-main":        "#F0F0F0",
-    "--content-text":   "#777777",
-     "--sidebar-text":   "#FFFFFF",  
-      "--sidebar-icon":   "#FFFFFF",
-    "--header-text":    "#333333",
+    "--sidebar-bg": "#FFFFFF", // white sidebar, colored accents
+    "--nav-headbg": "#c6164f",
+    "--headerbg": "#E2E2E2",
+    "--bg-main": "#F0F0F0",
+    "--content-text": "#777777",
+    "--sidebar-text": "#c6164f",
+    "--sidebar-icon": "#c6164f",
+    "--header-text": "#333333",
   },
 
   demo4: {
