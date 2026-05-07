@@ -60,6 +60,7 @@ const MainScreen = () => {
           <CalendarCard />
         </div>
       </div>
+    
     </div>
   );
 };

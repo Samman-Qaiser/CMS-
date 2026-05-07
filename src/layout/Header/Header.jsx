@@ -1,100 +1,85 @@
-// src/components/Header/Header.jsx
-import { useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { toggleSidebar, SIDEBAR_TYPES } from "../../redux/Slice/uiSlice"; 
-import { BsSearch } from "react-icons/bs";
+import { useLocation } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { toggleSidebar } from '../../redux/Slice/uiSlice'
+import { BsSearch } from 'react-icons/bs'
 import { FaArrowRightLong } from "react-icons/fa6";
 
 const getPageTitle = (pathname) => {
-  const segment = pathname.split("/").filter(Boolean).pop() || "dashboard";
-  return segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, " ");
-};
+  const segment = pathname.split('/').filter(Boolean).pop() || 'dashboard'
+  return segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' ')
+}
 
 function Header() {
-  const dispatch = useDispatch();
-  const location = useLocation();
-  const sidebarOpen = useSelector((state) => state.ui.sidebarOpen);
-  const sidebarType = useSelector((state) => state.ui.sidebarType); // Get current sidebar type
-  const pageTitle = getPageTitle(location.pathname);
-
-  // Determine if the toggle button should be hidden
-  const hideToggleButton =
-    sidebarType === SIDEBAR_TYPES.MINI || sidebarType === SIDEBAR_TYPES.COMPACT;
+  const dispatch = useDispatch()
+  const location = useLocation()
+  const sidebarOpen = useSelector((state) => state.ui.sidebarOpen)
+  const pageTitle = getPageTitle(location.pathname)
 
   return (
-    <header
-      className="
-      h-[64px] flex items-center px-6 gap-4 shrink-0
-      bg-white/10 dark:bg-black/10
-      backdrop-blur-xl
-      border-b border-white/20 dark:border-white/5
-      shadow-lg
-      sticky top-0 z-10
-    "
-    >
-      {/* Custom Menu Button - Conditionally Rendered */}
-      {!hideToggleButton && (
-        <button
-          onClick={() => dispatch(toggleSidebar())}
-          className="group relative flex flex-col items-center justify-center w-9 h-9 rounded-lg
-                     hover:bg-white/20 dark:hover:bg-white/10 transition-all duration-200 cursor-pointer"
-          aria-label="Toggle Sidebar"
-        >
-          {sidebarOpen ? (
-            /* Arrow icon when sidebar is open */
-            <FaArrowRightLong className="w-4 h-4 text-gray-800 dark:text-white" />
-          ) : (
-            /* Hamburger lines when sidebar is closed */
-            <>
-              {/* Line 1 */}
-              <span className="block h-0.5 rounded-full bg-gray-800 dark:bg-white w-5 -translate-y-1" />
-
-              {/* Line 2 */}
-              <span className="block h-0.5 rounded-full bg-gray-800 dark:bg-white w-5 my-1" />
-
-              {/* Line 3 - shorter, grows from right side on hover */}
-              <span
-                className="block h-0.5 rounded-full bg-gray-800 dark:bg-white 
-                             w-3 group-hover:w-5 transition-all duration-300 origin-right"
-              />
-            </>
-          )}
-        </button>
-      )}
+    <header className="
+      h-[70px] flex items-center px-6 gap-4 shrink-0
+      /* Glassmorphism Effect */
+     bg-transparent
+      backdrop-blur-lg 
+      border-b border-white/30 dark:border-white/10
+      sticky top-0 z-50
+    ">
+      
+      {/* Menu Button with Animated Lines */}
+      <button
+        onClick={() => dispatch(toggleSidebar())}
+        className="group flex flex-col items-start justify-center w-10 h-10 rounded-xl
+                   hover:bg-white/30 dark:hover:bg-white/5 transition-colors duration-300"
+        aria-label="Toggle Sidebar"
+      >
+        {sidebarOpen ? (
+          <FaArrowRightLong className="w-5 h-5 text-gray-800  mx-auto" />
+        ) : (
+          <div className="flex flex-col gap-1.5 ml-2.5">
+            {/* Line 1 - Base width */}
+            <span className="h-0.5 bg-gray-800  rounded-full 
+                           w-4 group-hover:w-6 transition-all duration-300 ease-in-out" />
+            
+            {/* Line 2 - Medium width */}
+            <span className="h-0.5 bg-gray-800  rounded-full 
+                           w-6 group-hover:w-4 transition-all duration-300 ease-in-out" />
+            
+            {/* Line 3 - Shorter line that expands */}
+            <span className="h-0.5 bg-gray-800  rounded-full 
+                           w-3 group-hover:w-6 transition-all duration-300 ease-in-out" />
+          </div>
+        )}
+      </button>
 
       {/* Page Title */}
-      <h1
-        className="text-[35px] font-bold text-gray-800 dark:text-white tracking-tight
-                     drop-shadow-sm"
-      >
+      <h1 className="text-2xl font-bold text-gray-800  tracking-tight">
         {pageTitle}
       </h1>
 
       <div className="flex-1" />
 
-      {/* Search — mirror-like glassmorphism */}
-      <div
-        className="flex items-center gap-2
-                      bg-white/20 dark:bg-white/5
-                      backdrop-blur-lg
-                      border border-white/30 dark:border-white/10
-                      rounded-full px-4 py-2
-                      shadow-inner
-                      hover:bg-white/30 dark:hover:bg-white/10 
-                      transition-all duration-300
-                      hover:shadow-lg"
-      >
-        <BsSearch className="w-4 h-4 text-gray-600 dark:text-gray-300 shrink-0" />
+      {/* Glassmorphism Search Bar */}
+      <div className="flex items-center gap-2
+      bg-transparent
+                      dark:bg-sidebar-bg
+                      backdrop-blur-xl
+                      border border-white/40 dark:border-white/10
+                      rounded-sm px-4 py-2
+                      shadow-[0_4px_12px_rgba(0,0,0,0.05)]
+                      focus-within:ring-2 focus-within:ring-blue-500/20
+                      transition-all duration-300">
+        <BsSearch className="w-4 h-4 text-primary dark:text-sidebar-icon font-bold " />
         <input
           type="text"
           placeholder="Search here..."
           className="bg-transparent outline-none text-sm text-gray-700 dark:text-white
-                     placeholder:text-gray-500 dark:placeholder:text-gray-400
-                     w-32 focus:w-48 transition-all duration-300"
+                     placeholder:text-gray-500 
+                     dark:placeholder:text-content-text
+                     w-32 md:w-48 focus:w-60 transition-all duration-500"
         />
       </div>
     </header>
-  );
+  )
 }
 
-export default Header;
+export default Header
