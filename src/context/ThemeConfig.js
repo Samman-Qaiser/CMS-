@@ -57,9 +57,9 @@ export const presets = {
     "--nav-headbg":     "#c6164f",
     "--headerbg":       "#E2E2E2",
     "--bg-main":        "#F0F0F0",
-    "--content-text":   "#777777",
-     "--sidebar-text":   "#FFFFFF",  
-      "--sidebar-icon":   "#FFFFFF",
+    "--content-text":   "#737B8B",   // page body text
+    "--sidebar-text":   "#737B8B",  
+      "--sidebar-icon":   "#c6164f",
     "--header-text":    "#333333",
   },
 
