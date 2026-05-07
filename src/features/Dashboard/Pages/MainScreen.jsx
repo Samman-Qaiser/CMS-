@@ -2,6 +2,7 @@ import { BsBookmark, BsCheckSquare, BsLightbulb } from "react-icons/bs";
 import LearningActivity from "../../../components/mainscreen/LearningActivity";
 import StatCard from "../../../components/mainscreen/StatCard";
 import VoucherCard from "../../../components/mainscreen/VoucherCard";
+import ScoreActivity from "../../../components/mainscreen/ScoreActivity";
 
 const statData = [
   {
@@ -46,13 +47,15 @@ const MainScreen = () => {
           />
         ))}
       </div>
-      <div className="row3"></div>
+      <div className="grid grid-cols-1  mb-6">
+        <ScoreActivity />
+      </div>
       <div className="row4">
         <div className="col1"></div>
         <div className="col2"></div>
       </div>
     </div>
   );
-}
+};
 
-export default MainScreen
+export default MainScreen;
