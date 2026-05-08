@@ -56,7 +56,7 @@ const CustomSelector = ({
           <ul className="
             absolute z-50 w-full mt-2 
             shadow-[0_10px_40px_rgba(0,0,0,0.15)] dark:shadow-[0_10px_40px_rgba(0,0,0,0.4)]
-            rounded-xl overflow-hidden border border-primary/20
+            rounded-xl overflow-hidden border border-primary/20 bg-bg-main
             animate-in fade-in slide-in-from-top-2 duration-200
           ">
             {options.map((option) => (
