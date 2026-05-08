@@ -1,20 +1,59 @@
-import { useState } from "react";
-import { useForm, Controller, Watch } from "react-hook-form";
+import { useState, useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
 import { motion } from "framer-motion";
 import { BsPencil, BsEye, BsEyeSlash } from "react-icons/bs";
 import defaultAvatar from "/public/images/default_avatar.jpg";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-const AddUserForm = () => {
+export const UserForm = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [selectedImage, setSelectedImage] = useState(defaultAvatar);
 
+  const allUsers = [
+    {
+      id: 1,
+      name: "Khesh Mehra",
+      email: "manager@example.com",
+      gender: "Male",
+      group: "Manager",
+      mobile: "9652588652",
+      dob: "1996-08-24",
+      status: "Active",
+      img: "https://i.pravatar.cc/150?u=1",
+    },
+    {
+      id: 2,
+      name: "Ravi Sharma",
+      email: "customer@example.com",
+      gender: "Male",
+      group: "Customer",
+      mobile: "9654752251",
+      dob: "1996-08-10",
+      status: "Active",
+      img: "https://i.pravatar.cc/150?u=2",
+    },
+    {
+      id: 3,
+      name: "Gaurav Nagar",
+      email: "admin@example.com",
+      gender: "Male",
+      group: "Admin",
+      mobile: "9785255135",
+      dob: "1996-08-24",
+      status: "Active",
+      img: "https://i.pravatar.cc/150?u=3",
+    },
+  ];
+
   const {
     register,
     handleSubmit,
     control,
+    reset,
+    watch,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -24,18 +63,36 @@ const AddUserForm = () => {
     },
   });
 
+  useEffect(() => {
+    if (id) {
+      const userToEdit = allUsers.find((u) => u.id === parseInt(id));
+      if (userToEdit) {
+        const [firstName, ...lastNameParts] = userToEdit.name.split(" ");
+        reset({
+          firstName: firstName,
+          lastName: lastNameParts.join(" "),
+          email: userToEdit.email,
+          username: userToEdit.email.split("@")[0],
+          phoneNumber: userToEdit.mobile,
+          gender: userToEdit.gender,
+          role: userToEdit.group,
+          dob: userToEdit.dob,
+          isActive: userToEdit.status === "Active",
+        });
+        setSelectedImage(userToEdit.img);
+      }
+    }
+  }, [id, reset]);
+
   const onSubmit = (data) => {
-    console.log("Saved", data);
+    console.log(id ? "Update API Call" : "Create API Call", data);
     navigate(-1);
   };
 
-  const handleCancel = () => {
-    console.log("Canceled");
-    navigate(-1);
-  };
+  const handleCancel = () => navigate(-1);
 
   const handleImageChange = (event) => {
-    if (event.target.files && event.target.files[0]) {
+    if (event.target.files?.[0]) {
       setSelectedImage(URL.createObjectURL(event.target.files[0]));
     }
   };
@@ -47,10 +104,9 @@ const AddUserForm = () => {
       transition={{ duration: 0.5 }}
       className="bg-white dark:bg-[#292d4a] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden"
     >
-      {/* Header */}
       <div className="p-6 border-b border-gray-50 dark:border-gray-800">
         <h2 className="text-xl font-bold" style={{ color: "var(--primary)" }}>
-          New User Form
+          {id ? "Edit User Form" : "New User Form"}
         </h2>
       </div>
 
@@ -221,22 +277,20 @@ const AddUserForm = () => {
             required
             isFilled={false}
             validate={(value) =>
-              value === Watch("password") || "Passwords do not match"
+              value === watch("password") || "Passwords do not match"
             }
           />
         </div>
-
-        {/* Row 6: Actions */}
         <div className="flex gap-4 pt-4 border-t border-gray-50 dark:border-gray-800">
           <button
             type="submit"
-            className="px-8 py-3 rounded-xl text-white bg-[#4CBC9A] hover:bg-[#3a9b7e] font-bold transition-transform hover:scale-105 active:scale-95 "
+            className="px-8 py-3 rounded-xl text-white bg-[#4CBC9A] hover:bg-[#3a9b7e] font-bold transition-transform hover:scale-105 active:scale-95"
           >
-            Save
+            {id ? "Update" : "Save"}
           </button>
           <button
             type="button"
-            onClick={handleCancel} 
+            onClick={handleCancel}
             className="px-8 py-3 rounded-xl text-white font-bold transition-transform hover:scale-105 active:scale-95"
             style={{ backgroundColor: "var(--primary)" }}
           >
@@ -378,5 +432,3 @@ const PasswordField = ({
     )}
   </div>
 );
-
-export default AddUserForm;

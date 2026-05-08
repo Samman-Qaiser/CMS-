@@ -168,9 +168,12 @@ const UserTable = ({ users }) => {
                     >
                       <BsShieldCheck size={16} />
                     </Link>
-                    <button className="p-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors">
+                    <Link
+                      to={`/dashboard/edit-user/${user.id}`}
+                      className="p-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors"
+                    >
                       <BsPencilSquare size={16} />
-                    </button>
+                    </Link>
                     <button className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors">
                       <BsTrash size={16} />
                     </button>
