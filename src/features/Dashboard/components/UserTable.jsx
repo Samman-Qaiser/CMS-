@@ -10,8 +10,24 @@ import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 
-const UserTable = ({ users }) => {
+const UserTable = ({ users = [] }) => {
   const [selectedUsers, setSelectedUsers] = useState([]);
+
+  // --- Pagination State ---
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  const indexOfLastUser = currentPage * itemsPerPage;
+  const indexOfFirstUser = indexOfLastUser - itemsPerPage;
+  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+  const totalPages = Math.ceil(users.length / itemsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+      setSelectedUsers([]);
+    }
+  };
 
   // Toggle individual checkbox
   const handleCheckboxChange = (userId) => {
@@ -25,7 +41,7 @@ const UserTable = ({ users }) => {
   // Toggle "Select All"
   const handleSelectAll = (e) => {
     if (e.target.checked) {
-      setSelectedUsers(users.map((u) => u.id));
+      setSelectedUsers(currentUsers.map((u) => u.id));
     } else {
       setSelectedUsers([]);
     }
@@ -39,28 +55,35 @@ const UserTable = ({ users }) => {
         text: "Please Select Items To Delete",
         icon: "info",
         confirmButtonColor: "var(--primary)",
-        confirmButtonText: "OK",
       });
     } else {
       Swal.fire({
         title: "Are you sure?",
-        text: "You won't be able to revert this!",
+        text: `Deleting ${selectedUsers.length} users!`,
         icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: "#d33",
+        confirmButtonColor: "#ef4444",
         cancelButtonColor: "#a0aec0",
         confirmButtonText: "Delete",
+        background: document.documentElement.classList.contains("dark")
+          ? "#292d4a"
+          : "#fff",
+        color: document.documentElement.classList.contains("dark")
+          ? "#fff"
+          : "#000",
       }).then((result) => {
         if (result.isConfirmed) {
           console.log("Deleting users:", selectedUsers);
+          setSelectedUsers([]);
         }
       });
     }
   };
+
   const handleDelete = (userId, userName) => {
     Swal.fire({
       title: "Are you sure?",
-      text: `Delete ${userName}? This cannot be undone.`,
+      text: `Delete ${userName}?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#ef4444",
@@ -75,38 +98,37 @@ const UserTable = ({ users }) => {
     }).then((result) => {
       if (result.isConfirmed) {
         console.log(`Deleting user: ${userId}`);
-        Swal.fire("Deleted!", "User has been removed.", "success");
+        Swal.fire("Deleted!", "User removed.", "success");
       }
     });
   };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="bg-white dark:bg-[#292d4a] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden"
     >
-      {/* Table Header Action Bar */}
+      {/* Header Action Bar */}
       <div className="p-6 flex justify-between items-center border-b border-gray-50 dark:border-gray-800">
         <h2 className="text-xl font-semibold text-primary">Users</h2>
         <div className="flex gap-3">
           <button
             onClick={handleDeleteClick}
-            className="px-6 py-2 rounded-lg border border-primary cursor-pointer text-primary font-semibold hover:bg-primary hover:text-white transition-colors"
+            className="px-6 py-2 rounded-lg border border-primary text-primary font-semibold hover:bg-primary hover:text-white transition-colors"
           >
             Delete
           </button>
           <Link
             to="/dashboard/add-user"
-            className="flex items-center rounded-lg overflow-hidden bg-primary shadow-lg shadow-primary/20"
+            className="flex items-center rounded-lg bg-primary text-white px-4 py-2 font-semibold shadow-lg shadow-primary/20"
           >
-            <span className=" flex gap-2 items-center text-white px-4 py-2 font-semibold">
-              ADD USER
-              <BsPlusLg />
-            </span>
+            ADD USER <BsPlusLg className="ml-2" />
           </Link>
         </div>
       </div>
 
+      {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
@@ -116,7 +138,8 @@ const UserTable = ({ users }) => {
                   type="checkbox"
                   onChange={handleSelectAll}
                   checked={
-                    selectedUsers.length === users.length && users.length > 0
+                    selectedUsers.length === currentUsers.length &&
+                    currentUsers.length > 0
                   }
                   className="w-4 h-4 rounded border-gray-300"
                 />
@@ -127,25 +150,26 @@ const UserTable = ({ users }) => {
               <th className="py-4 px-2 text-sm font-medium">Groups</th>
               <th className="py-4 px-2 text-sm font-medium">Mobile</th>
               <th className="py-4 px-2 text-sm font-medium">Date Of Birth</th>
-              <th className="py-4 px-2 text-sm font-medium">Status</th>
+              <th className="py-4 px-2 text-sm font-medium text-center">
+                Status
+              </th>
               <th className="py-4 px-2 text-sm font-medium">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
-            {users.map((user) => (
+            {currentUsers.map((user) => (
               <tr
                 key={user.id}
                 className="hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors"
               >
-                <td className="py-4 px-2 text-[12px] font-medium pl-8">
+                <td className="py-4 px-2 pl-8">
                   <input
                     type="checkbox"
+                    checked={selectedUsers.includes(user.id)}
+                    onChange={() => handleCheckboxChange(user.id)}
                     className="w-4 h-4 rounded"
-                    checked={selectedUsers.includes(user.id)} // Bind checked state
-                    onChange={() => handleCheckboxChange(user.id)} // Bind change event
                   />
                 </td>
-                {/* ... rest of your table cells ... */}
                 <td className="py-4 px-2 text-[12px] font-medium">
                   <div className="flex items-center gap-3">
                     <img
@@ -166,7 +190,7 @@ const UserTable = ({ users }) => {
                 </td>
                 <td className="py-4 px-2 text-[12px]">
                   <span
-                    className={`px-3 py-1 rounded-full text-xs text-white font-medium`}
+                    className="px-3 py-1 rounded-full text-xs text-white font-medium"
                     style={{ backgroundColor: "var(--primary)" }}
                   >
                     {user.group}
@@ -211,15 +235,38 @@ const UserTable = ({ users }) => {
 
       {/* Pagination Footer */}
       <div className="p-6 flex justify-between items-center text-sm text-content-text font-medium">
-        <span>Page 1 of 1.</span>
+        <span>
+          Page {currentPage} of {totalPages || 1}.
+        </span>
         <div className="flex items-center gap-2">
-          <button className="p-2 hover:bg-primary cursor-pointer border rounded-lg hover:text-gray-50">
+          <button
+            disabled={currentPage === 1}
+            onClick={() => handlePageChange(currentPage - 1)}
+            className={`p-2 border rounded-lg transition-colors ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-primary hover:text-white cursor-pointer"}`}
+          >
             <IoChevronBack />
           </button>
-          <button className="w-8 h-8 flex items-center justify-center rounded-lg bg-primary text-white font-semibold shadow-md shadow-primary/30">
-            1
-          </button>
-          <button className="p-2 hover:bg-primary cursor-pointer border rounded-lg hover:text-gray-50">
+
+          {/* Page Numbers */}
+          {[...Array(totalPages)].map((_, index) => (
+            <button
+              key={index + 1}
+              onClick={() => handlePageChange(index + 1)}
+              className={`w-8 h-8 flex items-center justify-center rounded-lg font-semibold transition-all ${
+                currentPage === index + 1
+                  ? "bg-primary text-white shadow-md shadow-primary/30 scale-110"
+                  : "border hover:bg-primary/10"
+              }`}
+            >
+              {index + 1}
+            </button>
+          ))}
+
+          <button
+            disabled={currentPage === totalPages || totalPages === 0}
+            onClick={() => handlePageChange(currentPage + 1)}
+            className={`p-2 border rounded-lg transition-colors ${currentPage === totalPages || totalPages === 0 ? "opacity-50 cursor-not-allowed" : "hover:bg-primary hover:text-white cursor-pointer"}`}
+          >
             <IoChevronForward />
           </button>
         </div>
