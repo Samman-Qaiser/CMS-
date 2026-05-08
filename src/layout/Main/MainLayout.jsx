@@ -54,35 +54,40 @@ if (lang) {
   const isOverlay = sidebarType === SIDEBAR_TYPES.OVERLAY;
 
   return (
-  
-  <div className={`
+    <div
+      className={`
   flex overflow-hidden bg-bg-main transition-colors duration-300
-  ${containerLayout === 'boxed' ? '' : 'h-screen'}
+  ${containerLayout === "boxed" ? "" : "h-screen"}
   ${getContainerClass()}
-`}>
- 
+`}
+    >
       {!isOverlay && <ActiveSidebar />}
 
-      <div  className={`flex flex-col flex-1 overflow-hidden transition-all duration-500`}>
-        
-     
-        <div className={`flex flex-col flex-1 overflow-hidden $bg-sidebar-bg/50`}>
-     
+      <div
+        className={`flex flex-col flex-1 overflow-hidden transition-all duration-500`}
+      >
+        <div
+          className={`flex flex-col flex-1 overflow-hidden $bg-sidebar-bg/50`}
+        >
           {isOverlay ? (
             <div className="flex items-center border-b border-gray-100 dark:border-white/5 bg-white dark:bg-gray-900 z-30 relative shrink-0">
-               <div className="flex items-center px-6 py-5 shrink-0">
-                <img src="./logo-full.png" alt="Logo" className="h-10 object-contain" />
+              <div className="flex items-center px-6 py-5 shrink-0">
+                <img
+                  src="./logo-full.png"
+                  alt="Logo"
+                  className="h-10 object-contain"
+                />
               </div>
               <div className="flex-1">
                 <Header />
               </div>
-              <ActiveSidebar /> 
+              <ActiveSidebar />
             </div>
           ) : (
             <Header />
           )}
 
-          <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 custom-scrollbar">
+          <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 md:pr-[6.5vw] custom-scrollbar">
             <Outlet />
           </main>
 
