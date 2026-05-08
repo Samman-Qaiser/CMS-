@@ -6,41 +6,97 @@ import { FaArrowRightLong } from "react-icons/fa6"
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-const getPageTitle = (pathname) => {
-  const segment = pathname.split('/').filter(Boolean).pop() || 'dashboard'
-  return segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' ')
+const PAGE_TITLE_KEYS = {
+  'index':                   'nav.dashboardLight',
+  'index-2':                 'nav.dashboardDark',
+  'dashboard':               'nav.dashboard',
+  'users':                   'nav.users',
+  'groups':                  'nav.groups',
+  'permissions':             'nav.permissions',
+  'courses':                 'nav.courses',
+  'profile':                 'nav.profile',
+  'message':                 'nav.message',
+  'activity':                'nav.activity',
+  'schedule':                'nav.schedule',
+  'blogs':                   'nav.blogs',
+  'comments':                'nav.comment',
+  'subscribe':               'nav.subscribers',
+  'contact-us':              'nav.contactUs',
+  'configurations':          'nav.configurations',
+  'instructors':             'nav.instructors',
+  'instructor-dashboard':    'nav.instructorDashboard',
+  'instructor-courses':      'nav.instructorCourses',
+  'instructor-schedule':     'nav.instructorSchedule',
+  'instructor-students':     'nav.instructorStudents',
+  'instructor-resources':    'nav.instructorResources',
+  'instructor-transactions': 'nav.instructorTransactions',
+  'instructor-liveclass':    'nav.instructorLiveclass',
+  'app-profile':             'nav.profile',
+  'post-details':            'nav.postDetails',
+  'email-compose':           'nav.compose',
+  'email-inbox':             'nav.inbox',
+  'email-read':              'nav.read',
+  'app-calender':            'nav.calendar',
+  'ecom-product-grid':       'nav.productGrid',
+  'ecom-product-list':       'nav.productList',
+  'ecom-product-detail':     'nav.productDetails',
+  'ecom-product-order':      'nav.order',
+  'ecom-checkout':           'nav.checkout',
+  'ecom-invoice':            'nav.invoice',
+  'ecom-customers':          'nav.customers',
+  'widget-basic':            'nav.widget',
+  'form-element':            'nav.formElements',
+  'form-wizard':             'nav.wizard',
+  'form-ckeditor':           'nav.ckEditor',
+  'form-pickers':            'nav.pickers',
+  'form-validation':         'nav.formValidate',
+  'table-bootstrap-basic':   'nav.bootstrap',
+  'table-datatable-basic':   'nav.datatable',
+  'pages':                   'nav.pages',
+  'page-error-400':          'nav.error',
+  'page-error-403':          'nav.error',
+  'page-error-404':          'nav.error',
+  'page-error-500':          'nav.error',
+  'page-error-503':          'nav.error',
+  'page-lock-screen':        'nav.lockScreen',
+  'empty-page':              'nav.emptyPage',
 }
 
 function Header() {
-  const dispatch = useDispatch()
-  const location = useLocation()
+  const dispatch    = useDispatch()
+  const location    = useLocation()
   const sidebarOpen = useSelector((state) => state.ui.sidebarOpen)
-  const pageTitle = getPageTitle(location.pathname)
-const { t } = useTranslation()
+  const currentLang = useSelector((s) => s.language.current)
+  const { t, i18n } = useTranslation()
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
-  
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10)
-    }
+    i18n.changeLanguage(currentLang.code)
+  }, [currentLang.code])
 
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 10)
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  const segment   = location.pathname.split('/').filter(Boolean).pop() || 'dashboard'
+  const titleKey  = PAGE_TITLE_KEYS[segment]
+  const pageTitle = titleKey
+    ? t(titleKey)
+    : segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' ')
+
   return (
     <header className={`
       h-[70px] flex items-center w-full px-6 gap-4 shrink-0
-      sticky top-0 z-50
-      border-b transition-all duration-500
+      sticky top-0 z-50 border-b transition-all duration-500
       ${scrolled
         ? 'bg-white/40 dark:bg-sidebar-bg/10 backdrop-blur-sm border-white/30 dark:border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.08)]'
         : 'bg-transparent backdrop-blur-none border-transparent shadow-none'
       }
     `}>
 
-      {/* Menu Button */}
+      {/* Menu Toggle */}
       <button
         onClick={() => dispatch(toggleSidebar())}
         className="group flex flex-col items-start justify-center w-10 h-10 rounded-xl
@@ -59,13 +115,13 @@ const { t } = useTranslation()
       </button>
 
       {/* Page Title */}
-      <h1 className="text-2xl font-bold text-header-text tracking-tight">
-       {t(pageTitle)}
+      <h1 className="text-2xl font-bold text-header-text tracking-tight capitalize">
+        {pageTitle}
       </h1>
 
       <div className="flex-1" />
 
-      {/* Search Bar */}
+      {/* Search */}
       <div className="flex items-center gap-2
                       bg-transparent dark:bg-sidebar-bg
                       backdrop-blur-md
@@ -77,7 +133,7 @@ const { t } = useTranslation()
         <BsSearch className="w-4 h-4 text-primary dark:text-sidebar-icon font-bold" />
         <input
           type="text"
-          placeholder="Search here..."
+          placeholder={t('common.search')}
           className="bg-transparent outline-none text-sm text-gray-700 dark:text-white
                      placeholder:text-gray-500 dark:placeholder:text-content-text
                      w-32 md:w-48 focus:w-60 transition-all duration-500"

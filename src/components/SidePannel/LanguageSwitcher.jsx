@@ -3,13 +3,15 @@ import { useRef, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BsChevronDown, BsChevronUp, BsCheck } from "react-icons/bs";
 import { setLanguage, LANGUAGES } from "../../redux/Slice/languageSlice";
+import { useTranslation } from 'react-i18next'
 
+import i18n from '../../i18n'
 export default function LanguageSwitcher() {
   const dispatch = useDispatch();
   const current  = useSelector((s) => s.language.current);
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
-
+const { i18n } = useTranslation() 
   useEffect(() => {
     const handler = (e) => {
       if (ref.current && !ref.current.contains(e.target)) setOpen(false);
@@ -18,10 +20,11 @@ export default function LanguageSwitcher() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const handleSelect = (code) => {
-    dispatch(setLanguage(code));
-    setOpen(false);
-  };
+ const handleSelect = (code) => {
+  dispatch(setLanguage(code))
+  i18n.changeLanguage(code)   // ← yeh add karo — Redux ke saath direct i18n bhi call karo
+  setOpen(false)
+}
 
   return (
     <div ref={ref} className="relative  ">

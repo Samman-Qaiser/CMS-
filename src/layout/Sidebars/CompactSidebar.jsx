@@ -3,11 +3,17 @@ import { useState, useEffect } from "react";
 import { BsChevronRight, BsChevronDown } from "react-icons/bs";
 import { ALL_NAV_ITEMS } from "../../utils/navitems";
 import logo from "/public/images/logo.png";
-
+import { useTranslation } from 'react-i18next'
+import { useSelector } from 'react-redux'
 const CompactSidebar = () => {
   const [openMenus, setOpenMenus] = useState({});
   const [isLightSidebar, setIsLightSidebar] = useState(true);
+  const { t, i18n } = useTranslation()                        // ← add
+  const currentLang = useSelector((s) => s.language.current)  // ← add
 
+  useEffect(() => {
+    i18n.changeLanguage(currentLang.code)                     // ← add
+  }, [currentLang.code])
   const checkTheme = () => {
     const bg = getComputedStyle(document.documentElement)
       .getPropertyValue("--sidebar-bg")
@@ -116,7 +122,7 @@ const CompactSidebar = () => {
                             opacity: !isLightSidebar && !isOpen ? 0.8 : 1,
                           }}
                         >
-                          {item.label}
+                          {t(item.label)}
                         </span>
                         {item.badge && (
                           <span
@@ -182,7 +188,7 @@ const CompactSidebar = () => {
                             }}
                             className="relative px-8 py-2 text-xs transition-all duration-200 rounded-lg"
                           >
-                            {child.label}
+                            {t(child.label)}
                             {hasSubChildren && (
                               <div className="absolute left-20 bottom-2 ">
                                 {isSubOpen ? (
@@ -208,7 +214,7 @@ const CompactSidebar = () => {
                                   className="px-8 py-2 text-xs transition-colors"
                                   style={{ color: "var(--sidebar-text)" }}
                                 >
-                                  {sub.label}
+                                  {t(sub.label)}
                                 </a>
                               ))}
                             </div>

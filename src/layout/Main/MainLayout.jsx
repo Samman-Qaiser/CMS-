@@ -11,6 +11,7 @@ import SidebarModern from "../Sidebars/ModernSidebar";
 import SidebarIconHover from "../Sidebars/IconHoverSidebar";
 import { useEffect } from "react";
 import RightPanel from "./SidePannel";
+import { useTranslation } from 'react-i18next'
 import { LANGUAGES } from '../../redux/Slice/languageSlice'
 const SIDEBAR_MAP = {
   [SIDEBAR_TYPES.FULL]: SidebarFull,
@@ -24,6 +25,7 @@ const SIDEBAR_MAP = {
 function MainLayout() {
   const { sidebarType, fontFamily, containerLayout } = useSelector((state) => state.ui);
   
+const { t, i18n } = useTranslation()
   const savedCode = localStorage.getItem('ui-language') || 'en'
   const lang = LANGUAGES.find(l => l.code === savedCode)
   if (lang) {

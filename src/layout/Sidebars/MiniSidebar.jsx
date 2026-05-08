@@ -3,9 +3,17 @@ import { Link } from "react-router-dom";
 import { BsChevronRight } from "react-icons/bs";
 import { ALL_NAV_ITEMS } from "../../utils/navitems";
 import logo from "/public/images/logo.png";
-
+import { useTranslation } from 'react-i18next'
+import { useEffect } from 'react'
+import { useSelector } from 'react-redux'
 const MiniSidebar = () => {
   const [activeItem, setActiveItem] = useState(null);
+  const { t, i18n } = useTranslation()                        // ← add
+  const currentLang = useSelector((s) => s.language.current)  // ← add
+
+  useEffect(() => {
+    i18n.changeLanguage(currentLang.code)                     // ← add
+  }, [currentLang.code])
 
   const isLightSidebar =
     ["#FFFFFF", "white"].includes(
@@ -91,7 +99,7 @@ const MiniSidebar = () => {
                           e.currentTarget.style.color = "var(--sidebar-text)";
                         }}
                       >
-                        <span className="whitespace-nowrap">{child.label}</span>
+                        <span className="whitespace-nowrap">{t(child.label)}</span>
                         {child.children && (
                           <BsChevronRight
                             size={10}
@@ -129,7 +137,7 @@ const MiniSidebar = () => {
                                   "var(--sidebar-text)";
                               }}
                             >
-                              {subChild.label}
+                              {t(subChild.label)}
                             </Link>
                           ))}
                         </div>

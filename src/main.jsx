@@ -5,7 +5,7 @@ import { store } from "./redux/Store.js";
 import { Provider } from "react-redux";
 import App from "./App.jsx";
 import { ThemeProvider } from "./context/ThemeProvider.jsx";
-
+import './i18n'
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>

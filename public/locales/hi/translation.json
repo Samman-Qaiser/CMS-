@@ -1,10 +1,10 @@
 {
   "nav": {
+    "modules": "मॉड्यूल",
     "user": "उपयोगकर्ता",
     "users": "उपयोगकर्ता",
     "groups": "समूह",
     "permissions": "अनुमतियाँ",
-
     "cms": "सामग्री प्रबंधन",
     "page": "पृष्ठ",
     "blog": "ब्लॉग",
@@ -15,7 +15,6 @@
     "menuSetup": "मेनू सेटअप",
     "subscribers": "सदस्य",
     "contactUs": "संपर्क करें",
-
     "config": "कॉन्फ़िग",
     "site": "साइट",
     "reading": "पठन",
@@ -23,7 +22,6 @@
     "widget": "विजेट",
     "theme": "थीम",
     "configurations": "कॉन्फ़िगरेशन",
-
     "dashboard": "डैशबोर्ड",
     "dashboardLight": "डैशबोर्ड लाइट",
     "dashboardDark": "डैशबोर्ड डार्क",
@@ -32,11 +30,9 @@
     "message": "संदेश",
     "activity": "गतिविधि",
     "profile": "प्रोफ़ाइल",
-
     "courses": "पाठ्यक्रम",
     "coursesDetails1": "पाठ्यक्रम विवरण 1",
     "coursesDetails2": "पाठ्यक्रम विवरण 2",
-
     "instructor": "प्रशिक्षक",
     "instructorDashboard": "डैशबोर्ड",
     "instructorCourses": "पाठ्यक्रम",
@@ -45,7 +41,6 @@
     "instructorResources": "संसाधन",
     "instructorTransactions": "लेन-देन",
     "instructorLiveclass": "लाइव क्लास",
-
     "apps": "ऐप्स",
     "postDetails": "पोस्ट विवरण",
     "email": "ईमेल",
@@ -61,23 +56,55 @@
     "checkout": "चेकआउट",
     "invoice": "चालान",
     "customers": "ग्राहक",
-
     "charts": "चार्ट्स",
+    "flot": "फ्लॉट",
+    "morris": "मॉरिस",
+    "chartjs": "चार्टजेएस",
+    "chartist": "चार्टिस्ट",
+    "sparkline": "स्पार्कलाइन",
+    "peity": "पेइटी",
     "bootstrap": "बूटस्ट्रैप",
+    "accordion": "अकॉर्डियन",
+    "alert": "अलर्ट",
+    "badge": "बैज",
+    "button": "बटन",
+    "modal": "मोडल",
+    "buttonGroup": "बटन समूह",
+    "listGroup": "सूची समूह",
+    "cards": "कार्ड्स",
+    "carousel": "कैरोसेल",
+    "dropdown": "ड्रॉपडाउन",
+    "popover": "पॉपओवर",
+    "progressbar": "प्रगति बार",
+    "tab": "टैब",
+    "typography": "टाइपोग्राफी",
+    "pagination": "पृष्ठांकन",
+    "grid": "ग्रिड",
     "plugins": "प्लगइन्स",
+    "select2": "सेलेक्ट 2",
+    "nestedTable": "नेस्टेड तालिका",
+    "nouiSlider": "नोयूआई स्लाइडर",
+    "sweetAlert": "स्वीट अलर्ट",
+    "toastr": "टोस्टर",
+    "jqvMap": "जेक्यूवी मैप",
+    "lightGallery": "लाइट गैलरी",
     "forms": "फॉर्म",
     "formElements": "फॉर्म तत्व",
     "wizard": "विज़ार्ड",
     "ckEditor": "सीके एडिटर",
     "pickers": "पिकर्स",
     "formValidate": "फॉर्म सत्यापन",
-
     "table": "तालिका",
     "datatable": "डेटा तालिका",
-
     "pages": "पृष्ठ",
     "error": "त्रुटि",
+    "error400": "त्रुटि 400",
+    "error403": "त्रुटि 403",
+    "error404": "त्रुटि 404",
+    "error500": "त्रुटि 500",
+    "error503": "त्रुटि 503",
     "lockScreen": "लॉक स्क्रीन",
     "emptyPage": "खाली पृष्ठ"
-  }
+  },
+  "common": { "search": "यहाँ खोजें..." }
 }

@@ -5,10 +5,12 @@ import { useSelector } from "react-redux";
 import { getNavItemsByRole } from "../../utils/navItems";
 import { BsChevronRight } from "react-icons/bs";
 import { createPortal } from "react-dom";
+import { useTranslation } from "react-i18next"; // ← add
 
 // ── Nested Sub-Flyout (level 2) ─────────────────────────────
 function SubFlyout({ children, anchorRef, onClose }) {
   const [pos, setPos] = useState({ top: 0, left: 0 });
+  const { t } = useTranslation(); // ← add
 
   useEffect(() => {
     if (anchorRef?.current) {
@@ -34,13 +36,10 @@ function SubFlyout({ children, anchorRef, onClose }) {
               className={({ isActive }) =>
                 `flex items-center px-3 py-2 rounded-xl text-[13px] font-medium
                  transition-all duration-200
-                 ${isActive
-                  ? "bg-primary text-white"
-                  : "text-sidebar-text"
-                }`
+                 ${isActive ? "bg-primary text-white" : "text-sidebar-text"}`
               }
             >
-              {sub.label}
+              {t(sub.label)} {/* ← add */}
             </NavLink>
           </li>
         ))}
@@ -55,6 +54,7 @@ function FlyoutRow({ child, onClose }) {
   const [subOpen, setSubOpen] = useState(false);
   const rowRef = useRef(null);
   const hasNested = child.children?.length > 0;
+  const { t } = useTranslation(); // ← add
 
   return (
     <li
@@ -68,9 +68,9 @@ function FlyoutRow({ child, onClose }) {
         <button
           className="w-full flex items-center justify-between gap-3 px-3 py-2
                      rounded-xl text-[13px] font-medium transition-all duration-200
-                     text-sidebar-text "
+                     text-sidebar-text"
         >
-          <span>{child.label}</span>
+          <span>{t(child.label)}</span> {/* ← add */}
           <BsChevronRight className="w-3 h-3 shrink-0 opacity-50" />
         </button>
       ) : (
@@ -80,13 +80,10 @@ function FlyoutRow({ child, onClose }) {
           className={({ isActive }) =>
             `flex items-center gap-3 px-3 py-2 rounded-xl text-[13px] font-medium
              transition-all duration-200
-             ${isActive
-              ? "bg-primary text-white"
-              : "text-sidebar-text "
-            }`
+             ${isActive ? "bg-primary text-white" : "text-sidebar-text"}`
           }
         >
-          {child.label}
+          {t(child.label)} {/* ← add */}
         </NavLink>
       )}
 
@@ -104,6 +101,7 @@ function FlyoutRow({ child, onClose }) {
 // ── Main Flyout Panel (level 1) ─────────────────────────────
 function FlyoutPanel({ item, anchorRef, onClose }) {
   const [pos, setPos] = useState({ top: 0, left: 0 });
+  const { t } = useTranslation(); // ← add
 
   useEffect(() => {
     if (anchorRef?.current) {
@@ -122,11 +120,10 @@ function FlyoutPanel({ item, anchorRef, onClose }) {
       style={{ top: pos.top, left: pos.left }}
       onMouseLeave={onClose}
     >
-      {/* Section title */}
       <p className="px-5 pb-2 pt-1 text-[11px] font-semibold uppercase tracking-widest
                     text-sidebar-text opacity-50 border-b border-black/5
                     dark:border-white/10">
-        {item.label}
+        {t(item.label)} {/* ← add */}
       </p>
 
       <ul className="mt-2 space-y-0.5 px-2">
@@ -146,6 +143,7 @@ function SidebarItem({ item }) {
   const anchorRef = useRef(null);
   const Icon = item.icon;
   const hasChildren = item.children?.length > 0;
+  const { t } = useTranslation(); // ← add
 
   const isActive = item.path
     ? location.pathname === item.path
@@ -163,12 +161,12 @@ function SidebarItem({ item }) {
 
       <span className="text-[13.125px] text-center leading-tight
                         transition-colors text-sidebar-text duration-200">
-        {item.label}
+        {t(item.label)} {/* ← add */}
       </span>
 
       {item.badge && (
         <span className="text-[11px] font-semibold rounded-full text-sidebar-icon mt-2">
-          {item.badge}
+          {t(item.badge)} {/* ← add */}
         </span>
       )}
     </div>
@@ -216,6 +214,7 @@ function ModernSidebar() {
   const role = useSelector((state) => state.auth.role);
   const sidebarOpen = useSelector((state) => state.ui.sidebarOpen);
   const navItems = getNavItemsByRole(role?.toLowerCase());
+  // ← koi useEffect nahi, languageSlice handle karega
 
   return (
     <aside
