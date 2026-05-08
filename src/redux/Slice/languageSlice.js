@@ -28,17 +28,15 @@ const languageSlice = createSlice({
     current: getSavedLang(),
   },
   reducers: {
-    setLanguage: (state, action) => {
-      const lang = LANGUAGES.find((l) => l.code === action.payload)
-      if (!lang) return
-      state.current = lang
-      try {
-        localStorage.setItem(STORAGE_KEY, lang.code)
-        // RTL/LTR support — html dir attribute change karo
-        document.documentElement.dir  = lang.dir
-        document.documentElement.lang = lang.code
-      } catch {}
-    },
+  setLanguage: (state, action) => {
+  const lang = LANGUAGES.find((l) => l.code === action.payload)
+  if (!lang) return
+  state.current = lang
+  localStorage.setItem(STORAGE_KEY, lang.code)
+  document.documentElement.dir  = lang.dir
+  document.documentElement.lang = lang.code
+  i18n.changeLanguage(lang.code)  // ← yeh add karo
+},
   },
 })
 

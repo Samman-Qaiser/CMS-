@@ -107,7 +107,7 @@ const UserTable = ({ users = [] }) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white dark:bg-[#292d4a] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden"
+      className="bg-white dark:bg-[#292d4a] mt-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden"
     >
       {/* Header Action Bar */}
       <div className="p-6 flex justify-between items-center border-b border-gray-50 dark:border-gray-800">

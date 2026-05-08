@@ -17,13 +17,13 @@ const UserFilter = ({ onFilter }) => {
 
   const selectedGroup = watch("group");
   const groups = ["Admin", "Manager", "Customer"];
- 
+
   const onSubmit = (data) => {
     if (onFilter) {
       onFilter(data);
     }
   };
- 
+
   const handleClear = () => {
     const defaultValues = {
       email: "",
@@ -61,12 +61,13 @@ const UserFilter = ({ onFilter }) => {
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3 }}
           >
+            {/* Grid Form Implementation */}
             <form
               onSubmit={handleSubmit(onSubmit)}
-              className="px-6 pb-8 pt-2 flex flex-wrap lg:flex-nowrap items-center gap-4"
+              className="px-6 pb-8 pt-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end"
             >
               {/* Email Input */}
-              <div className="flex-1 min-w-[200px]">
+              <div className="w-full">
                 <input
                   {...register("email")}
                   placeholder="Email"
@@ -76,7 +77,7 @@ const UserFilter = ({ onFilter }) => {
               </div>
 
               {/* Mobile Input */}
-              <div className="flex-1 min-w-[200px]">
+              <div className="w-full">
                 <input
                   {...register("mobile")}
                   placeholder="Mobile"
@@ -86,7 +87,7 @@ const UserFilter = ({ onFilter }) => {
               </div>
 
               {/* Custom Group Dropdown */}
-              <div className="flex-1 min-w-[200px] relative">
+              <div className="w-full relative">
                 <div
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   className={`w-full px-4 py-2 text-sm rounded-lg border flex items-center justify-between cursor-pointer transition-all
@@ -136,18 +137,18 @@ const UserFilter = ({ onFilter }) => {
                 </AnimatePresence>
               </div>
 
-              {/* Buttons */}
-              <div className="flex gap-3">
+              {/* Buttons Grid Section */}
+              <div className="grid grid-cols-2 gap-3">
                 <button
                   type="submit"
-                  className="px-6 py-2 text-sm rounded-lg bg-primary text-white font-semibold flex items-center gap-2 transition-transform hover:scale-105 active:scale-95"
+                  className="w-full justify-center px-6 py-2 text-sm rounded-lg bg-primary text-white font-semibold flex items-center gap-2 transition-transform hover:scale-105 active:scale-95"
                 >
                   <BsSearch /> Filter
                 </button>
                 <button
                   type="button"
                   onClick={handleClear}
-                  className="px-6 py-2 text-sm rounded-lg text-primary border-primary font-semibold border transition-all hover:bg-gray-50 active:scale-95"
+                  className="w-full justify-center px-6 py-2 text-sm rounded-lg text-primary border-primary font-semibold border transition-all hover:bg-gray-50 active:scale-95"
                 >
                   Clear
                 </button>

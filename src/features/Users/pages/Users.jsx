@@ -8,7 +8,7 @@ const Users = () => {
     mobile: "",
     group: "Select Group",
   });
- 
+
   const allUsers = [
     {
       id: 1,
@@ -44,7 +44,7 @@ const Users = () => {
       img: "https://i.pravatar.cc/150?u=3",
     },
   ];
- 
+
   const filteredUsers = allUsers.filter((user) => {
     const matchEmail = user.email
       .toLowerCase()
@@ -56,9 +56,11 @@ const Users = () => {
   });
 
   return (
-    <div className="flex flex-col gap-6">
-      <UserFilter onFilter={setFilters} /> 
-      <UserTable users={filteredUsers} />
+    <div>
+      <div className="flex flex-col gap-6">
+        <UserFilter onFilter={setFilters} />
+        <UserTable users={filteredUsers} />
+      </div>
     </div>
   );
 };
