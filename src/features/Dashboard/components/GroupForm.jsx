@@ -163,13 +163,20 @@ const GroupForm = () => {
             </div>
           </div>
         </div>
-
-        <div className="mt-8 pt-6 border-t border-gray-50 dark:border-gray-800">
+ 
+        <div className="mt-8 pt-6 border-t border-gray-50 dark:border-gray-800 flex items-center gap-4">
           <button
             onClick={handleSave}
             className="px-8 py-2.5 bg-[#4CBC9A] text-white rounded-lg font-bold hover:bg-[#3a9b7e] transition-all shadow-sm"
           >
             Save
+          </button>
+
+          <button
+            onClick={() => navigate(-1)}
+            className="px-8 py-2.5 bg-primary text-white rounded-lg font-bold hover:opacity-90 transition-all shadow-sm"
+          >
+            Back
           </button>
         </div>
       </div>
