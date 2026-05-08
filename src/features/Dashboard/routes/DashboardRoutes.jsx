@@ -2,11 +2,11 @@ import { Route, Routes } from "react-router-dom";
 import MainScreen from "../Pages/MainScreen";
 import ProtectedRoute from "../../../route/ProtectedRoute";
 import MainLayout from "../../../layout/Main/MainLayout";
-import Users from "../Pages/Users";
-import AssignPermissionsToUser from "../components/AssignPermissionsToUser";
-import { UserForm } from "../components/UserForm";
-import Groups from "../Pages/Groups";
-import GroupForm from "../components/GroupForm";
+import Users from "../../Users/Pages/Users";
+import AssignPermissionsToUser from "../../Users/components/AssignPermissionsToUser";
+import { UserForm } from "../../Users/components/UserForm";
+import Groups from "../../Users/pages/Groups";
+import GroupForm from "../../Users/components/GroupForm";
 
 function DashboardRoutes() {
   return (
