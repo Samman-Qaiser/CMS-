@@ -42,7 +42,7 @@ function MainLayout() {
       case 'wide_boxed':
         return 'max-w-[1600px] mx-auto w-full';
       default:
-        return 'w-[94vw]';
+        return 'w-[92vw]';
     }
   };
 
@@ -50,12 +50,12 @@ function MainLayout() {
   const isOverlay = sidebarType === SIDEBAR_TYPES.OVERLAY;
 
   return (
-    // ✅ Body/html scroll use karne ke liye min-h-screen, overflow-hidden NAHI
+  
     <div className={`flex transition-colors duration-300 min-h-screen ${getContainerClass()}`}>
 
       {!isOverlay && <ActiveSidebar />}
 
-      {/* ✅ Yeh column flex hai, height auto grow kare */}
+   
       <div
         style={{ backgroundColor: 'var(--bg-main)' }}
         className="flex flex-col flex-1 transition-all duration-500"
@@ -76,7 +76,7 @@ function MainLayout() {
           <Header /> 
           )}
 
-          {/* ✅ overflow-y-auto NAHI — page naturally scroll kare */}
+     
           <main className="flex-1 p-4 md:p-6">
             <Outlet />
           </main>

@@ -96,7 +96,7 @@ export default function RightPanel() {
     <>
       {/* ── Fixed Icon Strip ─────────────────────────────── */}
       <div
-        className="fixed right-0 top-5 rounded-l-[30px] bottom-4 z-[180] flex flex-col bg-white  dark:bg-[#292d4a] items-center justify-between  w-[6vw] h-[92vh] py-6 "
+        className="fixed right-0 top-5 rounded-l-[30px] bottom-4 z-[180] flex flex-col bg-white  dark:bg-[#292d4a] items-center justify-between  w-[6.5vw] h-[92vh] py-6 "
         style={{
         
         
