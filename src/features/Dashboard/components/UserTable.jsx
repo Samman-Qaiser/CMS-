@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useState } from "react";
 import {
   BsTrash,
   BsPencilSquare,
@@ -7,10 +8,56 @@ import {
 } from "react-icons/bs";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const UserTable = ({ users }) => {
- 
+  const [selectedUsers, setSelectedUsers] = useState([]);
 
+  // Toggle individual checkbox
+  const handleCheckboxChange = (userId) => {
+    setSelectedUsers((prev) =>
+      prev.includes(userId)
+        ? prev.filter((id) => id !== userId)
+        : [...prev, userId],
+    );
+  };
+
+  // Toggle "Select All"
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedUsers(users.map((u) => u.id));
+    } else {
+      setSelectedUsers([]);
+    }
+  };
+
+  // Handle the Delete Button Click
+  const handleDeleteClick = () => {
+    if (selectedUsers.length === 0) {
+      Swal.fire({
+        title: "Oops...",
+        text: "Please Select Items To Delete",
+        icon: "info",
+        confirmButtonColor: "var(--primary)",
+        confirmButtonText: "OK",
+      });
+    } else {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#a0aec0",
+        confirmButtonText: "Delete",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          console.log("Deleting users:", selectedUsers);
+          // delete logic here
+        }
+      });
+    }
+  };
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -21,7 +68,10 @@ const UserTable = ({ users }) => {
       <div className="p-6 flex justify-between items-center border-b border-gray-50 dark:border-gray-800">
         <h2 className="text-xl font-semibold text-primary">Users</h2>
         <div className="flex gap-3">
-          <button className="px-6 py-2 rounded-lg border border-primary text-primary font-semibold hover:bg-red-50 transition-colors">
+          <button
+            onClick={handleDeleteClick} 
+            className="px-6 py-2 rounded-lg border border-primary cursor-pointer text-primary font-semibold hover:bg-primary hover:text-white transition-colors"
+          >
             Delete
           </button>
           <Link
@@ -36,7 +86,6 @@ const UserTable = ({ users }) => {
         </div>
       </div>
 
-      {/* Table Wrapper */}
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
@@ -44,9 +93,13 @@ const UserTable = ({ users }) => {
               <th className="py-4 px-2 pl-8">
                 <input
                   type="checkbox"
+                  onChange={handleSelectAll}  
+                  checked={
+                    selectedUsers.length === users.length && users.length > 0
+                  }
                   className="w-4 h-4 rounded border-gray-300"
                 />
-              </th>
+              </th> 
               <th className="py-4 px-2 text-sm font-medium">Full Name</th>
               <th className="py-4 px-2 text-sm font-medium">Email</th>
               <th className="py-4 px-2 text-sm font-medium">Gender</th>
@@ -64,8 +117,14 @@ const UserTable = ({ users }) => {
                 className="hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors"
               >
                 <td className="py-4 px-2 text-[12px] font-medium pl-8">
-                  <input type="checkbox" className="w-4 h-4 rounded" />
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 rounded"
+                    checked={selectedUsers.includes(user.id)} // Bind checked state
+                    onChange={() => handleCheckboxChange(user.id)} // Bind change event
+                  />
                 </td>
+                {/* ... rest of your table cells ... */}
                 <td className="py-4 px-2 text-[12px] font-medium">
                   <div className="flex items-center gap-3">
                     <img
