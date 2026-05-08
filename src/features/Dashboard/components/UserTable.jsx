@@ -53,10 +53,31 @@ const UserTable = ({ users }) => {
       }).then((result) => {
         if (result.isConfirmed) {
           console.log("Deleting users:", selectedUsers);
-          // delete logic here
         }
       });
     }
+  };
+  const handleDelete = (userId, userName) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: `Delete ${userName}? This cannot be undone.`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#ef4444",
+      cancelButtonColor: "var(--primary)",
+      confirmButtonText: "Yes, delete it!",
+      background: document.documentElement.classList.contains("dark")
+        ? "#292d4a"
+        : "#fff",
+      color: document.documentElement.classList.contains("dark")
+        ? "#fff"
+        : "#000",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log(`Deleting user: ${userId}`);
+        Swal.fire("Deleted!", "User has been removed.", "success");
+      }
+    });
   };
   return (
     <motion.div
@@ -174,7 +195,10 @@ const UserTable = ({ users }) => {
                     >
                       <BsPencilSquare size={16} />
                     </Link>
-                    <button className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors">
+                    <button
+                      onClick={() => handleDelete(user.id, user.name)}
+                      className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
+                    >
                       <BsTrash size={16} />
                     </button>
                   </div>
