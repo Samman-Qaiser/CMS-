@@ -37,7 +37,7 @@ const UserFilter = ({ onFilter }) => {
   };
 
   return (
-    <div className="bg-white dark:bg-[#292d4a] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+    <div className=" bg-white dark:bg-[#292d4a] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 ">
       {/* Header with Toggle */}
       <div className="p-5 flex items-center justify-between">
         <h2 className="text-xl font-bold" style={{ color: "var(--primary)" }}>

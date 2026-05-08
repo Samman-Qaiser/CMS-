@@ -7,7 +7,7 @@ import AssignPermissionsToUser from "../../Users/components/AssignPermissionsToU
 import { UserForm } from "../../Users/components/UserForm";
 import Groups from "../../Users/pages/Groups";
 import GroupForm from "../../Users/components/GroupForm";
-
+import Instructors from "../Pages/Instructors";
 function DashboardRoutes() {
   return (
     <Routes>
@@ -17,6 +17,14 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <MainScreen />
+            </ProtectedRoute>
+          }
+        />
+        <Route 
+          path="/instructors"
+          element={
+            <ProtectedRoute>
+              <Instructors />
             </ProtectedRoute>
           }
         />
