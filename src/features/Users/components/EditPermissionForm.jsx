@@ -34,7 +34,7 @@ const EditPermissionForm = () => {
   return (
     <div className="bg-white dark:bg-[#292d4a] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
       <div className="p-6 border-b border-gray-50 dark:border-gray-800">
-        <h2 className="text-xl font-bold text-[#20a1cf]">Edit Permissions</h2>
+        <h2 className="text-xl font-bold text-primary">Edit Permissions</h2>
       </div>
 
       <div className="p-8 space-y-6">
