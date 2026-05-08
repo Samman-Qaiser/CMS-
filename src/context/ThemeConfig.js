@@ -1,3 +1,5 @@
+
+
 export const presets = {
   default: {
     "--primary": "#FF6A59",
@@ -5,10 +7,10 @@ export const presets = {
     "--primary-dark": "#bf1400",
     "--secondary": "#4CBC9A",
     "--secondary-dark": "#3a9b7e",
-    "--sidebar-bg": "#FFFFFF",
     "--nav-headbg": "#FFFFFF",
     "--headerbg": "#E2E2E2",
     "--bg-main": "#F0F0F0",
+      "--sidebar-bg": "#FFFFFF",
     "--content-text": "#737B8B", // page body text
     "--sidebar-text": "#737B8B",
     "--sidebar-icon": "#FF6A59", // sidebar icon color  ← NEW

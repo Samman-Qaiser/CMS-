@@ -395,8 +395,8 @@ function FullSidebar() {
   return (
     <aside
       className={`
-      h-screen shrink-0 rounded-r-[20px] flex flex-col
-      border-r border-gray-100 dark:border-white/5
+      h-screen shrink-0 rounded-r-[40px] flex flex-col
+      border-r border-gray-100 dark:border-white/5 sticky top-0
       transition-all duration-300 ease-in-out overflow-visible
       ${sidebarOpen ? "w-[260px]" : "w-[72px]"}
     `}

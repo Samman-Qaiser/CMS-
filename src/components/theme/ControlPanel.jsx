@@ -10,7 +10,7 @@ const ControlPanel = () => {
 
   return (
     <>
-      <div className="fixed right-0 top-[35%] -translate-y-1/2 flex flex-col gap-1 z-[9999]">
+      <div className="fixed right-0 top-[28%] -translate-y-1/2 flex flex-col gap-1 z-[9999]">
         <button
           onClick={() => setActiveModal("demo")}
           className="bg-[#627EEA] text-white p-3 rounded-l-md shadow-lg hover:bg-[#4a6cf0] transition-all cursor-pointer"

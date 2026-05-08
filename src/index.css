@@ -7,9 +7,9 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-   --color-sidebar-icon: var(--sidebar-icon); 
-     --color-sidebar-text: var(--sidebar-text);  /* ← NEW */
-  --color-header-text: var(--header-text);  
+  --color-sidebar-icon: var(--sidebar-icon);
+  --color-sidebar-text: var(--sidebar-text);
+  --color-header-text: var(--header-text);
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-primary-dark: var(--primary-dark);
@@ -21,13 +21,12 @@
   --color-bg-main: var(--bg-main);
   --color-content-text: var(--content-text);
 }
+
 @theme {
   --font-poppins: 'Poppins', sans-serif;
 }
 
-body {
-  font-family: var(--font-poppins);
-}
+/* Light Theme (Default) */
 :root {
   --primary: #FF6A59;
   --primary-hover: #ff3c26;
@@ -39,27 +38,29 @@ body {
   --sidebar-bg: #FFFFFF;
   --bg-main: #F0F0F0;
   --content-text: #737B8B;
-  --sidebar-icon: #737B8B;
-  --sidebar-text: #737B8B; 
-  --sidebar-icon:#FF6A59; /* ← NEW */
-  --header-text: #333333;   /* ← NEW */
+  --sidebar-icon: #FF6A59;
+  --sidebar-text: #737B8B;
+  --header-text: #333333;
 }
 
+/* Dark Theme - Apply when .dark class is on html */
 .dark {
   --bg-main: #20203c;
   --content-text: #828690;
   --sidebar-bg: #292d4a;
   --headerbg: #292d4a;
-  --sidebar-text: #a0a4b8;  /* ← NEW */
-  --header-text: #e0e0e0;   /* ← NEW */
+  --sidebar-text: #a0a4b8;
+  --header-text: #e0e0e0;
+  --sidebar-icon: #FF6A59;
+  --primary: #FF6A59;
+  --primary-hover: #ff3c26;
+  --secondary: #4CBC9A;
+  --nav-headbg: #292d4a;
 }
-
-/* index.css */
 
 @layer base {
   body {
-    /* Redux wala font inline style se apply hoga, ye sirf default fallback hai */
     @apply bg-bg-main text-content-text transition-all duration-300;
-    font-family: 'Poppins', sans-serif; 
+    font-family: 'Poppins', sans-serif;
   }
 }

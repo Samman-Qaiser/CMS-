@@ -2,7 +2,8 @@ import { useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { toggleSidebar } from '../../redux/Slice/uiSlice'
 import { BsSearch } from 'react-icons/bs'
-import { FaArrowRightLong } from "react-icons/fa6";
+import { FaArrowRightLong } from "react-icons/fa6"
+import { useEffect, useState } from 'react'
 
 const getPageTitle = (pathname) => {
   const segment = pathname.split('/').filter(Boolean).pop() || 'dashboard'
@@ -15,17 +16,30 @@ function Header() {
   const sidebarOpen = useSelector((state) => state.ui.sidebarOpen)
   const pageTitle = getPageTitle(location.pathname)
 
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+  
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   return (
-    <header className="
-      h-[70px] flex items-center w-[90vw] px-6 gap-4 shrink-0
-      /* Glassmorphism Effect */
-  bg-transparent
-      backdrop-blur-lg 
-      border-b border-white/30 dark:border-white/10
+    <header className={`
+      h-[70px] flex items-center w-full px-6 gap-4 shrink-0
       sticky top-0 z-50
-    ">
-      
-      {/* Menu Button with Animated Lines */}
+      border-b transition-all duration-500
+      ${scrolled
+        ? 'bg-white/40 dark:bg-sidebar-bg/10 backdrop-blur-sm border-white/30 dark:border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.08)]'
+        : 'bg-transparent backdrop-blur-none border-transparent shadow-none'
+      }
+    `}>
+
+      {/* Menu Button */}
       <button
         onClick={() => dispatch(toggleSidebar())}
         className="group flex flex-col items-start justify-center w-10 h-10 rounded-xl
@@ -33,48 +47,38 @@ function Header() {
         aria-label="Toggle Sidebar"
       >
         {sidebarOpen ? (
-          <FaArrowRightLong className="w-5 h-5 text-gray-800  mx-auto" />
+          <FaArrowRightLong className="w-5 h-5 text-header-text mx-auto" />
         ) : (
           <div className="flex flex-col gap-1.5 ml-2.5">
-            {/* Line 1 - Base width */}
-            <span className="h-0.5 bg-gray-800  rounded-full 
-                           w-4 group-hover:w-6 transition-all duration-300 ease-in-out" />
-            
-            {/* Line 2 - Medium width */}
-            <span className="h-0.5 bg-gray-800  rounded-full 
-                           w-6 group-hover:w-4 transition-all duration-300 ease-in-out" />
-            
-            {/* Line 3 - Shorter line that expands */}
-            <span className="h-0.5 bg-gray-800  rounded-full 
-                           w-3 group-hover:w-6 transition-all duration-300 ease-in-out" />
+            <span className="h-0.5 bg-header-text rounded-full w-4 group-hover:w-6 transition-all duration-300 ease-in-out" />
+            <span className="h-0.5 bg-header-text rounded-full w-6 group-hover:w-4 transition-all duration-300 ease-in-out" />
+            <span className="h-0.5 bg-header-text rounded-full w-3 group-hover:w-6 transition-all duration-300 ease-in-out" />
           </div>
         )}
       </button>
 
       {/* Page Title */}
-      <h1 className="text-2xl font-bold text-gray-800  tracking-tight">
+      <h1 className="text-2xl font-bold text-header-text tracking-tight">
         {pageTitle}
       </h1>
 
       <div className="flex-1" />
 
-      {/* Glassmorphism Search Bar */}
+      {/* Search Bar */}
       <div className="flex items-center gap-2
-      bg-transparent
-                      dark:bg-sidebar-bg
-                      backdrop-blur-xl
+                      bg-transparent dark:bg-sidebar-bg
+                      backdrop-blur-md
                       border border-primary/40 dark:border-white/10
                       rounded-sm px-4 py-2
                       shadow-[0_4px_12px_rgba(0,0,0,0.05)]
                       focus-within:ring-2 focus-within:ring-primary
                       transition-all duration-300">
-        <BsSearch className="w-4 h-4 text-primary dark:text-sidebar-icon font-bold " />
+        <BsSearch className="w-4 h-4 text-primary dark:text-sidebar-icon font-bold" />
         <input
           type="text"
           placeholder="Search here..."
           className="bg-transparent outline-none text-sm text-gray-700 dark:text-white
-                     placeholder:text-gray-500 
-                     dark:placeholder:text-content-text
+                     placeholder:text-gray-500 dark:placeholder:text-content-text
                      w-32 md:w-48 focus:w-60 transition-all duration-500"
         />
       </div>
