@@ -24,7 +24,7 @@ export default function LanguageSwitcher() {
   };
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative  ">
       {/* Trigger — flag image + code */}
       <button
         onClick={() => setOpen(!open)}
@@ -51,7 +51,7 @@ export default function LanguageSwitcher() {
       {/* Dropdown */}
       {open && (
         <div
-          className="absolute right-[70px] bottom-0 z-[200] w-[180px] rounded-2xl shadow-xl border border-gray-100 dark:border-white/10 bg-white dark:bg-gray-900 overflow-hidden"
+          className="absolute right-[70px] bg-bg-main bottom-0 z-[200] w-[180px] rounded-2xl shadow-xl border border-gray-100 dark:border-white/10 bg-white dark:bg-gray-900 overflow-hidden"
           style={{ animation: "dropUp 0.18s ease" }}
         >
           <style>{`

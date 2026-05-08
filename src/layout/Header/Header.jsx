@@ -4,6 +4,7 @@ import { toggleSidebar } from '../../redux/Slice/uiSlice'
 import { BsSearch } from 'react-icons/bs'
 import { FaArrowRightLong } from "react-icons/fa6"
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 const getPageTitle = (pathname) => {
   const segment = pathname.split('/').filter(Boolean).pop() || 'dashboard'
@@ -15,7 +16,7 @@ function Header() {
   const location = useLocation()
   const sidebarOpen = useSelector((state) => state.ui.sidebarOpen)
   const pageTitle = getPageTitle(location.pathname)
-
+const { t } = useTranslation()
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
@@ -59,7 +60,7 @@ function Header() {
 
       {/* Page Title */}
       <h1 className="text-2xl font-bold text-header-text tracking-tight">
-        {pageTitle}
+       {t(pageTitle)}
       </h1>
 
       <div className="flex-1" />

@@ -33,7 +33,7 @@ export default function ProfileDropdown({ onClose }) {
   return (
     <div
       ref={ref}
-      className="absolute right-[70px] top-0 z-[200] w-[220px] rounded-2xl shadow-xl border border-gray-100 dark:border-white/10 bg-white dark:bg-gray-900 overflow-hidden"
+      className="absolute right-[70px] top-0 z-[200] w-[220px] rounded-2xl shadow-xl border border-gray-100 dark:border-white/10 bg-bg-main overflow-hidden"
       style={{ animation: "dropIn 0.2s ease" }}
     >
       <style>{`

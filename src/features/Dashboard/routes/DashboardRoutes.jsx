@@ -2,9 +2,11 @@ import { Route, Routes } from "react-router-dom";
 import MainScreen from "../Pages/MainScreen";
 import ProtectedRoute from "../../../route/ProtectedRoute";
 import MainLayout from "../../../layout/Main/MainLayout";
-import Users from "../Pages/Users"; 
-import AssignPermissionsToUser from "../components/AssignPermissionsToUser";
-import { UserForm } from "../components/UserForm";
+import Users from "../../Users/pages/Users";
+import AssignPermissionsToUser from "../../Users/components/AssignPermissionsToUser";
+import { UserForm } from "../../Users/components/UserForm";
+import Groups from "../../Users/pages/Groups";
+import GroupForm from "../../Users/components/GroupForm";
 import Instructors from "../Pages/Instructors";
 function DashboardRoutes() {
   return (
@@ -13,7 +15,6 @@ function DashboardRoutes() {
         <Route
           index
           element={
-            // ← /dashboard pe match karega
             <ProtectedRoute>
               <MainScreen />
             </ProtectedRoute>
@@ -23,6 +24,7 @@ function DashboardRoutes() {
           path="/instructors"
           element={
             <ProtectedRoute>
+            
               <Instructors />
             </ProtectedRoute>
           }
@@ -59,8 +61,33 @@ function DashboardRoutes() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="groups"
+          element={
+            <ProtectedRoute>
+              <Groups />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="add-group"
+          element={
+            <ProtectedRoute>
+              <GroupForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="edit-group-permissions/:name"
+          element={
+            <ProtectedRoute>
+              <GroupForm />
+            </ProtectedRoute>
+          }
+        />
       </Route>
     </Routes>
   );
 }
+
 export default DashboardRoutes;
