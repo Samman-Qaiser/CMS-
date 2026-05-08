@@ -139,7 +139,7 @@ const CompactSidebar = () => {
                                 : "var(--sidebar-text)",
                             }}
                           >
-                            {item.badge}
+                            {t(item.badge)}
                           </span>
                         )}
                       </div>
