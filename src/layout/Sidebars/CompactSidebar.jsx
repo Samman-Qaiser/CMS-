@@ -32,7 +32,7 @@ const CompactSidebar = () => {
 
   return (
     <div
-      className="h-screen w-50 flex flex-col border-r border-gray-200/10 z-50 shadow-lg transition-all duration-300"
+      className="h-screen sticky top-0 w-50 flex flex-col border-r border-gray-200/10 z-50 shadow-lg transition-all duration-300"
       style={{ backgroundColor: "var(--sidebar-bg)" }}
     >
       {/* header */}

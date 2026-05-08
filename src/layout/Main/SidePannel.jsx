@@ -22,12 +22,7 @@ function Drawer({ panelKey, onClose }) {
 
   return (
     <>
-      {/* Backdrop */}
-      <div
-        className="fixed top-10  inset-0 z-[190]  bg-black/20 "
-        onClick={onClose}
-        style={{ animation: "fadeIn 0.2s ease" }}
-      />
+    
 
       {/* Drawer */}
       <div
@@ -51,11 +46,11 @@ function PanelIconBtn({ icon: Icon, activeKey, myKey, badge, onClick }) {
   return (
     <button
       onClick={() => onClick(myKey)}
-      className="relative w-10 h-10 flex items-center justify-center rounded-2xl transition-all duration-200 bg-primary/10"
+      className="relative w-10 h-10  cursor-pointer flex items-center justify-center rounded-2xl transition-all duration-200 bg-primary/10"
    
     >
       <Icon
-        className="w-4.5 h-4.5 text-primary"
+        className="w-4.5 h-4.5 font-bold text-primary"
    
       />
       {badge > 0 && (
@@ -101,7 +96,7 @@ export default function RightPanel() {
     <>
       {/* ── Fixed Icon Strip ─────────────────────────────── */}
       <div
-        className="fixed right-0 top-5 rounded-l-[30px] bottom-4 z-[180] flex flex-col bg-white items-center justify-between w-[6vw] py-6 "
+        className="fixed right-0 top-5 rounded-l-[30px] bottom-4 z-[180] flex flex-col bg-white  dark:bg-[#292d4a] items-center justify-between  w-[6.5vw] h-[92vh] py-6 "
         style={{
         
         

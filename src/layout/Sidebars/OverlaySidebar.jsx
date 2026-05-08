@@ -178,13 +178,7 @@ function OverlaySidebar() {
 
   return (
     <>
-      {/* Backdrop */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/30 z-40"
-          style={{ top: '72px' }} // header height ke barabar
-        />
-      )}
+     
 
       {/* Sidebar — fixed, header ke neeche */}
       <aside

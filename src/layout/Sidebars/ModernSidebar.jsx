@@ -221,7 +221,7 @@ function ModernSidebar() {
     <aside
       className={`
         h-screen shrink-0 flex flex-col
-        bg-sidebar-bg
+        bg-sidebar-bg sticky top-0
         border-r border-black/5 dark:border-white/5
         transition-all duration-300 ease-in-out
         overflow-hidden

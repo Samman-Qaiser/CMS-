@@ -10,17 +10,17 @@ const ControlPanel = () => {
 
   return (
     <>
-      <div className="fixed right-0 top-[35%] -translate-y-1/2 flex flex-col gap-1 z-[9999]">
+      <div className="fixed right-0 top-[28%] -translate-y-1/2 flex flex-col gap-1 z-[9999]">
         <button
           onClick={() => setActiveModal("demo")}
-          className="bg-[#627EEA] text-white p-3 rounded-l-md shadow-lg hover:bg-[#4a6cf0] transition-all cursor-pointer"
+          className="bg-[#627EEA] text-white p-2 rounded-l-md shadow-lg hover:bg-[#4a6cf0] transition-all cursor-pointer"
         >
           <IoWaterOutline size={24} />
         </button>
 
         <button
           onClick={() => setActiveModal("theme")}
-          className="bg-[#FF6A59] text-white p-3 rounded-l-md shadow-lg hover:bg-[#ee4a4a] transition-all cursor-pointer"
+          className="bg-[#FF6A59] text-white p-2 rounded-l-md shadow-lg hover:bg-[#ee4a4a] transition-all cursor-pointer"
         >
           <IoSettingsOutline size={24} className="animate-[spin_4s_linear_infinite]" />
         </button>
