@@ -11,8 +11,8 @@ function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#FDF2F2] p-4 font-poppins">
-      <div className="bg-white rounded-xl shadow-lg p-8 md:p-12 w-full max-w-lg text-center">
+    <div className="min-h-screen flex items-center justify-center  p-4 font-poppins">
+      <div className="bg-sidebar-bg rounded-xl shadow-lg p-8 md:p-12 w-full max-w-lg text-center">
         
         {/* Logo Section */}
         <div className="flex justify-center mb-6">
@@ -24,12 +24,12 @@ function ForgotPassword() {
         </div>
 
         {/* Heading */}
-        <h2 className="text-xl font-bold text-[#2C3E50] mb-8">Forgot Password</h2>
+        <h2 className="text-xl font-bold text-header-text mb-8">Forgot Password</h2>
 
         {/* Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 text-left">
           <div>
-            <label className="text-sm font-semibold text-gray-700 block mb-2">Email</label>
+            <label className="text-sm font-semibold text-header-text block mb-2">Email</label>
             <input 
               {...register("email", { 
                 required: "Email is required",
@@ -49,15 +49,15 @@ function ForgotPassword() {
 
           <button 
             type="submit" 
-            className="w-full py-3 bg-[#FF6D52] text-white font-bold rounded-lg hover:bg-[#ff5a3d] shadow-md transition-all active:scale-[0.98] uppercase tracking-wide"
+            className="w-full py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 shadow-md transition-all active:scale-[0.98] uppercase tracking-wide"
           >
             Submit
           </button>
         </form>
 
         {/* Back to Login Link */}
-        <div className="mt-8 text-sm text-gray-500">
-          Remembered your password? <Link to="/" className="text-orange-500 hover:underline">Back to Login</Link>
+        <div className="mt-8 text-sm text-header-text">
+          Remembered your password? <Link to="/" className="text-primary hover:underline">Back to Login</Link>
         </div>
 
       </div>
