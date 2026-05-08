@@ -5,6 +5,7 @@ import MainLayout from "../../../layout/Main/MainLayout";
 import Users from "../Pages/Users"; 
 import AssignPermissionsToUser from "../components/AssignPermissionsToUser";
 import { UserForm } from "../components/UserForm";
+import Instructors from "../Pages/Instructors";
 function DashboardRoutes() {
   return (
     <Routes>
@@ -15,6 +16,14 @@ function DashboardRoutes() {
             // ← /dashboard pe match karega
             <ProtectedRoute>
               <MainScreen />
+            </ProtectedRoute>
+          }
+        />
+        <Route 
+          path="/instructors"
+          element={
+            <ProtectedRoute>
+              <Instructors />
             </ProtectedRoute>
           }
         />
