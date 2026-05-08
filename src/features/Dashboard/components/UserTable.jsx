@@ -69,7 +69,7 @@ const UserTable = ({ users }) => {
         <h2 className="text-xl font-semibold text-primary">Users</h2>
         <div className="flex gap-3">
           <button
-            onClick={handleDeleteClick} 
+            onClick={handleDeleteClick}
             className="px-6 py-2 rounded-lg border border-primary cursor-pointer text-primary font-semibold hover:bg-primary hover:text-white transition-colors"
           >
             Delete
@@ -93,13 +93,13 @@ const UserTable = ({ users }) => {
               <th className="py-4 px-2 pl-8">
                 <input
                   type="checkbox"
-                  onChange={handleSelectAll}  
+                  onChange={handleSelectAll}
                   checked={
                     selectedUsers.length === users.length && users.length > 0
                   }
                   className="w-4 h-4 rounded border-gray-300"
                 />
-              </th> 
+              </th>
               <th className="py-4 px-2 text-sm font-medium">Full Name</th>
               <th className="py-4 px-2 text-sm font-medium">Email</th>
               <th className="py-4 px-2 text-sm font-medium">Gender</th>
@@ -162,9 +162,12 @@ const UserTable = ({ users }) => {
                 </td>
                 <td className="py-4 px-2 text-[12px]">
                   <div className="flex gap-2">
-                    <button className="p-2 bg-emerald-100 text-emerald-600 rounded-lg hover:bg-emerald-200 transition-colors">
+                    <Link
+                      to={`/dashboard/users/assign-permissions-to-user/${user.id}`}
+                      className="p-2 bg-emerald-100 text-emerald-600 rounded-lg hover:bg-emerald-200 transition-colors"
+                    >
                       <BsShieldCheck size={16} />
-                    </button>
+                    </Link>
                     <button className="p-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors">
                       <BsPencilSquare size={16} />
                     </button>

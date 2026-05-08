@@ -4,6 +4,7 @@ import ProtectedRoute from "../../../route/ProtectedRoute";
 import MainLayout from "../../../layout/Main/MainLayout";
 import Users from "../Pages/Users";
 import AddUsers from "../Pages/AddUsers";
+import AssignPermissionsToUser from "../components/AssignPermissionsToUser";
 function DashboardRoutes() {
   return (
     <Routes>
@@ -22,6 +23,14 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <Users />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="users/assign-permissions-to-user/:id"
+          element={
+            <ProtectedRoute>
+              <AssignPermissionsToUser />
             </ProtectedRoute>
           }
         />
