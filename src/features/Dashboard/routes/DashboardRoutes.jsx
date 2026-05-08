@@ -8,6 +8,8 @@ import { UserForm } from "../../Users/components/UserForm";
 import Groups from "../../Users/pages/Groups";
 import GroupForm from "../../Users/components/GroupForm";
 import Instructors from "../Pages/Instructors";
+import EditPermissionForm from "../../Users/components/EditPermissionForm";
+import Permissions from "../../Users/pages/Permissions";
 function DashboardRoutes() {
   return (
     <Routes>
@@ -20,11 +22,10 @@ function DashboardRoutes() {
             </ProtectedRoute>
           }
         />
-        <Route 
+        <Route
           path="/instructors"
           element={
             <ProtectedRoute>
-            
               <Instructors />
             </ProtectedRoute>
           }
@@ -82,6 +83,22 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <GroupForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="permissions"
+          element={
+            <ProtectedRoute>
+              <Permissions />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="edit-permissions/:id"
+          element={
+            <ProtectedRoute>
+              <EditPermissionForm />
             </ProtectedRoute>
           }
         />
