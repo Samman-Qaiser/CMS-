@@ -13,7 +13,7 @@ const PageForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEditMode = Boolean(id);
- 
+
   const { register, handleSubmit, control, reset } = useForm({
     defaultValues: {
       title: "",
@@ -60,8 +60,8 @@ const PageForm = () => {
           visibility: pageToEdit.visibility || "Public",
           publishOn: pageToEdit.publishOn || "",
           seoTitle: pageToEdit.title || "",
-          seoKeywords: pageToEdit.keywords || "",  
-          seoDescription: pageToEdit.description || "", 
+          seoKeywords: pageToEdit.keywords || "",
+          seoDescription: pageToEdit.description || "",
         });
       }
     }
@@ -282,7 +282,7 @@ const PageForm = () => {
               </FormSection>
             )}
           </div>
- 
+
           <div className="space-y-6">
             <FormSection title="Publish">
               <div className="space-y-4">
