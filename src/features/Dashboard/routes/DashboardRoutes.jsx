@@ -10,6 +10,7 @@ import GroupForm from "../../Users/components/GroupForm";
 import Instructors from "../Pages/Instructors";
 import EditPermissionForm from "../../Users/components/EditPermissionForm";
 import Permissions from "../../Users/pages/Permissions";
+import Pages from "../../CMS/pages/Pages";
 function DashboardRoutes() {
   return (
     <Routes>
@@ -99,6 +100,14 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <EditPermissionForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="pages"
+          element={
+            <ProtectedRoute>
+              <Pages />
             </ProtectedRoute>
           }
         />
