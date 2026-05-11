@@ -65,8 +65,8 @@ const { t, i18n } = useTranslation()
         <div className="flex flex-col flex-1">
 
           {isOverlay ? (
-            <div className="flex items-center border-b border-gray-100 dark:border-white/5 bg-white dark:bg-gray-900 z-30 relative shrink-0">
-              <div className="flex items-center px-6 py-5 shrink-0">
+            <div className="flex fixed left-0 top-0 items-center border-b border-gray-100 dark:border-white/5 bg-white dark:bg-gray-900 z-30 shrink-0">
+              <div className="flex  items-center bg-nav-headbg px-6 py-5 shrink-0">
                 <img src="./logo-full.png" alt="Logo" className="h-10 object-contain" />
               </div>
               <div className="flex-1 ">

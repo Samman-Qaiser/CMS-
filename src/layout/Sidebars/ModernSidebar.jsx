@@ -227,7 +227,7 @@ function ModernSidebar() {
         ${sidebarOpen ? "w-[10%]" : "w-0"}
       `}
     >
-      <div className="flex items-center justify-center py-5 border-b
+      <div className="flex items-center bg-nav-headbg justify-center py-5 border-b
                       border-black/5 dark:border-white/5 shrink-0">
         <img src="./logo-half.png" alt="Logo" className="h-16 w-16 object-contain" />
       </div>

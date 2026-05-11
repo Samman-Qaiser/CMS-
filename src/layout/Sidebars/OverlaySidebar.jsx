@@ -181,7 +181,7 @@ function OverlaySidebar() {
           border-r border-gray-100 dark:border-white/5
           overflow-hidden
           transition-all duration-300 ease-in-out
-          ${sidebarOpen ? "w-[20%]" : "w-0"}
+          ${sidebarOpen ? "w-[19%]" : "w-0"}
         `}
         style={{ top: "72px" }}
       >
