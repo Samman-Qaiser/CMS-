@@ -10,9 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-react": "^11.1.2",
     "@reduxjs/toolkit": "^2.11.2",
     "@tailwindcss/vite": "^4.2.4",
     "apexcharts": "^5.10.6",
+    "ckeditor5": "^48.0.1",
+    "ckeditor5-premium-features": "^48.0.1",
     "framer-motion": "^12.38.0",
     "i18next": "^26.0.10",
     "i18next-http-backend": "^4.0.0",

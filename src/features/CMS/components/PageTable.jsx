@@ -124,7 +124,7 @@ const PageTable = ({ pages = [] }) => {
             Delete
           </button>
           <Link
-            to="/add-page"
+            to="/dashboard/add-page"
             className="flex items-center rounded-lg bg-primary text-white px-4 py-2 font-semibold shadow-lg shadow-primary/20"
           >
             ADD Page <BsPlusLg className="ml-2" />
@@ -203,9 +203,12 @@ const PageTable = ({ pages = [] }) => {
                 </td>
                 <td className="py-4 px-2">
                   <div className="flex gap-2">
-                    <button className="p-2 cursor-pointer bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors">
+                    <Link
+                      to={`/dashboard/edit-page/${page.id}`}
+                      className="p-2 cursor-pointer bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors"
+                    >
                       <BsPencilSquare size={16} />
-                    </button>
+                    </Link>
                     <button
                       onClick={() => handleDelete(page.id, page.title)}
                       className="p-2 cursor-pointer bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
