@@ -14,6 +14,7 @@ import Pages from "../../CMS/pages/Pages";
 import PageForm from "../../CMS/components/PageForm";
 import Blogs from "../../CMS/pages/Blogs";
 import BlogForm from "../../CMS/components/BlogForm";
+import BlogCategories from "../../CMS/components/BlogCategories";
 function DashboardRoutes() {
   return (
     <Routes>
@@ -151,6 +152,14 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <BlogForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="blogs/categories"
+          element={
+            <ProtectedRoute>
+              <BlogCategories />
             </ProtectedRoute>
           }
         />

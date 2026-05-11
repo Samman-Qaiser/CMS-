@@ -1,3 +1,62 @@
+export const categoriesData = [
+  {
+    id: 1,
+    name: "Backend",
+    slug: "backend",
+    description: "Server side logic and database management",
+    count: 5,
+  },
+  {
+    id: 2,
+    name: "Design",
+    slug: "design",
+    description: "UI/UX principles, Graphics, and Branding",
+    count: 3,
+  },
+  {
+    id: 3,
+    name: "Frontend",
+    slug: "frontend",
+    description: "ReactJS, Tailwind CSS, and Motion UI",
+    count: 12,
+  },
+  {
+    id: 4,
+    name: "News",
+    slug: "news",
+    description: "Latest industry updates and company news",
+    count: 8,
+  },
+  {
+    id: 5,
+    name: "Tutorials",
+    slug: "tutorials",
+    description: "Step-by-step technical guides and how-tos",
+    count: 20,
+  },
+  {
+    id: 6,
+    name: "Mobile",
+    slug: "mobile",
+    description: "React Native and Flutter application development",
+    count: 2,
+  },
+  {
+    id: 7,
+    name: "SEO",
+    slug: "seo",
+    description: "Search engine optimization and digital marketing",
+    count: 4,
+  },
+  {
+    id: 8,
+    name: "Security",
+    slug: "security",
+    description: "Web security best practices and protocols",
+    count: 1,
+  },
+];
+
 export const allBlogs = [
   {
     id: 1,
