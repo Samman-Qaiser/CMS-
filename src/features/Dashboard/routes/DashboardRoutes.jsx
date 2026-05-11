@@ -12,6 +12,7 @@ import EditPermissionForm from "../../Users/components/EditPermissionForm";
 import Permissions from "../../Users/pages/Permissions";
 import Pages from "../../CMS/pages/Pages";
 import PageForm from "../../CMS/components/PageForm";
+import Blogs from "../../CMS/pages/Blogs";
 function DashboardRoutes() {
   return (
     <Routes>
@@ -125,6 +126,14 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <PageForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="blogs"
+          element={
+            <ProtectedRoute>
+              <Blogs />
             </ProtectedRoute>
           }
         />
