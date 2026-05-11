@@ -18,6 +18,7 @@ import Schedule from "../Pages/Schedule";
 import PageForm from "../../CMS/components/PageForm";
 import Blogs from "../../CMS/pages/Blogs";
 import BlogForm from "../../CMS/components/BlogForm";
+import CoursesPage from "../../Courses/Pages/CoursePage";
 function DashboardRoutes() {
   return (
     <Routes>
@@ -54,6 +55,14 @@ function DashboardRoutes() {
             <ProtectedRoute>
           
             <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/courses"
+          element={
+            <ProtectedRoute>
+  <CoursesPage />
             </ProtectedRoute>
           }
         />
