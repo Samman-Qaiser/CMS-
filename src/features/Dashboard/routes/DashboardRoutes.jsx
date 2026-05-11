@@ -13,6 +13,7 @@ import Permissions from "../../Users/pages/Permissions";
 import Pages from "../../CMS/pages/Pages";
 import PageForm from "../../CMS/components/PageForm";
 import Blogs from "../../CMS/pages/Blogs";
+import BlogForm from "../../CMS/components/BlogForm";
 function DashboardRoutes() {
   return (
     <Routes>
@@ -134,6 +135,22 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <Blogs />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="edit-blog/:id"
+          element={
+            <ProtectedRoute>
+              <BlogForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="add-blog"
+          element={
+            <ProtectedRoute>
+              <BlogForm />
             </ProtectedRoute>
           }
         />
