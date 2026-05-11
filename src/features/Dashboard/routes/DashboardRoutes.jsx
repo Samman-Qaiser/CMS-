@@ -10,6 +10,8 @@ import GroupForm from "../../Users/components/GroupForm";
 import Instructors from "../Pages/Instructors";
 import EditPermissionForm from "../../Users/components/EditPermissionForm";
 import Permissions from "../../Users/pages/Permissions";
+import Activity from "../Pages/Activity";
+import Profile from "../Pages/Profile";
 function DashboardRoutes() {
   return (
     <Routes>
@@ -27,6 +29,24 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <Instructors />
+            </ProtectedRoute>
+          }
+        />
+           <Route
+          path="/activity"
+          element={
+            <ProtectedRoute>
+          
+              <Activity />
+            </ProtectedRoute>
+          }
+        />
+         <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+          
+            <Profile />
             </ProtectedRoute>
           }
         />
