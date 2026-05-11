@@ -15,6 +15,8 @@ import Activity from "../Pages/Activity";
 import Profile from "../Pages/Profile";
 import Messages from "../Pages/ChatPage";
 import Schedule from "../Pages/Schedule";
+import PageForm from "../../CMS/components/PageForm";
+import Blogs from "../../CMS/pages/Blogs";
 function DashboardRoutes() {
   return (
     <Routes>
@@ -147,6 +149,30 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <Pages />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="edit-page/:id"
+          element={
+            <ProtectedRoute>
+              <PageForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="add-page"
+          element={
+            <ProtectedRoute>
+              <PageForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="blogs"
+          element={
+            <ProtectedRoute>
+              <Blogs />
             </ProtectedRoute>
           }
         />

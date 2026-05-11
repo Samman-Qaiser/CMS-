@@ -5,37 +5,31 @@ import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 
-const PageTable = ({ pages = [] }) => {
-  const [selectedPages, setSelectedPages] = useState([]);
+const BlogTable = ({ blogs = [] }) => {
+  const [selectedBlogs, setSelectedBlogs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
   const indexOfLast = currentPage * itemsPerPage;
   const indexOfFirst = indexOfLast - itemsPerPage;
-  const currentPages = pages.slice(indexOfFirst, indexOfLast);
-  const totalPages = Math.ceil(pages.length / itemsPerPage);
+  const currentBlogs = blogs.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(blogs.length / itemsPerPage);
 
-  const handlePageChange = (pageNumber) => {
-    if (pageNumber >= 1 && pageNumber <= totalPages) {
-      setCurrentPage(pageNumber);
-      setSelectedPages([]);
+  const handlePageChange = (num) => {
+    if (num >= 1 && num <= totalPages) {
+      setCurrentPage(num);
+      setSelectedBlogs([]);
     }
   };
 
-  const handleCheckboxChange = (pageId) => {
-    setSelectedPages((prev) =>
-      prev.includes(pageId)
-        ? prev.filter((id) => id !== pageId)
-        : [...prev, pageId],
+  const handleCheckboxChange = (id) => {
+    setSelectedBlogs((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
     );
   };
 
   const handleSelectAll = (e) => {
-    if (e.target.checked) {
-      setSelectedPages(currentPages.map((p) => p.id));
-    } else {
-      setSelectedPages([]);
-    }
+    setSelectedBlogs(e.target.checked ? currentBlogs.map((b) => b.id) : []);
   };
 
   const handleCopy = (url) => {
@@ -50,19 +44,19 @@ const PageTable = ({ pages = [] }) => {
     });
   };
 
-  // --- Bulk Delete Logic   ---
+  // --- Bulk Delete Logic ---
   const handleDeleteClick = () => {
-    if (selectedPages.length === 0) {
+    if (selectedBlogs.length === 0) {
       Swal.fire({
         title: "Oops...",
-        text: "Please Select Items To Delete",
+        text: "Please Select Blogs To Delete",
         icon: "info",
         confirmButtonColor: "var(--primary)",
       });
     } else {
       Swal.fire({
         title: "Are you sure?",
-        text: `Deleting ${selectedPages.length} pages!`,
+        text: `Deleting ${selectedBlogs.length} blogs!`,
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#ef4444",
@@ -76,9 +70,9 @@ const PageTable = ({ pages = [] }) => {
           : "#000",
       }).then((result) => {
         if (result.isConfirmed) {
-          console.log("Deleting pages:", selectedPages);
-          setSelectedPages([]);
-          Swal.fire("Deleted!", "Selected pages have been removed.", "success");
+          console.log("Deleting blogs:", selectedBlogs);
+          setSelectedBlogs([]);
+          Swal.fire("Deleted!", "Selected blogs have been removed.", "success");
         }
       });
     }
@@ -88,7 +82,7 @@ const PageTable = ({ pages = [] }) => {
   const handleDelete = (id, title) => {
     Swal.fire({
       title: "Are you sure?",
-      text: `Delete page: ${title}?`,
+      text: `Delete blog: ${title}?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#ef4444",
@@ -102,8 +96,8 @@ const PageTable = ({ pages = [] }) => {
         : "#000",
     }).then((result) => {
       if (result.isConfirmed) {
-        console.log(`Deleting page: ${id}`);
-        Swal.fire("Deleted!", "Page removed.", "success");
+        console.log(`Deleting blog: ${id}`);
+        Swal.fire("Deleted!", "Blog removed.", "success");
       }
     });
   };
@@ -115,7 +109,7 @@ const PageTable = ({ pages = [] }) => {
       className="bg-white dark:bg-[#292d4a] mt-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden"
     >
       <div className="p-6 flex justify-between items-center border-b border-gray-50 dark:border-gray-800">
-        <h2 className="text-xl font-semibold text-primary">Pages</h2>
+        <h2 className="text-xl font-semibold text-primary">Blogs</h2>
         <div className="flex gap-3">
           <button
             onClick={handleDeleteClick}
@@ -124,16 +118,16 @@ const PageTable = ({ pages = [] }) => {
             Delete
           </button>
           <Link
-            to="/dashboard/add-page"
+            to="/dashboard/add-blog"
             className="flex items-center rounded-lg bg-primary text-white px-4 py-2 font-semibold shadow-lg shadow-primary/20"
           >
-            ADD Page <BsPlusLg className="ml-2" />
+            ADD Blog <BsPlusLg className="ml-2" />
           </Link>
         </div>
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full overflow-x-scroll text-left border-collapse">
+        <table className="w-full text-left border-collapse">
           <thead>
             <tr className="text-content-text font-semibold text-sm">
               <th className="py-4 px-2 pl-8">
@@ -141,8 +135,8 @@ const PageTable = ({ pages = [] }) => {
                   type="checkbox"
                   onChange={handleSelectAll}
                   checked={
-                    selectedPages.length === currentPages.length &&
-                    currentPages.length > 0
+                    selectedBlogs.length === currentBlogs.length &&
+                    currentBlogs.length > 0
                   }
                 />
               </th>
@@ -158,62 +152,63 @@ const PageTable = ({ pages = [] }) => {
               <th className="py-4 px-2 text-sm font-medium">Action</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
-            {currentPages.map((page) => (
+          <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+            {currentBlogs.map((blog) => (
               <tr
-                key={page.id}
-                className="hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors text-sm"
+                key={blog.id}
+                className="hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors text-[13px]"
               >
-                <td className="py-4 px-2 pl-8">
+                <td className="py-4 px-4 pl-8">
                   <input
                     type="checkbox"
-                    checked={selectedPages.includes(page.id)}
-                    onChange={() => handleCheckboxChange(page.id)}
+                    className="w-4 h-4"
+                    checked={selectedBlogs.includes(blog.id)}
+                    onChange={() => handleCheckboxChange(blog.id)}
                   />
                 </td>
-                <td className="py-4 px-2 text-[12px] text-gray-600 dark:text-gray-300">
-                  {page.title}
+                <td className="py-4 px-2 text-[12px] font-medium text-gray-700 dark:text-gray-200">
+                  {blog.title}
                 </td>
                 <td className="py-4 px-2 text-[12px] text-gray-500">
-                  {page.status}
+                  {blog.status}
                 </td>
                 <td className="py-4 px-2 text-[12px]">
                   <span
-                    className={`px-3 py-1 rounded-lg text-xs font-bold text-white ${page.visibility === "Public" ? "bg-green-500" : "bg-orange-400"}`}
+                    className={`px-3 py-1 rounded-full font-bold text-white ${blog.visibility === "Public" ? "bg-green-500" : "bg-cyan-500"}`}
                   >
-                    {page.visibility}
+                    {blog.visibility}
                   </span>
                 </td>
-                <td className="py-4 px-2 text-[12px] text-gray-500">
-                  {page.publishOn}
+                <td className="py-4 px-2 text-[12px] text-gray-500 whitespace-nowrap">
+                  {blog.publishOn}
                 </td>
-                <td className="py-4 px-2 text-[12px] text-gray-500">
-                  {page.createdAt}
+                <td className="py-4 px-2 text-[12px] text-gray-400">
+                  {blog.createdAt}
                 </td>
-                <td className="py-4 px-2 text-[12px] text-gray-500">
-                  {page.updatedAt}
+                <td className="py-4 px-2 text-[12px] text-gray-400">
+                  {blog.updatedAt}
                 </td>
-                <td className="py-4 px-2 text-[12px] text-center">
+                <td className="py-4 px-2 text-center">
                   <button
-                    onClick={() => handleCopy(page.url)}
-                    className="p-2 text-primary cursor-pointer"
+                    onClick={() => handleCopy(blog.url)}
+                    className="text-primary cursor-pointer transition-colors"
                   >
                     <BsCopy size={18} />
                   </button>
                 </td>
-                <td className="py-4 px-2">
+                <td className="py-4 px-4">
                   <div className="flex gap-2">
                     <Link
-                      to={`/dashboard/edit-page/${page.id}`}
-                      className="p-2 cursor-pointer bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors"
+                      to={`/dashboard/edit-blog/${blog.id}`}
+                      className="p-1.5 bg-primary text-white rounded shadow-sm cursor-pointer transition-colors"
                     >
-                      <BsPencilSquare size={16} />
+                      <BsPencilSquare size={14} />
                     </Link>
                     <button
-                      onClick={() => handleDelete(page.id, page.title)}
-                      className="p-2 cursor-pointer bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
+                      onClick={() => handleDelete(blog.id, blog.title)}
+                      className="p-1.5 bg-red-500 text-white rounded shadow-sm cursor-pointer transition-colors"
                     >
-                      <BsTrash size={16} />
+                      <BsTrash size={14} />
                     </button>
                   </div>
                 </td>
@@ -223,39 +218,37 @@ const PageTable = ({ pages = [] }) => {
         </table>
       </div>
 
-      <div className="p-6 flex justify-between items-center text-sm text-content-text font-medium border-t border-gray-50 dark:border-gray-800">
-        <span>
+      <div className="p-6 flex justify-between items-center border-t border-gray-100 dark:border-gray-800">
+        <span className="text-gray-500 text-sm font-medium">
           Page {currentPage} of {totalPages || 1}.
         </span>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           <button
             disabled={currentPage === 1}
             onClick={() => handlePageChange(currentPage - 1)}
-            className={`p-2 border rounded-lg transition-colors ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-primary hover:text-white cursor-pointer"}`}
+            className="p-2 border border-gray-200 rounded-lg text-gray-400 hover:bg-gray-50 disabled:opacity-30 transition-colors"
           >
-            <IoChevronBack />
+            <IoChevronBack size={18} />
           </button>
-
-          {[...Array(totalPages)].map((_, index) => (
+          {[...Array(totalPages)].map((_, i) => (
             <button
-              key={index + 1}
-              onClick={() => handlePageChange(index + 1)}
-              className={`w-8 h-8 flex items-center justify-center rounded-lg font-semibold transition-all ${
-                currentPage === index + 1
-                  ? "bg-primary text-white shadow-md shadow-primary/30 scale-110"
-                  : "border hover:bg-primary/10"
+              key={i}
+              onClick={() => handlePageChange(i + 1)}
+              className={`w-9 h-9 flex items-center justify-center rounded-lg text-sm font-bold transition-all ${
+                currentPage === i + 1
+                  ? "bg-primary text-white shadow-lg"
+                  : "text-gray-500 hover:bg-gray-100 border border-transparent"
               }`}
             >
-              {index + 1}
+              {i + 1}
             </button>
           ))}
-
           <button
             disabled={currentPage === totalPages || totalPages === 0}
             onClick={() => handlePageChange(currentPage + 1)}
-            className={`p-2 border rounded-lg transition-colors ${currentPage === totalPages || totalPages === 0 ? "opacity-50 cursor-not-allowed" : "hover:bg-primary hover:text-white cursor-pointer"}`}
+            className="p-2 border border-gray-200 rounded-lg text-gray-400 hover:bg-gray-50 disabled:opacity-30 transition-colors"
           >
-            <IoChevronForward />
+            <IoChevronForward size={18} />
           </button>
         </div>
       </div>
@@ -263,4 +256,4 @@ const PageTable = ({ pages = [] }) => {
   );
 };
 
-export default PageTable;
+export default BlogTable;
