@@ -13,8 +13,7 @@ const PageForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEditMode = Boolean(id);
-
-  // --- React Hook Form Setup ---
+ 
   const { register, handleSubmit, control, reset } = useForm({
     defaultValues: {
       title: "",
@@ -26,6 +25,7 @@ const PageForm = () => {
       visibility: "Public",
       publishOn: "",
       seoTitle: "",
+      seoKeywords: "",
       seoDescription: "",
     },
   });
@@ -44,11 +44,12 @@ const PageForm = () => {
     SEO: true,
   });
 
-  // --- Load Data for Edit Mode ---
+  // --- Loading Data for Edit Mode ---
   useEffect(() => {
     if (isEditMode) {
       const pageToEdit = allPages.find((p) => p.id === parseInt(id));
       if (pageToEdit) {
+        // Resetting with verified keys from pagesData structure
         reset({
           title: pageToEdit.title || "",
           content: pageToEdit.content || "",
@@ -59,15 +60,15 @@ const PageForm = () => {
           visibility: pageToEdit.visibility || "Public",
           publishOn: pageToEdit.publishOn || "",
           seoTitle: pageToEdit.title || "",
-          seoDescription: pageToEdit.excerpt || "",
+          seoKeywords: pageToEdit.keywords || "",  
+          seoDescription: pageToEdit.description || "", 
         });
       }
     }
   }, [id, isEditMode, reset]);
 
-  // --- Handlers ---
+  // --- Submit Handler ---
   const onSubmit = (data) => {
-    // Your original logic preserved here
     console.log("Saving Page Data:", data);
 
     Swal.fire({
@@ -170,7 +171,6 @@ const PageForm = () => {
         </div>
       </div>
 
-      {/* Main Form */}
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
@@ -260,6 +260,16 @@ const PageForm = () => {
                   </div>
                   <div>
                     <label className="block text-sm text-gray-500 mb-1">
+                      Meta Keywords
+                    </label>
+                    <textarea
+                      {...register("seoKeywords")}
+                      rows="3"
+                      className="w-full border rounded-lg p-2 dark:bg-[#1e2235]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-500 mb-1">
                       Meta Descriptions
                     </label>
                     <textarea
@@ -272,7 +282,7 @@ const PageForm = () => {
               </FormSection>
             )}
           </div>
-
+ 
           <div className="space-y-6">
             <FormSection title="Publish">
               <div className="space-y-4">
