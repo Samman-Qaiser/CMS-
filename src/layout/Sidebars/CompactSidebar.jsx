@@ -43,8 +43,8 @@ const CompactSidebar = () => {
     >
       {/* header */}
       <div
-        className="flex w-full items-center mx-auto px-6 py-4 sticky top-0 z-10 transition-colors duration-300"
-        style={{ backgroundColor: "var(--nav-headbg)" }}
+        className="flex w-full  bg-nav-headbg items-center mx-auto px-6 py-4 sticky top-0 z-10 transition-colors duration-300"
+  
       >
         <img src={logo} alt="Logo" className="w-20" />
       </div>

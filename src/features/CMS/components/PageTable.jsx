@@ -1,55 +1,58 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
-import {
-  BsTrash,
-  BsPencilSquare,
-  BsShieldCheck,
-  BsPlusLg,
-} from "react-icons/bs";
+import { BsTrash, BsPencilSquare, BsPlusLg, BsCopy } from "react-icons/bs";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 
-const UserTable = ({ users = [] }) => {
-  const [selectedUsers, setSelectedUsers] = useState([]);
-
-  // --- Pagination State ---
+const PageTable = ({ pages = [] }) => {
+  const [selectedPages, setSelectedPages] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  const indexOfLastUser = currentPage * itemsPerPage;
-  const indexOfFirstUser = indexOfLastUser - itemsPerPage;
-  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
-  const totalPages = Math.ceil(users.length / itemsPerPage);
+  const indexOfLast = currentPage * itemsPerPage;
+  const indexOfFirst = indexOfLast - itemsPerPage;
+  const currentPages = pages.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(pages.length / itemsPerPage);
 
   const handlePageChange = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber);
-      setSelectedUsers([]);
+      setSelectedPages([]);
     }
   };
 
-  // Toggle individual checkbox
-  const handleCheckboxChange = (userId) => {
-    setSelectedUsers((prev) =>
-      prev.includes(userId)
-        ? prev.filter((id) => id !== userId)
-        : [...prev, userId],
+  const handleCheckboxChange = (pageId) => {
+    setSelectedPages((prev) =>
+      prev.includes(pageId)
+        ? prev.filter((id) => id !== pageId)
+        : [...prev, pageId],
     );
   };
 
-  // Toggle "Select All"
   const handleSelectAll = (e) => {
     if (e.target.checked) {
-      setSelectedUsers(currentUsers.map((u) => u.id));
+      setSelectedPages(currentPages.map((p) => p.id));
     } else {
-      setSelectedUsers([]);
+      setSelectedPages([]);
     }
   };
 
-  // Handle the Delete Button Click
+  const handleCopy = (url) => {
+    navigator.clipboard.writeText(window.location.origin + url);
+    Swal.fire({
+      toast: true,
+      position: "top-end",
+      icon: "success",
+      title: "URL Copied!",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  };
+
+  // --- Bulk Delete Logic   ---
   const handleDeleteClick = () => {
-    if (selectedUsers.length === 0) {
+    if (selectedPages.length === 0) {
       Swal.fire({
         title: "Oops...",
         text: "Please Select Items To Delete",
@@ -59,7 +62,7 @@ const UserTable = ({ users = [] }) => {
     } else {
       Swal.fire({
         title: "Are you sure?",
-        text: `Deleting ${selectedUsers.length} users!`,
+        text: `Deleting ${selectedPages.length} pages!`,
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#ef4444",
@@ -73,17 +76,19 @@ const UserTable = ({ users = [] }) => {
           : "#000",
       }).then((result) => {
         if (result.isConfirmed) {
-          console.log("Deleting users:", selectedUsers);
-          setSelectedUsers([]);
+          console.log("Deleting pages:", selectedPages);
+          setSelectedPages([]);
+          Swal.fire("Deleted!", "Selected pages have been removed.", "success");
         }
       });
     }
   };
 
-  const handleDelete = (userId, userName) => {
+  // --- Single Delete Logic ---
+  const handleDelete = (id, title) => {
     Swal.fire({
       title: "Are you sure?",
-      text: `Delete ${userName}?`,
+      text: `Delete page: ${title}?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#ef4444",
@@ -97,8 +102,8 @@ const UserTable = ({ users = [] }) => {
         : "#000",
     }).then((result) => {
       if (result.isConfirmed) {
-        console.log(`Deleting user: ${userId}`);
-        Swal.fire("Deleted!", "User removed.", "success");
+        console.log(`Deleting page: ${id}`);
+        Swal.fire("Deleted!", "Page removed.", "success");
       }
     });
   };
@@ -109,9 +114,8 @@ const UserTable = ({ users = [] }) => {
       animate={{ opacity: 1, y: 0 }}
       className="bg-white dark:bg-[#292d4a] mt-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden"
     >
-      {/* Header Action Bar */}
       <div className="p-6 flex justify-between items-center border-b border-gray-50 dark:border-gray-800">
-        <h2 className="text-xl font-semibold text-primary">Users</h2>
+        <h2 className="text-xl font-semibold text-primary">Pages</h2>
         <div className="flex gap-3">
           <button
             onClick={handleDeleteClick}
@@ -120,17 +124,16 @@ const UserTable = ({ users = [] }) => {
             Delete
           </button>
           <Link
-            to="/dashboard/add-user"
+            to="/add-page"
             className="flex items-center rounded-lg bg-primary text-white px-4 py-2 font-semibold shadow-lg shadow-primary/20"
           >
-            ADD USER <BsPlusLg className="ml-2" />
+            ADD Page <BsPlusLg className="ml-2" />
           </Link>
         </div>
       </div>
 
-      {/* Table */}
       <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
+        <table className="w-full overflow-x-scroll text-left border-collapse">
           <thead>
             <tr className="text-content-text font-semibold text-sm">
               <th className="py-4 px-2 pl-8">
@@ -138,87 +141,73 @@ const UserTable = ({ users = [] }) => {
                   type="checkbox"
                   onChange={handleSelectAll}
                   checked={
-                    selectedUsers.length === currentUsers.length &&
-                    currentUsers.length > 0
+                    selectedPages.length === currentPages.length &&
+                    currentPages.length > 0
                   }
                 />
               </th>
-              <th className="py-4 px-2 text-sm font-medium">Full Name</th>
-              <th className="py-4 px-2 text-sm font-medium">Email</th>
-              <th className="py-4 px-2 text-sm font-medium">Gender</th>
-              <th className="py-4 px-2 text-sm font-medium">Groups</th>
-              <th className="py-4 px-2 text-sm font-medium">Mobile</th>
-              <th className="py-4 px-2 text-sm font-medium">Date Of Birth</th>
+              <th className="py-4 px-2 text-sm font-medium">Title</th>
+              <th className="py-4 px-2 text-sm font-medium">Status</th>
+              <th className="py-4 px-2 text-sm font-medium">Visibility</th>
+              <th className="py-4 px-2 text-sm font-medium">Publish On</th>
+              <th className="py-4 px-2 text-sm font-medium">Created At</th>
+              <th className="py-4 px-2 text-sm font-medium">Updated At</th>
               <th className="py-4 px-2 text-sm font-medium text-center">
-                Status
+                Copy Url
               </th>
               <th className="py-4 px-2 text-sm font-medium">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
-            {currentUsers.map((user) => (
+            {currentPages.map((page) => (
               <tr
-                key={user.id}
-                className="hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors"
+                key={page.id}
+                className="hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors text-sm"
               >
                 <td className="py-4 px-2 pl-8">
                   <input
                     type="checkbox"
-                    checked={selectedUsers.includes(user.id)}
-                    onChange={() => handleCheckboxChange(user.id)}
+                    checked={selectedPages.includes(page.id)}
+                    onChange={() => handleCheckboxChange(page.id)}
                   />
                 </td>
-                <td className="py-4 px-2 text-[12px] font-medium">
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={user.img}
-                      className="w-10 h-10 rounded-full border border-gray-100"
-                      alt=""
-                    />
-                    <span className="font-medium text-gray-600 dark:text-gray-300">
-                      {user.name}
-                    </span>
-                  </div>
-                </td>
-                <td className="py-4 px-2 text-[12px] font-semibold text-gray-700 dark:text-gray-200">
-                  {user.email}
+                <td className="py-4 px-2 text-[12px] text-gray-600 dark:text-gray-300">
+                  {page.title}
                 </td>
                 <td className="py-4 px-2 text-[12px] text-gray-500">
-                  {user.gender}
+                  {page.status}
                 </td>
                 <td className="py-4 px-2 text-[12px]">
                   <span
-                    className="px-3 py-1 rounded-full text-xs text-white font-medium"
-                    style={{ backgroundColor: "var(--primary)" }}
+                    className={`px-3 py-1 rounded-lg text-xs font-bold text-white ${page.visibility === "Public" ? "bg-green-500" : "bg-orange-400"}`}
                   >
-                    {user.group}
+                    {page.visibility}
                   </span>
                 </td>
                 <td className="py-4 px-2 text-[12px] text-gray-500">
-                  {user.mobile}
+                  {page.publishOn}
                 </td>
                 <td className="py-4 px-2 text-[12px] text-gray-500">
-                  {user.dob}
+                  {page.createdAt}
+                </td>
+                <td className="py-4 px-2 text-[12px] text-gray-500">
+                  {page.updatedAt}
                 </td>
                 <td className="py-4 px-2 text-[12px] text-center">
-                  <div className="w-3 h-3 rounded-full bg-green-500 mx-auto"></div>
+                  <button
+                    onClick={() => handleCopy(page.url)}
+                    className="p-2 text-primary cursor-pointer"
+                  >
+                    <BsCopy size={18} />
+                  </button>
                 </td>
-                <td className="py-4 px-2 text-[12px]">
+                <td className="py-4 px-2">
                   <div className="flex gap-2">
-                    <Link
-                      to={`/dashboard/users/assign-permissions-to-user/${user.id}`}
-                      className="p-2 bg-emerald-100 text-emerald-600 rounded-lg hover:bg-emerald-200 transition-colors"
-                    >
-                      <BsShieldCheck size={16} />
-                    </Link>
-                    <Link
-                      to={`/dashboard/edit-user/${user.id}`}
-                      className="p-2 cursor-pointer bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors"
-                    >
+                    <button className="p-2 cursor-pointer bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors">
                       <BsPencilSquare size={16} />
-                    </Link>
+                    </button>
                     <button
-                      onClick={() => handleDelete(user.id, user.name)}
+                      onClick={() => handleDelete(page.id, page.title)}
                       className="p-2 cursor-pointer bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
                     >
                       <BsTrash size={16} />
@@ -231,8 +220,7 @@ const UserTable = ({ users = [] }) => {
         </table>
       </div>
 
-      {/* Pagination Footer */}
-      <div className="p-6 flex justify-between items-center text-sm text-content-text font-medium">
+      <div className="p-6 flex justify-between items-center text-sm text-content-text font-medium border-t border-gray-50 dark:border-gray-800">
         <span>
           Page {currentPage} of {totalPages || 1}.
         </span>
@@ -245,7 +233,6 @@ const UserTable = ({ users = [] }) => {
             <IoChevronBack />
           </button>
 
-          {/* Page Numbers */}
           {[...Array(totalPages)].map((_, index) => (
             <button
               key={index + 1}
@@ -273,4 +260,4 @@ const UserTable = ({ users = [] }) => {
   );
 };
 
-export default UserTable;
+export default PageTable;

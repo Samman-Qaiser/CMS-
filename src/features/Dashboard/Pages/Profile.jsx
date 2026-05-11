@@ -2,27 +2,28 @@ import React from 'react'
 import { CourseCard, StatCard } from '../components/StatCard';
 import { MoreHorizontal } from 'lucide-react';
 import ScoreActivity from '../components/ScoreActivity';
+import { Link } from 'react-router-dom';
 const Profile = () => {
   return (
 
     <div className="p-2 bg-bg-main min-h-screen font-poppins flex flex-col lg:flex-row gap-8">
       
-      {/* LEFT SIDEBAR CARD */}
+      {/* LEFT content CARD */}
       <div className="w-full lg:w-[350px] bg-white dark:bg-[#292D4A] rounded-md p-4 shadow-sm h-fit">
-        <div className="flex justify-end"><MoreHorizontal className="text-sidebar-text" /></div>
+        <div className="flex justify-end"><MoreHorizontal className="text-content-text" /></div>
         <div className="flex flex-col items-center mb-8">
           <img src="https://i.pravatar.cc/150?u=nella" alt="profile" className="w-28 h-28 rounded-lg object-cover mb-4" />
           <h2 className="text-xl font-bold text-header-text">Nella Vita</h2>
-          <p className="text-sm text-sidebar-text">Member Since 2020</p>
+          <p className="text-sm text-content-text">Member Since 2020</p>
         </div>
 
         <div className="flex gap-4 mb-10">
           <div className="bg-bg-main dark:bg-black/20 p-4 rounded-lg flex-1 ">
-            <p className="text-[14px] text-sidebar-textfont-bold">Points</p>
+            <p className="text-[14px] text-content-text font-bold">Points</p>
             <p className="text-lg font-bold text-header-text">2300</p>
           </div>
          <div className="bg-bg-main dark:bg-black/20 p-4 rounded-lg flex-1 ">
-            <p className="text-[14px] text-sidebar-textfont-bold">Certificate</p>
+            <p className="text-[14px] text-content-textfont-bold">Certificate</p>
             <p className="text-lg font-bold text-header-text">50</p>
           </div>
         </div>
@@ -36,7 +37,7 @@ const Profile = () => {
         <h3 className="font-bold text-header-text mb-4">Bio</h3>
 <div className='bg-bg-main p-4 rounded-lg'>
        
-        <p className="text-xs text-sidebar-text leading-loose opacity-80">
+        <p className="text-xs text-content-text leading-loose opacity-80">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
          
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua
@@ -57,7 +58,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
         {/* Current Courses Section */}
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-xl font-bold text-header-text">Current Courses</h3>
-          <button className="px-6 py-2 bg-blue-600 text-white text-xs font-bold rounded-lg shadow-lg shadow-blue-600/30">View all</button>
+          <button className="px-6 py-2 bg-primary cursor-pointer text-white text-xs font-bold rounded-lg ">
+          <Link to="/dashboard/courses">View all</Link>
+          </button>
         </div>
 
         <div className="flex flex-col md:flex-row gap-6">

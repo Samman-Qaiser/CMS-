@@ -134,7 +134,7 @@ function Header() {
       rgbaColor = headerBgColor
     }
     customHeaderStyle.backgroundColor = rgbaColor
-    customHeaderStyle.backdropFilter = 'blur(12px)'
+    customHeaderStyle.backdropFilter = 'blur(6px)'
     customHeaderStyle.borderBottomColor = 'rgba(255,255,255,0.25)'
   }
 

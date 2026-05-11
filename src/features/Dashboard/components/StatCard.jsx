@@ -6,13 +6,13 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 export const StatCard = ({ icon, title, count, colorClass }) => (
   <div className="bg-white dark:bg-[#292D4A] p-8 rounded-lg flex items-center justify-between shadow-sm flex-1">
     <div className="flex items-center gap-4">
-      <div className={`p-3 rounded-2xl bg-opacity-10 ${colorClass} bg-current`}>{icon}</div>
+      <div className={`text-5xl `}>{icon}</div>
       <div>
         <h4 className="text-xl font-bold text-header-text">{count}</h4>
-        <p className="text-xs text-sidebar-text">{title}</p>
+        <p className="text-xs text-content-text">{title}</p>
       </div>
     </div>
-    <ChevronRight size={18} className="text-sidebar-text opacity-40" />
+    <ChevronRight size={18} className="text-content-text opacity-40" />
   </div>
 );
 

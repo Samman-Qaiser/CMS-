@@ -10,11 +10,15 @@ import GroupForm from "../../Users/components/GroupForm";
 import Instructors from "../Pages/Instructors";
 import EditPermissionForm from "../../Users/components/EditPermissionForm";
 import Permissions from "../../Users/pages/Permissions";
+import Pages from "../../CMS/pages/Pages";
 import Activity from "../Pages/Activity";
 import Profile from "../Pages/Profile";
+import Messages from "../Pages/ChatPage";
+import Schedule from "../Pages/Schedule";
 function DashboardRoutes() {
   return (
     <Routes>
+    
       <Route element={<MainLayout />}>
         <Route
           index
@@ -47,6 +51,22 @@ function DashboardRoutes() {
             <ProtectedRoute>
           
             <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/message"
+          element={
+            <ProtectedRoute>
+            <Messages />
+            </ProtectedRoute>
+          }
+        />
+          <Route
+          path="/schedule"
+          element={
+            <ProtectedRoute>
+            <Schedule />
             </ProtectedRoute>
           }
         />
@@ -119,6 +139,14 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <EditPermissionForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="pages"
+          element={
+            <ProtectedRoute>
+              <Pages />
             </ProtectedRoute>
           }
         />
