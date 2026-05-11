@@ -72,7 +72,8 @@ export default function CustomCalendar() {
   const isSel   = (day, cur) => cur && day === sel.d && month === sel.m && year === sel.y;
 
   return (
-    <div className="w-full bg-[#ffffff] dark:bg-[#292D4A] rounded-2xl p-6 flex flex-col">
+    <>   <h3 className="text-xl text-header-text font-bold leading-2 ">Calender</h3>
+       <div className="w-full bg-[#ffffff] dark:bg-[#292D4A] rounded-lg p-6 flex flex-col">
 
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
@@ -149,6 +150,7 @@ export default function CustomCalendar() {
           </div>
         ))}
       </div>
-    </div>
+    </div></>
+ 
   );
 }

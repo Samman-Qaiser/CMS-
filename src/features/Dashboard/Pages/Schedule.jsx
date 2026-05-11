@@ -18,7 +18,7 @@ const Schedule = () => {
       </div>
 
       {/* Right Column */}
-      <div className="flex flex-col w-[50%] gap-8">
+      <div className="flex flex-col w-[50%] justify-center gap-8">
         <CustomCalendar />
         <UpcomingSchedule />
       </div>
