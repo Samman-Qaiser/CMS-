@@ -288,10 +288,14 @@ function FullSidebar() {
       className={`h-screen shrink-0 rounded-r-[40px] flex flex-col border-r border-gray-100 dark:border-white/5 sticky top-0 transition-all duration-300 ease-in-out overflow-visible ${sidebarOpen ? "w-[260px]" : "w-[72px]"}`}
       style={{ backgroundColor: "var(--sidebar-bg)" }}
     >
-      <div className={`flex items-center border-b border-gray-100 dark:border-white/5 transition-all duration-300 ${sidebarOpen ? "px-6 py-5 justify-start" : "px-0 py-5 justify-center"}`}>
+      <div className={`flex bg-nav-headbg items-center border-b border-gray-100 dark:border-white/5 transition-all duration-300 ${sidebarOpen ? "px-6 py-5 justify-start" : "px-0 py-5 justify-center"}`}>
         {sidebarOpen
-          ? <img src="./logo-full.png" alt="Logo" className="h-10 object-contain" />
-          : <img src="./logo-half.png" alt="Logo" className="h-8 object-contain" />
+          ? 
+            <img src="./logo-full.png" alt="Logo" className="h-10 object-contain" />
+    
+          :
+            <img src="./logo-half.png" alt="Logo" className="h-8 object-contain" />
+    
         }
       </div>
       <nav className={`flex-1 overflow-y-auto py-4 ${sidebarOpen ? "px-3" : "px-2"} [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-200 dark:[&::-webkit-scrollbar-thumb]:bg-white/10`}>

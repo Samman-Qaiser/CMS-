@@ -70,6 +70,9 @@ function Header() {
   const { t, i18n } = useTranslation()
   const [scrolled, setScrolled] = useState(false)
 
+  // Get the user-selected header background color from CSS variable
+  const [headerBgColor, setHeaderBgColor] = useState('')
+
   useEffect(() => {
     i18n.changeLanguage(currentLang.code)
   }, [currentLang.code])
@@ -80,11 +83,60 @@ function Header() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Effect to read the --headerbg CSS variable
+  useEffect(() => {
+    const updateHeaderColor = () => {
+      const computedStyle = getComputedStyle(document.documentElement)
+      const bgColor = computedStyle.getPropertyValue('--headerbg').trim()
+      setHeaderBgColor(bgColor)
+    }
+
+    updateHeaderColor()
+    // Watch for theme changes (like from ThemeSwitcher)
+    const observer = new MutationObserver(updateHeaderColor)
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['style', 'class'] })
+    return () => observer.disconnect()
+  }, [])
+
   const segment   = location.pathname.split('/').filter(Boolean).pop() || 'dashboard'
   const titleKey  = PAGE_TITLE_KEYS[segment]
   const pageTitle = titleKey
     ? t(titleKey)
     : segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' ')
+
+  // Build dynamic style – if user selected a header color, apply it with glassmorphism mix
+  const customHeaderStyle = {}
+  if (headerBgColor && headerBgColor !== 'transparent') {
+    // Convert the solid color to a rgba version with low opacity for glass effect
+    // This creates a beautiful blend: selected color + blur + transparency
+    let rgbaColor = headerBgColor
+    try {
+      // If it's hex, convert to rgba
+      if (headerBgColor.startsWith('#')) {
+        const r = parseInt(headerBgColor.slice(1, 3), 16)
+        const g = parseInt(headerBgColor.slice(3, 5), 16)
+        const b = parseInt(headerBgColor.slice(5, 7), 16)
+        rgbaColor = `rgba(${r}, ${g}, ${b}, 0.85)`
+      } else if (headerBgColor.startsWith('rgb')) {
+        // Replace rgb or rgba with a lower opacity version
+        if (headerBgColor.startsWith('rgba')) {
+          rgbaColor = headerBgColor.replace(/rgba\((.+?)\)/, (_, values) => {
+            const parts = values.split(',')
+            return `rgba(${parts[0]}, ${parts[1]}, ${parts[2]}, 0.85)`
+          })
+        } else {
+          rgbaColor = headerBgColor.replace(/rgb\((.+?)\)/, (_, values) => {
+            return `rgba(${values}, 0.85)`
+          })
+        }
+      }
+    } catch (e) {
+      rgbaColor = headerBgColor
+    }
+    customHeaderStyle.backgroundColor = rgbaColor
+    customHeaderStyle.backdropFilter = 'blur(12px)'
+    customHeaderStyle.borderBottomColor = 'rgba(255,255,255,0.25)'
+  }
 
   return (
     <header className={`
@@ -92,9 +144,9 @@ function Header() {
       sticky top-0 z-50 border-b transition-all duration-500
       ${scrolled
         ? 'bg-white/40 dark:bg-sidebar-bg/10 backdrop-blur-sm border-white/30 dark:border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.08)]'
-        : 'bg-transparent backdrop-blur-none border-transparent shadow-none'
+        : 'backdrop-blur-none border-transparent shadow-none'
       }
-    `}>
+    `} style={customHeaderStyle}>
 
       {/* Menu Toggle */}
       <button
