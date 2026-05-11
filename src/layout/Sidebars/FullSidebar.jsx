@@ -153,7 +153,7 @@ function NavItem({ item, depth = 0, collapsed }) {
               padding: "7px 12px", borderRadius: "6px",
               transition: "color 0.2s", fontSize: "13px", fontWeight: 400,
               marginLeft: "16px", backgroundColor: "transparent",
-              color: navActive ? "var(--primary)" : "var(--sidebar-text)",
+              color: navActive ? "var(--sidebar-text)" : "var(--sidebar-text)",
               textDecoration: "none",
             })}
           >

@@ -11,9 +11,14 @@ import Instructors from "../Pages/Instructors";
 import EditPermissionForm from "../../Users/components/EditPermissionForm";
 import Permissions from "../../Users/pages/Permissions";
 import Pages from "../../CMS/pages/Pages";
+import Activity from "../Pages/Activity";
+import Profile from "../Pages/Profile";
+import Messages from "../Pages/ChatPage";
+import Schedule from "../Pages/Schedule";
 import PageForm from "../../CMS/components/PageForm";
 import Blogs from "../../CMS/pages/Blogs";
 import BlogForm from "../../CMS/components/BlogForm";
+import CoursesPage from "../../Courses/Pages/CoursePage";
 import BlogCategories from "../../CMS/components/BlogCategories";
 function DashboardRoutes() {
   return (
@@ -32,6 +37,46 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <Instructors />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/activity"
+          element={
+            <ProtectedRoute>
+              <Activity />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/courses"
+          element={
+            <ProtectedRoute>
+              <CoursesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/message"
+          element={
+            <ProtectedRoute>
+              <Messages />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/schedule"
+          element={
+            <ProtectedRoute>
+              <Schedule />
             </ProtectedRoute>
           }
         />
