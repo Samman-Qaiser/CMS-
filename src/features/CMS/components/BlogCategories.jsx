@@ -13,6 +13,36 @@ const BlogCategories = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
+  // ---  STATE FOR EDITING ---
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [formData, setFormData] = useState({ name: "", parent: "None" });
+
+  // Function to trigger edit mode
+  const handleEdit = (cat) => {
+    setEditingCategory(cat);
+    setFormData({ name: cat.name, parent: cat.parent || "None" });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Function to handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (editingCategory) {
+      // Update existing
+      const updatedCategories = categories.map((cat) =>
+        cat.id === editingCategory.id
+          ? { ...cat, name: formData.name, parent: formData.parent }
+          : cat,
+      );
+      setCategories(updatedCategories);
+      setEditingCategory(null);
+      Swal.fire("Updated!", "Category has been updated.", "success");
+    } else {
+      Swal.fire("Added!", "New category created.", "success");
+    }
+    setFormData({ name: "", parent: "None" });
+  };
+
   // filters data based on the state
   const handleSearch = () => {
     const filtered = categoriesData.filter(
@@ -95,14 +125,20 @@ const BlogCategories = () => {
         <div className="lg:col-span-1">
           <div className="bg-white dark:bg-[#292d4a] p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
             <h3 className="text-lg font-bold text-primary mb-6">
-              Add Category
+              {editingCategory ? "Edit Category" : "Add Category"}
             </h3>
-            <form className="space-y-5">
+            <form className="space-y-5" onSubmit={handleSubmit}>
               <div>
                 <label className="text-sm font-semibold text-gray-600 dark:text-gray-300 block mb-2">
                   Parent Category
                 </label>
-                <select className="w-full p-2.5 border rounded-lg dark:bg-[#1e2235] dark:border-gray-600 outline-none text-sm text-gray-500">
+                <select
+                  value={formData.parent}
+                  onChange={(e) =>
+                    setFormData({ ...formData, parent: e.target.value })
+                  }
+                  className="w-full p-2.5 border rounded-lg dark:bg-[#1e2235] dark:border-gray-600 outline-none text-sm text-gray-500"
+                >
                   <option value="None">None</option>
                   {categoriesData.map((cat) => (
                     <option key={cat.id} value={cat.name}>
@@ -117,16 +153,36 @@ const BlogCategories = () => {
                 </label>
                 <input
                   type="text"
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
                   className="w-full p-2.5 border rounded-lg dark:bg-[#1e2235] dark:border-gray-600 outline-none focus:border-primary transition-all text-sm"
                   placeholder="Category name"
+                  required
                 />
               </div>
-              <button
-                type="submit"
-                className="bg-primary text-white px-6 py-2.5 rounded-lg font-bold hover:bg-opacity-90 transition-all text-sm mt-2"
-              >
-                Save
-              </button>
+              <div className="flex gap-2">
+                <button
+                  type="submit"
+                  className="bg-primary text-white px-6 py-2.5 rounded-lg font-bold hover:bg-opacity-90 transition-all text-sm mt-2 flex-1"
+                >
+                  {editingCategory ? "Update" : "Save"}
+                </button>
+
+                {editingCategory && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingCategory(null);
+                      setFormData({ name: "", parent: "None" });
+                    }}
+                    className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-6 py-2.5 rounded-lg font-bold hover:bg-opacity-90 transition-all text-sm mt-2 flex-1"
+                  >
+                    Cancel
+                  </button>
+                )}
+              </div>
             </form>
           </div>
         </div>
@@ -212,7 +268,10 @@ const BlogCategories = () => {
                       </td>
                       <td className="py-4 px-2 text-[12px]">
                         <div className="flex gap-2">
-                          <button className="p-2 cursor-pointer bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors">
+                          <button
+                            onClick={() => handleEdit(cat)} // Trigger edit here
+                            className="p-2 cursor-pointer bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors"
+                          >
                             <BsPencilSquare size={16} />
                           </button>
                           <button
