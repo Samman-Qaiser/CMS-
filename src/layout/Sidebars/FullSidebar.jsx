@@ -288,7 +288,7 @@ function FullSidebar() {
       className={`h-screen shrink-0 rounded-r-[40px] flex flex-col border-r border-gray-100 dark:border-white/5 sticky top-0 transition-all duration-300 ease-in-out overflow-visible ${sidebarOpen ? "w-[260px]" : "w-[72px]"}`}
       style={{ backgroundColor: "var(--sidebar-bg)" }}
     >
-      <div className={`flex bg-nav-headbg items-center border-b border-gray-100 dark:border-white/5 transition-all duration-300 ${sidebarOpen ? "px-6 py-5 justify-start" : "px-0 py-5 justify-center"}`}>
+      <div className={`flex rounded-r-[40px] bg-nav-headbg items-center border-b border-gray-100 dark:border-white/5 transition-all duration-300 ${sidebarOpen ? "px-6 py-5 justify-start" : "px-0 py-5 justify-center"}`}>
         {sidebarOpen
           ? 
             <img src="./logo-full.png" alt="Logo" className="h-10 object-contain" />

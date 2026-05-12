@@ -62,6 +62,7 @@ const { t, i18n } = useTranslation()
         style={{ backgroundColor: 'var(--bg-main)' }}
         className="flex flex-col flex-1 transition-all duration-500"
       >
+
         <div className="flex flex-col flex-1">
 
           {isOverlay ? (

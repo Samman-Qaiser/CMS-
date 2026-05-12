@@ -1,12 +1,14 @@
 
 import { useState, useEffect, useRef } from "react";
-import { BsBell, BsEnvelope, BsGear } from "react-icons/bs";
-
+import { FaGear } from "react-icons/fa6";
+import { IoMdMail } from "react-icons/io";
 import ProfileDropdown   from "../../components/SidePannel/Profiledropdown";
 import NotificationPanel from "../../components/SidePannel/NotificationPannel";
 import MessagePanel      from "../../components/SidePannel/MessagePannel";
 import SettingsPanel     from "../../components/SidePannel/SettingPannel";
 import LanguageSwitcher  from "../../components/SidePannel/LanguageSwitcher";
+import { FaBell } from "react-icons/fa";
+import { IoMail } from "react-icons/io5";
 
 // Drawer panels mapping
 const PANELS = {
@@ -39,18 +41,17 @@ function Drawer({ panelKey, onClose }) {
     </>
   );
 }
-
 // ── Icon Button ──────────────────────────────────────────────
 function PanelIconBtn({ icon: Icon, activeKey, myKey, badge, onClick }) {
   const isActive = activeKey === myKey;
   return (
     <button
       onClick={() => onClick(myKey)}
-      className="relative w-10 h-10  cursor-pointer flex items-center justify-center rounded-2xl transition-all duration-200 bg-primary/10"
+      className="relative w-10 h-10  cursor-pointer flex items-center justify-center rounded-2xl transition-all duration-200 bg-primary/40"
    
     >
       <Icon
-        className="w-4.5 h-4.5 font-bold text-primary"
+        className="w-4.5 h-4.5 font-bold text-black dark:text-white"
    
       />
       {badge > 0 && (
@@ -128,7 +129,7 @@ export default function RightPanel() {
         <div className="w-6 h-px bg-gray-200 dark:bg-white/10" />
        {/* Notification */}
        <PanelIconBtn
-          icon={BsBell}
+          icon={FaBell}
           myKey="notification"
           activeKey={activePanel}
           badge={7}
@@ -137,16 +138,15 @@ export default function RightPanel() {
 
         {/* Message */}
         <PanelIconBtn
-          icon={BsEnvelope}
+          icon={IoMdMail}
           myKey="message"
           activeKey={activePanel}
           badge={3}
           onClick={handlePanelClick}
-        />
-
+/>
         {/* Settings */}
         <PanelIconBtn
-          icon={BsGear}
+          icon={FaGear }
           myKey="settings"
           activeKey={activePanel}
           badge={0}

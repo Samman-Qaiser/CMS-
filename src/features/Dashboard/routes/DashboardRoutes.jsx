@@ -21,6 +21,7 @@ import BlogForm from "../../CMS/components/BlogForm";
 import CoursesPage from "../../Courses/Pages/CoursePage";
 import BlogCategories from "../../CMS/components/BlogCategories";
 import BlogTags from "../../CMS/components/BlogTags";
+import CourseDetail1 from "../../Courses/Pages/Coursedetail1";
 function DashboardRoutes() {
   return (
     <Routes>
@@ -62,6 +63,14 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <CoursesPage />
+            </ProtectedRoute>
+          }
+        />
+         <Route
+          path="/course-details-1"
+          element={
+            <ProtectedRoute>
+  <CourseDetail1 />
             </ProtectedRoute>
           }
         />
