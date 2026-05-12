@@ -71,7 +71,7 @@ export const ALL_NAV_ITEMS = [
       },
       { id: 'cms-comment',      label: 'nav.comment',     path: '/dashboard/comments',      roles: [ROLES.ADMIN, ROLES.MANAGER] },
       { id: 'cms-menu-setup',   label: 'nav.menuSetup',   path: '/dashboard/menus/setup',   roles: [ROLES.ADMIN, ROLES.MANAGER] },
-      { id: 'cms-subscribers',  label: 'nav.subscribers', path: '/dashboard/subscribe',     roles: [ROLES.ADMIN, ROLES.MANAGER] },
+      { id: 'cms-subscribers',  label: 'nav.subscribers', path: '/dashboard/subscribers',     roles: [ROLES.ADMIN, ROLES.MANAGER] },
       { id: 'cms-contact',      label: 'nav.contactUs',   path: '/dashboard/contact-us',    roles: [ROLES.ADMIN, ROLES.MANAGER] },
     ],
   },
