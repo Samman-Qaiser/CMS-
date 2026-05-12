@@ -27,8 +27,6 @@ import Comments from "../../CMS/pages/Comments";
 import CommentForm from "../../CMS/components/CommentForm";
 import Subscribers from "../../CMS/pages/Subscribers";
 import Contact from "../../CMS/pages/Contact";
-
-import BlogTags from "../../CMS/components/BlogTags";
 import InstructorDashboard from "../../Instructor/Pages/Instructordashboard";
 
 function DashboardRoutes() {
