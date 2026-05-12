@@ -1,3 +1,36 @@
+export const contactData = [
+  {
+    id: 1,
+    name: "Nitesh",
+    email: "nitesh@example.com",
+    phone: "978525355",
+    message:
+      "I am Nitesh, thank you for helping me with the project. I look forward to the update.",
+    status: "Approved",
+    created_at: "May 4, 2026, 3:01 p.m.",
+  },
+  {
+    id: 2,
+    name: "Admin",
+    email: "admin@example.com",
+    phone: "123456789",
+    message:
+      "Black Friday: All of Our Deals in One Spot. Please review the comments.",
+    status: "Trash",
+    created_at: "April 29, 2026, 9:07 p.m.",
+  },
+  {
+    id: 3,
+    name: "Testing User",
+    email: "testing@example.com",
+    phone: "987654321",
+    message:
+      "This is a test message to check the table layout and truncation logic.",
+    status: "Approved",
+    created_at: "May 10, 2026, 11:20 a.m.",
+  },
+];
+
 export const subscribersData = [
   {
     id: 1,
@@ -9,16 +42,16 @@ export const subscribersData = [
   },
   {
     id: 2,
-    name: "None",
-    email: "testing@example.com",
+    name: "Selena",
+    email: "selena@example.com",
     phone: "None",
     status: false,
     unsubscribe: false,
   },
   {
     id: 3,
-    name: "None",
-    email: "testing@example.com",
+    name: "Emma Watson",
+    email: "emma.w@hollywood.com",
     phone: "None",
     status: false,
     unsubscribe: false,
@@ -49,7 +82,7 @@ export const subscribersData = [
   },
   {
     id: 7,
-    name: "None",
+    name: "Guest User",
     email: "guest_user_99@yahoo.com",
     phone: "None",
     status: false,

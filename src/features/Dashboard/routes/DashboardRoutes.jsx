@@ -26,6 +26,7 @@ import BlogTags from "../../CMS/components/BlogTags";
 import Comments from "../../CMS/pages/Comments";
 import CommentForm from "../../CMS/components/CommentForm";
 import Subscribers from "../../CMS/pages/Subscribers";
+import Contact from "../../CMS/pages/Contact";
 function DashboardRoutes() {
   return (
     <Routes>
@@ -259,6 +260,14 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <Subscribers />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="contact-us"
+          element={
+            <ProtectedRoute>
+              <Contact />
             </ProtectedRoute>
           }
         />
