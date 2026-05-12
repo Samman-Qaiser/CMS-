@@ -57,6 +57,87 @@ export const categoriesData = [
   },
 ];
 
+export const tagsData = [
+  {
+    id: 1,
+    name: "yoga",
+    slug: "yoga",
+    createdAt: "Dec. 23, 2022, 12:21 p.m.",
+  },
+  {
+    id: 2,
+    name: "macos",
+    slug: "macos",
+    createdAt: "Dec. 23, 2022, 12:16 p.m.",
+  },
+  {
+    id: 3,
+    name: "cybercrime",
+    slug: "cybercrime",
+    createdAt: "Dec. 23, 2022, 12:07 p.m.",
+  },
+  {
+    id: 4,
+    name: "encrypted",
+    slug: "encrypted",
+    createdAt: "Dec. 23, 2022, 12:05 p.m.",
+  },
+  {
+    id: 5,
+    name: "encrypted password",
+    slug: "encrypted-password",
+    createdAt: "Dec. 23, 2022, 12:05 p.m.",
+  },
+  {
+    id: 6,
+    name: "php",
+    slug: "php",
+    createdAt: "Dec. 6, 2022, 10:25 a.m.",
+  },
+  {
+    id: 7,
+    name: "react",
+    slug: "react",
+    createdAt: "Dec. 6, 2022, 10:41 a.m.",
+  },
+  {
+    id: 8,
+    name: "python",
+    slug: "python",
+    createdAt: "Dec. 6, 2022, 10:25 a.m.",
+  },
+  {
+    id: 9,
+    name: "django",
+    slug: "django",
+    createdAt: "Dec. 6, 2022, 10:27 a.m.",
+  },
+  {
+    id: 10,
+    name: "js",
+    slug: "js",
+    createdAt: "Dec. 6, 2022, 10:42 a.m.",
+  },
+  {
+    id: 11,
+    name: "react js",
+    slug: "react-js",
+    createdAt: "Dec. 6, 2022, 10:42 a.m.",
+  },
+  {
+    id: 12,
+    name: "wordpress",
+    slug: "wordpress",
+    createdAt: "Dec. 6, 2022, 10:37 a.m.",
+  },
+  {
+    id: 13,
+    name: "wp",
+    slug: "wp",
+    createdAt: "Dec. 6, 2022, 10:37 a.m.",
+  },
+];
+
 export const allBlogs = [
   {
     id: 1,
