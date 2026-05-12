@@ -23,7 +23,6 @@ import CourseDetail1 from "../../Courses/Pages/Coursedetail1";
 import BlogCategories from "../../CMS/components/BlogCategories";
 import CourseDetail2 from "../../Courses/Pages/Coursedetail2";
 import BlogTags from "../../CMS/components/BlogTags";
-import CourseDetail1 from "../../Courses/Pages/Coursedetail1";
 import Comments from "../../CMS/pages/Comments";
 import CommentForm from "../../CMS/components/CommentForm";
 function DashboardRoutes() {
