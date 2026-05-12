@@ -61,9 +61,12 @@ const DemoSwitcher = ({ onClose }) => {
         {/* Demos Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10 pr-2">
           {demoKeys.map((key) => {
-            const isActive =
-              savedTheme &&
-              JSON.stringify(savedTheme) === JSON.stringify(presets[key]);
+            const isThemeActive = (preset) => {
+              if (!savedTheme) return false;
+              return JSON.stringify(savedTheme) === JSON.stringify(preset);
+           };
+
+            const isActive = isThemeActive(presets[key]);
 
             return (
               <div key={key} className="group">
