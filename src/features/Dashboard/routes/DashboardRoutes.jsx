@@ -22,6 +22,8 @@ import CoursesPage from "../../Courses/Pages/CoursePage";
 import BlogCategories from "../../CMS/components/BlogCategories";
 import BlogTags from "../../CMS/components/BlogTags";
 import CourseDetail1 from "../../Courses/Pages/Coursedetail1";
+import Comments from "../../CMS/pages/Comments";
+import CommentForm from "../../CMS/components/CommentForm";
 function DashboardRoutes() {
   return (
     <Routes>
@@ -66,11 +68,11 @@ function DashboardRoutes() {
             </ProtectedRoute>
           }
         />
-         <Route
+        <Route
           path="/course-details-1"
           element={
             <ProtectedRoute>
-  <CourseDetail1 />
+              <CourseDetail1 />
             </ProtectedRoute>
           }
         />
@@ -223,6 +225,22 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <BlogTags />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="comments"
+          element={
+            <ProtectedRoute>
+              <Comments />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="edit-comment/:id"
+          element={
+            <ProtectedRoute>
+              <CommentForm />
             </ProtectedRoute>
           }
         />

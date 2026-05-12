@@ -1,3 +1,51 @@
+export const commentsData = [
+  {
+    id: 1,
+    author: "John Doe",
+    email: "john@example.com",
+    comment: "This is a great post! Very helpful for React developers.",
+    post: "Mastering React Hooks",
+    status: "approved",
+    date: "May 12, 2026",
+  },
+  {
+    id: 2,
+    author: "Alice Smith",
+    email: "alice.s@webdev.com",
+    comment: "I think there is a typo in the second code block.",
+    post: "GSAP Animation Guide",
+    status: "pending",
+    date: "May 10, 2026",
+  },
+  {
+    id: 3,
+    author: "Bot_99",
+    email: "spam@bot.net",
+    comment: "Win a free iPhone by clicking this link now!",
+    post: "Introduction to Tailwind",
+    status: "spam",
+    date: "May 09, 2026",
+  },
+  {
+    id: 4,
+    author: "Mark Wilson",
+    email: "mark.w@tech.org",
+    comment: "Can you explain how to use Redux with this approach?",
+    post: "State Management 101",
+    status: "approved",
+    date: "May 08, 2026",
+  },
+  {
+    id: 5,
+    author: "Old User",
+    email: "deleted@user.com",
+    comment: "This content is no longer relevant to the latest update.",
+    post: "React v16 Features",
+    status: "trash",
+    date: "April 20, 2026",
+  },
+];
+
 export const categoriesData = [
   {
     id: 1,
