@@ -1,172 +1,173 @@
-import {
-  BarChart, Bar, XAxis, YAxis, Tooltip,
-  ResponsiveContainer, CartesianGrid, Cell
-} from 'recharts'
-import { FaChartLine } from 'react-icons/fa'
-import { useState } from 'react'
+import { useState } from "react";
 
-const data = [
-  { month: 'Jan', sent: 38,  answered: 50, hired: 27 },
-  { month: 'Feb', sent: 48,  answered: 50, hired: 24 },
-  { month: 'Mar', sent: 10,  answered: 35, hired: 48 },
-  { month: 'Apr', sent: 45,  answered: 8,  hired: 40 },
-  { month: 'May', sent: 45,  answered: 8,  hired: 48 },
-  { month: 'Jun', sent: 70,  answered: 25, hired: 30 },
-  { month: 'Jul', sent: 70,  answered: 5,  hired: 55 },
-  { month: 'Aug', sent: 35,  answered: 55, hired: 40 },
-  { month: 'Sep', sent: 48,  answered: 28, hired: 45 },
-  { month: 'Oct', sent: 35,  answered: 40, hired: 12 },
-  { month: 'Nov', sent: 35,  answered: 15, hired: 37 },
-  { month: 'Dec', sent: 10,  answered: 48, hired: 63 },
-]
+const monthlyData = [
+  { month: "Jan", hired: 40, applicationAnswered: 50, applicationSent: 25 },
+  { month: "Feb", hired: 50, applicationAnswered: 50, applicationSent: 25 },
+  { month: "Mar", hired: 10, applicationAnswered: 40, applicationSent: 45 },
+  { month: "Apr", hired: 10, applicationAnswered: 40, applicationSent: 45 },
+  { month: "May", hired: 45, applicationAnswered: 10, applicationSent: 45 },
+  { month: "Jun", hired: 65, applicationAnswered: 30, applicationSent: 35 },
+  { month: "Jul", hired: 5,  applicationAnswered: 70, applicationSent: 55 },
+  { month: "Aug", hired: 10, applicationAnswered: 65, applicationSent: 55 },
+  { month: "Sep", hired: 50, applicationAnswered: 30, applicationSent: 40 },
+  { month: "Oct", hired: 35, applicationAnswered: 40, applicationSent: 10 },
+  { month: "Nov", hired: 30, applicationAnswered: 45, applicationSent: 15 },
+  { month: "Dec", hired: 10, applicationAnswered: 50, applicationSent: 60 },
+];
 
-const LEGEND = [
-  { key: 'hired',    label: 'Hired',               color: '#C4C9E2' },
-  { key: 'answered', label: 'Application Answered', color: '#F97316' },
-  { key: 'sent',     label: 'Application Sent',     color: '#FBBF24' },
-]
+const Y_MAX = 160;
+const Y_TICKS = [0, 40, 80, 120, 160];
 
-// Tooltip — shows only the hovered segment's name + value
-const CustomTooltip = ({ active, payload, label }) => {
-  if (!active || !payload?.length) return null
+const CHUNK_META = {
+  hired: {
+    label: "Hired",
+    colorClass: "bg-slate-300 dark:bg-slate-500",
+    dotClass: "bg-slate-400",
+  },
+  applicationAnswered: {
+    label: "Application Answered",
+    colorClass: "bg-orange-400",
+    dotClass: "bg-orange-400",
+  },
+  applicationSent: {
+    label: "Application Sent",
+    colorClass: "bg-primary",
+    dotClass: "bg-primary",
+  },
+};
 
-  // recharts sends all segments in payload; find the one that was hovered
-  // We use the activeBar state passed via a trick — instead, show all but styled like image
-  // Image shows only 1 item per tooltip at a time depending on which chunk is hovered
-  // recharts stacked tooltip always gives all — we pick the last focused one
-  const item = payload[payload.length - 1]
-
-  return (
-    <div className="rounded-xl shadow-xl px-4 py-3 flex flex-col gap-2 min-w-[200px]"
-      style={{ background: 'rgba(240,242,250,0.97)', backdropFilter: 'blur(8px)' }}
-    >
-      <span className="text-sm font-semibold text-gray-600">{label}</span>
-      <div className="flex items-center gap-2.5">
-        <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: item.fill }} />
-        <span className="text-sm text-gray-500">{item.name}:</span>
-        <span className="text-sm font-bold text-gray-800 ml-auto pl-4">{item.value}</span>
-      </div>
-    </div>
-  )
-}
-
-export default function WorkingActivityChart() {
-  const [activeBar, setActiveBar] = useState(null) // { dataKey, index }
-
-  const totalHired    = data.reduce((s, d) => s + d.hired, 0)
-  const totalAnswered = data.reduce((s, d) => s + d.answered, 0)
-
-  // Returns fill with dimming when another segment is hovered
-  const getFill = (dataKey, index, baseColor) => {
-    if (!activeBar) return baseColor
-    if (activeBar.dataKey === dataKey && activeBar.index === index) return baseColor
-    // Dim other segments
-    return baseColor + '55'
-  }
+export default function WorkActivity() {
+  const [tooltip, setTooltip] = useState(null);
 
   return (
-    <div className="bg-[#ffffff] dark:bg-[#292D4A] rounded-md p-5 flex flex-col gap-5">
-
+    <div className="bg-[#ffffff] dark:bg-[#292D4A] rounded-2xl p-6 w-full shadow-lg">
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-4">
-        <h3 className="text-base font-bold text-header-text">Working Activity</h3>
-        <div className="flex items-center gap-6 flex-wrap">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-teal-500/20 flex items-center justify-center">
-              <FaChartLine className="w-3.5 h-3.5 text-teal-400" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-[10px] text-content-text">Performance</span>
-              <span className="text-sm font-bold text-header-text">{totalHired.toLocaleString()}</span>
-            </div>
+      <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+        <h2 className="text-header-text font-semibold text-lg">Working Activity</h2>
+        <div className="flex items-center gap-4 flex-wrap">
+          <div className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded-full bg-primary inline-block" />
+            <span className="text-content-text text-xs">Application Sent</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-primary/20 flex items-center justify-center">
-              <FaChartLine className="w-3.5 h-3.5 text-primary" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-[10px] text-content-text">Performance</span>
-              <span className="text-sm font-bold text-header-text">{totalAnswered.toLocaleString()}</span>
-            </div>
+          <div className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded-full bg-orange-400 inline-block" />
+            <span className="text-content-text text-xs">Application Answered</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded-full bg-slate-300 dark:bg-slate-500 inline-block" />
+            <span className="text-content-text text-xs">Hired</span>
           </div>
         </div>
       </div>
 
-      {/* Legend */}
-      <div className="flex items-center gap-5 flex-wrap">
-        {LEGEND.map((l) => (
-          <div key={l.key} className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: l.color }} />
-            <span className="text-xs text-content-text">{l.label}</span>
-          </div>
-        ))}
-      </div>
-
       {/* Chart */}
-      <ResponsiveContainer width="100%" height={240}>
-        <BarChart
-          data={data}
-          barCategoryGap="40%"
-          barSize={28}
-          onMouseLeave={() => setActiveBar(null)}
-        >
-          <CartesianGrid strokeDasharray="3 3" stroke="rgba(100,100,150,0.15)" vertical={false} />
-          <XAxis
-            dataKey="month"
-            tick={{ fill: 'var(--content-text)', fontSize: 12 }}
-            axisLine={false}
-            tickLine={false}
-          />
-          <YAxis
-            tick={{ fill: 'var(--content-text)', fontSize: 12 }}
-            axisLine={false}
-            tickLine={false}
-            ticks={[0, 40, 80, 120, 160]}
-          />
-          <Tooltip
-            content={<CustomTooltip />}
-            cursor={{ fill: 'rgba(255,255,255,0.03)' }}
-          />
+      <div className="relative flex gap-2">
+        {/* Y-axis */}
+        <div className="flex flex-col-reverse justify-between h-56 pr-2 shrink-0">
+          {Y_TICKS.map((tick) => (
+            <span key={tick} className="text-content-text text-xs leading-none">
+              {tick}
+            </span>
+          ))}
+        </div>
 
-          {/* Bottom chunk — Application Sent (yellow) */}
-          <Bar
-            dataKey="sent"
-            name="Application Sent"
-            stackId="a"
-            onMouseEnter={(_, index) => setActiveBar({ dataKey: 'sent', index })}
-          >
-            {data.map((_, index) => (
-              <Cell key={index} fill={getFill('sent', index, '#FBBF24')} />
+        {/* Bars + X labels */}
+        <div className="flex-1 flex flex-col">
+          <div className="relative h-56">
+            {/* Grid lines */}
+            {Y_TICKS.map((tick) => (
+              <div
+                key={tick}
+                className="absolute left-0 right-0 border-t border-dashed border-slate-200 dark:border-slate-600/40"
+                style={{ bottom: `${(tick / Y_MAX) * 100}%` }}
+              />
             ))}
-          </Bar>
 
-          {/* Middle chunk — Application Answered (orange) */}
-          <Bar
-            dataKey="answered"
-            name="Application Answered"
-            stackId="a"
-            onMouseEnter={(_, index) => setActiveBar({ dataKey: 'answered', index })}
-          >
-            {data.map((_, index) => (
-              <Cell key={index} fill={getFill('answered', index, '#F97316')} />
+            {/* Bars */}
+            <div className="absolute inset-0 flex items-end justify-around gap-1 px-1">
+              {monthlyData.map((d, i) => {
+                const total = d.hired + d.applicationAnswered + d.applicationSent;
+                const totalPct = Math.min((total / Y_MAX) * 100, 100);
+                const sentH  = (d.applicationSent / total) * 100;
+                const answH  = (d.applicationAnswered / total) * 100;
+                const hiredH = (d.hired / total) * 100;
+
+                const activeChunk = tooltip?.barIndex === i ? tooltip.chunk : null;
+
+                return (
+                  <div
+                    key={d.month}
+                    className="relative flex flex-col justify-end items-center flex-1"
+                    style={{ height: "100%" }}
+                    onMouseLeave={() => setTooltip(null)}
+                  >
+                    {/* Stacked bar */}
+                    <div
+                      className="relative w-5 rounded-t-md overflow-hidden"
+                      style={{ height: `${totalPct}%` }}
+                    >
+                      {/* BOTTOM — Application Sent */}
+                      <div
+                        className={`absolute bottom-0 left-0 right-0 cursor-pointer transition-all duration-150 bg-primary ${
+                          activeChunk === "applicationSent" ? "brightness-125 saturate-150" : ""
+                        }`}
+                        style={{ height: `${sentH}%` }}
+                        onMouseEnter={() => setTooltip({ barIndex: i, chunk: "applicationSent" })}
+                      />
+
+                      {/* MIDDLE — Application Answered */}
+                      <div
+                        className={`absolute left-0 right-0 cursor-pointer transition-all duration-150 bg-orange-400 ${
+                          activeChunk === "applicationAnswered" ? "brightness-125 saturate-150" : ""
+                        }`}
+                        style={{ bottom: `${sentH}%`, height: `${answH}%` }}
+                        onMouseEnter={() => setTooltip({ barIndex: i, chunk: "applicationAnswered" })}
+                      />
+
+                      {/* TOP — Hired */}
+                      <div
+                        className={`absolute top-0 left-0 right-0 cursor-pointer transition-all duration-150 bg-slate-300 dark:bg-slate-500 ${
+                          activeChunk === "hired" ? "brightness-125 saturate-150" : ""
+                        }`}
+                        style={{ height: `${hiredH}%` }}
+                        onMouseEnter={() => setTooltip({ barIndex: i, chunk: "hired" })}
+                      />
+                    </div>
+
+                    {/* Per-chunk Tooltip */}
+                    {activeChunk && (
+                      <div
+                        className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 z-30 bg-white dark:bg-[#1e2240] border border-slate-200 dark:border-slate-600 rounded-xl shadow-xl px-3 py-2.5 pointer-events-none"
+                        style={{ minWidth: "175px" }}
+                      >
+                        <p className="text-header-text font-semibold text-xs mb-1.5">{d.month}</p>
+                        <div className="flex items-center gap-2">
+                          <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${CHUNK_META[activeChunk].dotClass}`} />
+                          <span className="text-content-text text-xs flex-1">
+                            {CHUNK_META[activeChunk].label}
+                          </span>
+                          <span className="text-header-text text-xs font-bold">
+                            {d[activeChunk]}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* X-axis labels */}
+          <div className="flex justify-around px-1 pt-2">
+            {monthlyData.map((d) => (
+              <span key={d.month} className="flex-1 text-center text-content-text text-xs">
+                {d.month}
+              </span>
             ))}
-          </Bar>
-
-          {/* Top chunk — Hired (gray), rounded top */}
-          <Bar
-            dataKey="hired"
-            name="Hired"
-            stackId="a"
-            radius={[4, 4, 0, 0]}
-            onMouseEnter={(_, index) => setActiveBar({ dataKey: 'hired', index })}
-          >
-            {data.map((_, index) => (
-              <Cell key={index} fill={getFill('hired', index, '#C4C9E2')} />
-            ))}
-          </Bar>
-
-        </BarChart>
-      </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
     </div>
-  )
+  );
 }
