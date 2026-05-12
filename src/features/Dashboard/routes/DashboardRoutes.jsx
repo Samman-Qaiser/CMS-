@@ -20,10 +20,11 @@ import Blogs from "../../CMS/pages/Blogs";
 import BlogForm from "../../CMS/components/BlogForm";
 import CoursesPage from "../../Courses/Pages/CoursePage";
 import CourseDetail1 from "../../Courses/Pages/Coursedetail1";
+import BlogCategories from "../../CMS/components/BlogCategories";
+import CourseDetail2 from "../../Courses/Pages/Coursedetail2";
 function DashboardRoutes() {
   return (
     <Routes>
-    
       <Route element={<MainLayout />}>
         <Route
           index
@@ -41,21 +42,19 @@ function DashboardRoutes() {
             </ProtectedRoute>
           }
         />
-           <Route
+        <Route
           path="/activity"
           element={
             <ProtectedRoute>
-          
               <Activity />
             </ProtectedRoute>
           }
         />
-         <Route
+        <Route
           path="/profile"
           element={
             <ProtectedRoute>
-          
-            <Profile />
+              <Profile />
             </ProtectedRoute>
           }
         />
@@ -63,7 +62,7 @@ function DashboardRoutes() {
           path="/courses"
           element={
             <ProtectedRoute>
-  <CoursesPage />
+              <CoursesPage />
             </ProtectedRoute>
           }
         />
@@ -75,19 +74,27 @@ function DashboardRoutes() {
             </ProtectedRoute>
           }
         />
+           <Route
+          path="/course-details-2"
+          element={
+            <ProtectedRoute>
+  <CourseDetail2 />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/message"
           element={
             <ProtectedRoute>
-            <Messages />
+              <Messages />
             </ProtectedRoute>
           }
         />
-          <Route
+        <Route
           path="/schedule"
           element={
             <ProtectedRoute>
-            <Schedule />
+              <Schedule />
             </ProtectedRoute>
           }
         />
@@ -208,6 +215,14 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <BlogForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="blogs/categories"
+          element={
+            <ProtectedRoute>
+              <BlogCategories />
             </ProtectedRoute>
           }
         />
