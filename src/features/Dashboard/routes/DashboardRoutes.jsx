@@ -22,6 +22,10 @@ import CoursesPage from "../../Courses/Pages/CoursePage";
 import CourseDetail1 from "../../Courses/Pages/Coursedetail1";
 import BlogCategories from "../../CMS/components/BlogCategories";
 import CourseDetail2 from "../../Courses/Pages/Coursedetail2";
+
+import BlogTags from "../../CMS/components/BlogTags";
+import InstructorDashboard from "../../Instructor/Pages/Instructordashboard";
+
 function DashboardRoutes() {
   return (
     <Routes>
@@ -79,6 +83,14 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
   <CourseDetail2 />
+            </ProtectedRoute>
+          }
+        />
+          <Route
+          path="/instructor-dashboard"
+          element={
+            <ProtectedRoute>
+  <InstructorDashboard />
             </ProtectedRoute>
           }
         />
@@ -223,6 +235,14 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <BlogCategories />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="blogs/tags"
+          element={
+            <ProtectedRoute>
+              <BlogTags />
             </ProtectedRoute>
           }
         />
