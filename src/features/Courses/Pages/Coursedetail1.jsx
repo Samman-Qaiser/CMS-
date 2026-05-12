@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { FaStar, FaHeart, FaRegHeart, FaPlay, FaCheckCircle, FaArrowLeft } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
 
 const reviews = [
   {
@@ -53,16 +54,19 @@ function StarRow({ count = 5 }) {
 export default function CourseDetail1() {
   const [activeTab, setActiveTab] = useState('reviews')
   const [wishlisted, setWishlisted] = useState(false)
+  const navigate   = useNavigate()
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-[#1E2139] p-6">
       <div className="max-w-5xl mx-auto">
 
-        {/* Back */}
-        <button className="flex items-center gap-2 text-content-text mb-5 hover:text-header-text transition-colors duration-200">
-          <FaArrowLeft className="w-3.5 h-3.5" />
-          <span className="text-sm font-medium">Back</span>
-        </button>
+      <button
+            onClick={() => navigate(-1)}
+            className="flex items-center mb-4 gap-2 text-content-text hover:text-header-text transition-colors duration-200"
+          >
+            <FaArrowLeft className="w-3.5 h-3.5" />
+            <span className="text-sm font-medium">Back</span>
+          </button>
 
         {/* Main Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">

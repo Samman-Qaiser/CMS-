@@ -19,7 +19,9 @@ import PageForm from "../../CMS/components/PageForm";
 import Blogs from "../../CMS/pages/Blogs";
 import BlogForm from "../../CMS/components/BlogForm";
 import CoursesPage from "../../Courses/Pages/CoursePage";
+import CourseDetail1 from "../../Courses/Pages/Coursedetail1";
 import BlogCategories from "../../CMS/components/BlogCategories";
+import CourseDetail2 from "../../Courses/Pages/Coursedetail2";
 import BlogTags from "../../CMS/components/BlogTags";
 import CourseDetail1 from "../../Courses/Pages/Coursedetail1";
 import Comments from "../../CMS/pages/Comments";
@@ -72,7 +74,15 @@ function DashboardRoutes() {
           path="/course-details-1"
           element={
             <ProtectedRoute>
-              <CourseDetail1 />
+  <CourseDetail1 />
+            </ProtectedRoute>
+          }
+        />
+           <Route
+          path="/course-details-2"
+          element={
+            <ProtectedRoute>
+  <CourseDetail2 />
             </ProtectedRoute>
           }
         />
