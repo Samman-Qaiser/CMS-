@@ -38,6 +38,8 @@ import Subscribers from "../../CMS/pages/Subscribers";
 import InstructorCourses from "../../Instructor/Pages/InstructorCourses";
 import InstructorSchedule from "../../Instructor/Pages/InstructorSchedule";
 import StudentsPage from "../../Instructor/Pages/StudentsPage";
+import InstructorTransactions from "../../Instructor/Pages/InstructorTransactions";
+import InstructorResources from "../../Instructor/Pages/InstructorResources";
 function DashboardRoutes() {
   return (
     <Routes>
@@ -106,19 +108,20 @@ function DashboardRoutes() {
             </ProtectedRoute>
           }
         />
-             <Route
+        <Route
           path="/instructor-courses"
           element={
             <ProtectedRoute>
-  <InstructorCourses/>
+              <InstructorCourses />
             </ProtectedRoute>
           }
         />
-         <Route
+        <Route
           path="/instructor-schedule"
           element={
             <ProtectedRoute>
-  <InstructorSchedule/>
+              <InstructorSchedule />
+              <InstructorDashboard />
             </ProtectedRoute>
           }
         />
@@ -127,6 +130,22 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
   <StudentsPage/>
+            </ProtectedRoute>
+          }
+        />
+          <Route
+          path="/instructor-transactions"
+          element={
+            <ProtectedRoute>
+  <InstructorTransactions/>
+            </ProtectedRoute>
+          }
+        />
+           <Route
+          path="/instructor-resources"
+          element={
+            <ProtectedRoute>
+  <InstructorResources/>
             </ProtectedRoute>
           }
         />
