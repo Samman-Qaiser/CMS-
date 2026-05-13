@@ -9,12 +9,12 @@ const data = [
 
 export default function CoursesChart() {
   return (
-    <div className="bg-[#ffffff] w-[50%] dark:bg-[#292D4A] rounded-md p-5 flex flex-col gap-4">
+    <div className="bg-[#ffffff] w-[100%] dark:bg-[#292D4A] rounded-md p-5 flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h3 className="text-base font-bold text-header-text">Courses</h3>
         <div className="flex items-center gap-2 bg-primary/10 rounded-md px-3 py-1.5">
           <span className="text-lg font-bold text-primary">100</span>
-          <span className="text-xs text-primary">+19% than last year</span>
+          <span className="text-xs text-header-text">+19% than last year</span>
         </div>
       </div>
 

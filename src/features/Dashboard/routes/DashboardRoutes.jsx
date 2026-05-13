@@ -22,12 +22,17 @@ import CoursesPage from "../../Courses/Pages/CoursePage";
 import CourseDetail1 from "../../Courses/Pages/Coursedetail1";
 import BlogCategories from "../../CMS/components/BlogCategories";
 import CourseDetail2 from "../../Courses/Pages/Coursedetail2";
+
 import BlogTags from "../../CMS/components/BlogTags";
+import InstructorDashboard from "../../Instructor/Pages/Instructordashboard";
+
+
 import Comments from "../../CMS/pages/Comments";
 import CommentForm from "../../CMS/components/CommentForm";
 import Subscribers from "../../CMS/pages/Subscribers";
-import Contact from "../../CMS/pages/Contact";
-import InstructorDashboard from "../../Instructor/Pages/Instructordashboard";
+import InstructorCourses from "../../Instructor/Pages/InstructorCourses";
+import InstructorSchedule from "../../Instructor/Pages/InstructorSchedule";
+import Contact from "../../CMS/pages/Contact"; 
 import MenuSetup from "../../CMS/pages/MenuSetup";
 
 function DashboardRoutes() {
@@ -94,6 +99,23 @@ function DashboardRoutes() {
           path="/instructor-dashboard"
           element={
             <ProtectedRoute>
+  <InstructorDashboard />
+            </ProtectedRoute>
+          }
+        />
+             <Route
+          path="/instructor-courses"
+          element={
+            <ProtectedRoute>
+  <InstructorCourses/>
+            </ProtectedRoute>
+          }
+        />
+         <Route
+          path="/instructor-schedule"
+          element={
+            <ProtectedRoute>
+  <InstructorSchedule/>
               <InstructorDashboard />
             </ProtectedRoute>
           }
