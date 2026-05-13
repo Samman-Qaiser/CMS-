@@ -1,10 +1,28 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import { BsTrash, BsPencilSquare, BsEye, BsX } from "react-icons/bs";
+import {
+  BsTrash,
+  BsPencilSquare,
+  BsEye,
+  BsX,
+  BsChevronLeft,
+  BsChevronRight,
+} from "react-icons/bs";
 import Swal from "sweetalert2";
 
-const ContactTable = ({ contacts = [], onEdit }) => {
+const ContactTable = ({ contacts = [], onEdit, onDelete }) => {
   const [selectedContact, setSelectedContact] = useState(null);
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;  
+
+  // Pagination Logic
+  const totalPages = Math.ceil(contacts.length / itemsPerPage) || 1;
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = contacts.slice(indexOfFirstItem, indexOfLastItem);
+
   const confirmDelete = (id) => {
     Swal.fire({
       title: "Are you sure?",
@@ -13,8 +31,14 @@ const ContactTable = ({ contacts = [], onEdit }) => {
       confirmButtonColor: "#ef4444",
       confirmButtonText: "Delete",
     }).then((result) => {
-      if (result.isConfirmed) console.log("deleted id", id);
+      if (result.isConfirmed && onDelete) onDelete(id);
     });
+  };
+
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
   };
 
   return (
@@ -39,12 +63,12 @@ const ContactTable = ({ contacts = [], onEdit }) => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
-              {contacts.map((contact) => (
+              {currentItems.map((contact) => (
                 <tr
                   key={contact.id}
                   className="hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors"
                 >
-                  <td className="py-4 px-6 text-sm font-medium">
+                  <td className="py-4 px-6 text-sm font-medium text-gray-700 dark:text-gray-200">
                     {contact.name}
                   </td>
                   <td className="py-4 px-2 text-sm text-gray-500">
@@ -57,22 +81,22 @@ const ContactTable = ({ contacts = [], onEdit }) => {
                     {contact.message}
                   </td>
                   <td className="py-4 px-2">
-                    <div className="flex justify-center gap-2">
+                    <div className="flex justify-center gap-2"> 
                       <button
                         onClick={() => setSelectedContact(contact)}
-                        className="p-2 bg-blue-50 text-blue-500 rounded-lg hover:bg-blue-500 hover:text-white transition-all"
+                        className="p-2 bg-primary/10 text-primary rounded-lg hover:bg-primary hover:text-white transition-all shadow-sm"
                       >
                         <BsEye size={16} />
                       </button>
                       <button
                         onClick={() => onEdit(contact)}
-                        className="p-2 bg-primary/10 text-primary rounded-lg hover:bg-primary hover:text-white transition-all"
+                        className="p-2 bg-primary/10 text-primary rounded-lg hover:bg-primary hover:text-white transition-all shadow-sm"
                       >
                         <BsPencilSquare size={16} />
                       </button>
                       <button
                         onClick={() => confirmDelete(contact.id)}
-                        className="p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all"
+                        className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all shadow-sm"
                       >
                         <BsTrash size={16} />
                       </button>
@@ -83,11 +107,39 @@ const ContactTable = ({ contacts = [], onEdit }) => {
             </tbody>
           </table>
         </div>
+
+        {/* --- Pagination Footer  --- */}
+        <div className="p-6 flex items-center justify-between border-t border-gray-50 dark:border-gray-800">
+          <p className="text-sm text-gray-400">
+            Page {currentPage} of {totalPages}.
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className={`p-2 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all disabled:opacity-30`}
+            >
+              <BsChevronLeft size={14} className="text-gray-400" />
+            </button>
+            <button className="w-10 h-10 flex items-center justify-center bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/30">
+              {currentPage}
+            </button>
+
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className={`p-2 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all disabled:opacity-30`}
+            >
+              <BsChevronRight size={14} className="text-gray-400" />
+            </button>
+          </div>
+        </div>
       </motion.div>
+
+      {/* Contact detail modal */}
       <AnimatePresence>
         {selectedContact && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -95,14 +147,12 @@ const ContactTable = ({ contacts = [], onEdit }) => {
               onClick={() => setSelectedContact(null)}
               className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             />
-            {/* Modal Content */}
             <motion.div
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               className="relative w-full max-w-lg bg-white dark:bg-[#292d4a] rounded-xl shadow-2xl overflow-hidden"
             >
-              {/* Header */}
               <div className="flex items-center justify-between p-5 border-b dark:border-gray-700">
                 <h3 className="text-lg font-bold text-gray-700 dark:text-gray-200">
                   Contact Info
@@ -114,22 +164,20 @@ const ContactTable = ({ contacts = [], onEdit }) => {
                   <BsX size={24} />
                 </button>
               </div>
-              {/* Body */}
               <div className="p-8 space-y-4">
-                <p className="text-lg font-bold text-content-text">
+                <p className="text-lg font-bold text-gray-800 dark:text-white">
                   {selectedContact.name}
                 </p>
-                <p className="text-md font-semibold text-content-text">
+                <p className="text-md font-semibold text-gray-600 dark:text-gray-300">
                   {selectedContact.email}
                 </p>
-                <p className="text-md font-semibold text-content-text">
+                <p className="text-md font-semibold text-gray-600 dark:text-gray-300">
                   {selectedContact.phone}
                 </p>
-                <p className="text-md font-medium text-content-text leading-relaxed pt-2">
+                <p className="text-md font-medium text-gray-600 dark:text-gray-400 leading-relaxed pt-2">
                   {selectedContact.message}
                 </p>
               </div>
-              {/* Footer */}
               <div className="p-5 flex justify-end">
                 <button
                   onClick={() => setSelectedContact(null)}

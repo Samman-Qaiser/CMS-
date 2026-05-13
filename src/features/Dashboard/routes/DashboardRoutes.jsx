@@ -28,6 +28,7 @@ import CommentForm from "../../CMS/components/CommentForm";
 import Subscribers from "../../CMS/pages/Subscribers";
 import Contact from "../../CMS/pages/Contact";
 import InstructorDashboard from "../../Instructor/Pages/Instructordashboard";
+import MenuSetup from "../../CMS/pages/MenuSetup";
 
 function DashboardRoutes() {
   return (
@@ -85,15 +86,15 @@ function DashboardRoutes() {
           path="/course-details-2"
           element={
             <ProtectedRoute>
-  <CourseDetail2 />
+              <CourseDetail2 />
             </ProtectedRoute>
           }
         />
-          <Route
+        <Route
           path="/instructor-dashboard"
           element={
             <ProtectedRoute>
-  <InstructorDashboard />
+              <InstructorDashboard />
             </ProtectedRoute>
           }
         />
@@ -278,6 +279,14 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <Contact />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="menus/setup"
+          element={
+            <ProtectedRoute>
+              <MenuSetup />
             </ProtectedRoute>
           }
         />
