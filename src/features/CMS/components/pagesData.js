@@ -1,3 +1,52 @@
+export const initialMenusData = {
+  "Header Menu": [
+    { id: "h1", label: "Home", type: "Page" },
+    { id: "h2", label: "About", type: "Page" },
+    {
+      id: "h3",
+      label: "Pages",
+      type: "Link",
+      children: [
+        { id: "h3-1", label: "Secret", type: "Page" },
+        { id: "h3-2", label: "Blog Detail", type: "Link" },
+      ],
+    },
+    { id: "h4", label: "Blogs", type: "Link" },
+  ],
+  "Footer Menu": [
+    { id: "f1", label: "We Heard You Wanted to Add SSH Keys", type: "Blog" },
+    {
+      id: "f2",
+      label: "Black Friday: All of Our Deals in One Spot",
+      type: "Blog",
+    },
+    {
+      id: "f3",
+      label:
+        "React.js Lifecycle — Initialization, Mounting, Updating, and Unmounting",
+      type: "Blog",
+    },
+    {
+      id: "f4",
+      label:
+        "LastPass Admits to Severe Data Breach, Encrypted Password Vaults Stolen",
+      type: "Blog",
+    },
+  ],
+  "main menu": [
+    { id: "m1", label: "We Heard You Wanted to Add SSH Keys", type: "Blog" },
+    {
+      id: "m2",
+      label: "Black Friday: All of Our Deals in One Spot",
+      type: "Blog",
+    },
+    { id: "m3", label: "About", type: "Page" },
+    { id: "m4", label: "Secret", type: "Page" },
+    { id: "m5", label: "Home", type: "Page" },
+    { id: "m6", label: "About", type: "Page" },
+  ],
+};
+
 export const allPages = [
   {
     id: 1,

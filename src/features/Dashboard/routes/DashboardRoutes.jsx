@@ -40,6 +40,7 @@ import InstructorSchedule from "../../Instructor/Pages/InstructorSchedule";
 import StudentsPage from "../../Instructor/Pages/StudentsPage";
 import InstructorTransactions from "../../Instructor/Pages/InstructorTransactions";
 import InstructorResources from "../../Instructor/Pages/InstructorResources";
+import InstructorLiveClass from "../../Instructor/Pages/InstructorLiveClass";
 function DashboardRoutes() {
   return (
     <Routes>
@@ -121,15 +122,14 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <InstructorSchedule />
-              <InstructorDashboard />
             </ProtectedRoute>
           }
         />
-         <Route
+        <Route
           path="/instructor-students"
           element={
             <ProtectedRoute>
-  <StudentsPage/>
+              <StudentsPage />
             </ProtectedRoute>
           }
         />
@@ -146,6 +146,15 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
   <InstructorResources/>
+            </ProtectedRoute>
+          }
+        />
+        
+           <Route
+          path="/instructor-liveclass"
+          element={
+            <ProtectedRoute>
+  <InstructorLiveClass/>
             </ProtectedRoute>
           }
         />

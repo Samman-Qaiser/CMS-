@@ -171,17 +171,17 @@ export default function InstructorResources() {
               <div className="flex flex-col gap-3">
                 <div className="flex items-start gap-3">
                   <FaMapMarkerAlt className="w-4 h-4 text-white/80 mt-0.5 shrink-0" />
-                  <span className="text-xs text-white/90 leading-relaxed">
+                  <span className="text-sm text-white/90 leading-relaxed">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
                   </span>
                 </div>
                 <div className="flex items-center gap-3">
                   <FaPhone className="w-4 h-4 text-white/80 shrink-0" />
-                  <span className="text-xs text-white/90">+1234567890</span>
+                  <span className="text-sm text-white/90">+1234567890</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <FaEnvelope className="w-4 h-4 text-white/80 shrink-0" />
-                  <span className="text-xs text-white/90">lovia@support.com</span>
+                  <span className="text-sm text-white/90">lovia@support.com</span>
                 </div>
               </div>
             </div>
