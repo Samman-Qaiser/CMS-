@@ -1,24 +1,28 @@
-import { useState } from "react";
+/* eslint-disable react-hooks/set-state-in-effect */
+import { useState, useEffect } from "react";
 import { BsChevronDown, BsPlus } from "react-icons/bs";
 
-const Menu = () => {
+const Menu = ({ activeMenu, setActiveMenu, menus, onAddClick }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedMenu, setSelectedMenu] = useState("Header Menu");
-
-  const menus = ["Header Menu", "Footer Menu", "main menu", "vhtarfe"];
+  const [localSelected, setLocalSelected] = useState(activeMenu);
+ 
+  useEffect(() => {
+    setLocalSelected(activeMenu);
+  }, [activeMenu]);
 
   return (
     <div className="bg-white dark:bg-[#292d4a] rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 transition-all">
-      {/* Upper Section */}
       <div className="p-5 flex items-center justify-between border-b border-gray-50 dark:border-gray-800">
         <h3 className="text-primary font-bold text-lg">Menu</h3>
-        <button className="flex items-center gap-1 px-4 py-2 bg-primary/10 text-primary font-bold rounded-lg hover:bg-primary hover:text-white transition-all">
+        <button
+          onClick={onAddClick}
+          className="flex items-center gap-1 px-4 py-2 bg-primary/10 text-primary font-bold rounded-lg hover:bg-primary hover:text-white transition-all"
+        >
           <BsPlus size={20} />
           <span>Add menu</span>
         </button>
       </div>
 
-      {/* Lower Section */}
       <div className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <p className="text-gray-600 dark:text-gray-300 font-bold">
           Select a menu to edit
@@ -30,7 +34,7 @@ const Menu = () => {
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="w-full flex items-center justify-between px-4 py-3 bg-white dark:bg-[#2e3458] border border-primary rounded-xl text-gray-500 dark:text-gray-300 transition-all"
             >
-              <span>{selectedMenu}</span>
+              <span>{localSelected || "Select a menu..."}</span>
               <BsChevronDown
                 className={`transition-transform ${isDropdownOpen ? "rotate-180" : ""}`}
               />
@@ -42,13 +46,13 @@ const Menu = () => {
                   <div
                     key={menu}
                     onClick={() => {
-                      setSelectedMenu(menu);
+                      setLocalSelected(menu);
                       setIsDropdownOpen(false);
                     }}
                     className={`px-4 py-3 cursor-pointer transition-colors ${
-                      selectedMenu === menu
-                        ? "bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-white"
-                        : "text-gray-500 hover:bg-gray-50 dark:hover:bg-white/5"
+                      localSelected === menu
+                        ? "bg-gray-100 dark:bg-white/10 text-gray-900"
+                        : "text-gray-500 hover:bg-gray-50"
                     }`}
                   >
                     {menu}
@@ -58,7 +62,10 @@ const Menu = () => {
             )}
           </div>
 
-          <button className="px-8 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary-dark transition-all">
+          <button
+            onClick={() => setActiveMenu(localSelected)}
+            className="px-8 py-3 bg-primary text-white font-bold rounded-xl hover:opacity-90 transition-all"
+          >
             Select
           </button>
         </div>
