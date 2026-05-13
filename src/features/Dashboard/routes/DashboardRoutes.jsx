@@ -30,6 +30,8 @@ import InstructorDashboard from "../../Instructor/Pages/Instructordashboard";
 import Comments from "../../CMS/pages/Comments";
 import CommentForm from "../../CMS/components/CommentForm";
 import Subscribers from "../../CMS/pages/Subscribers";
+import InstructorCourses from "../../Instructor/Pages/InstructorCourses";
+import InstructorSchedule from "../../Instructor/Pages/InstructorSchedule";
 function DashboardRoutes() {
   return (
     <Routes>
@@ -95,6 +97,22 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
   <InstructorDashboard />
+            </ProtectedRoute>
+          }
+        />
+             <Route
+          path="/instructor-courses"
+          element={
+            <ProtectedRoute>
+  <InstructorCourses/>
+            </ProtectedRoute>
+          }
+        />
+         <Route
+          path="/instructor-schedule"
+          element={
+            <ProtectedRoute>
+  <InstructorSchedule/>
             </ProtectedRoute>
           }
         />

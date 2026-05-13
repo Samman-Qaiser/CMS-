@@ -26,8 +26,8 @@ const CHUNK_META = {
   },
   applicationAnswered: {
     label: "Application Answered",
-    colorClass: "bg-orange-400",
-    dotClass: "bg-orange-400",
+    colorClass: "bg-secondary",
+    dotClass: "bg-secondary",
   },
   applicationSent: {
     label: "Application Sent",

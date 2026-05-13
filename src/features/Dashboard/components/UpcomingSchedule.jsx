@@ -33,10 +33,10 @@ const UpcomingSchedule = () => {
   ];
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex w-[100%] flex-col gap-4">
       <div className="flex justify-between items-center mb-2">
-        <h3 className="text-xl font-bold text-header-text">Upcoming Schedule</h3>
-        <button className="text-white  text-[[12px] cursor-pointer bg-primary px-2 py-1 rounded-md text-[14px] hover:bg-primary/90 transition-all">
+        <h3 className=" font-bold text-header-text">Upcoming Schedule</h3>
+        <button className="text-white   cursor-pointer bg-primary px-2 py-1 rounded-md text-[14px] hover:bg-primary/90 transition-all">
           View all
         </button>
       </div>
@@ -60,15 +60,16 @@ const UpcomingSchedule = () => {
                     <img src={item.avatar} alt="instructor" className="w-6 h-6 rounded-full border border-white/10" />
                     <span>{item.instructor}</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Calendar size={14} />
-                    <span>{item.date}</span>
-                  </div>
+               
                   <div className="flex items-center gap-2">
                     <Clock size={14} />
                     <span>{item.time}</span>
                   </div>
                 </div>
+                   <div className="flex text-content-text text-xs items-center gap-2">
+                    <Calendar size={14} />
+                    <span>{item.date}</span>
+                  </div>
               </div>
 
               <button className="text-white/20 group-hover:text-primary transition-colors">

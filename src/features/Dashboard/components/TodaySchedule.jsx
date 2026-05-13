@@ -261,8 +261,8 @@ export default function TodaySchedule() {
   const isDark  = document.documentElement.classList.contains("dark");
 
   return (
-    <div className={`w-full flex flex-col bg-white dark:bg-[#292D4A] overflow-x-auto ${isDark ? "" : "scheduler-light"}`}>
-      <div className="min-w-[700px] flex flex-col">
+    <div className={`w-full h-auto flex flex-col bg-white dark:bg-[#292D4A] overflow-x-auto ${isDark ? "" : "scheduler-light"}`}>
+      <div className="w-[100%] flex shrink-0  flex-col">
 
         {/* ── Toolbar ── */}
         <div className="flex items-center px-5 py-3 gap-4 border-b border-black/8 dark:border-white/8">

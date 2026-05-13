@@ -14,7 +14,7 @@ export default function CoursesChart() {
         <h3 className="text-base font-bold text-header-text">Courses</h3>
         <div className="flex items-center gap-2 bg-primary/10 rounded-md px-3 py-1.5">
           <span className="text-lg font-bold text-primary">100</span>
-          <span className="text-xs text-primary">+19% than last year</span>
+          <span className="text-xs text-header-text">+19% than last year</span>
         </div>
       </div>
 

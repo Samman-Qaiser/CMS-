@@ -45,7 +45,7 @@ function Header() {
         transition-all duration-500 ease-in-out
         ${scrolled
           ? `bg-white/10 dark:bg-white/5
-             backdrop-blur-2xl
+             backdrop-blur-sm
              border-white/20 dark:border-white/10
              shadow-[0_8px_32px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.2)]`
           : 'bg-transparent border-transparent shadow-none backdrop-blur-none'
