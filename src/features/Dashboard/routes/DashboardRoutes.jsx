@@ -24,14 +24,20 @@ import BlogCategories from "../../CMS/components/BlogCategories";
 import CourseDetail2 from "../../Courses/Pages/Coursedetail2";
 
 import BlogTags from "../../CMS/components/BlogTags";
-import InstructorDashboard from "../../Instructor/Pages/Instructordashboard";
-
 
 import Comments from "../../CMS/pages/Comments";
+
+import Contact from "../../CMS/pages/Contact";
+import InstructorDashboard from "../../Instructor/Pages/Instructordashboard";
+import MenuSetup from "../../CMS/pages/MenuSetup";
+
+
+
 import CommentForm from "../../CMS/components/CommentForm";
 import Subscribers from "../../CMS/pages/Subscribers";
 import InstructorCourses from "../../Instructor/Pages/InstructorCourses";
 import InstructorSchedule from "../../Instructor/Pages/InstructorSchedule";
+import StudentsPage from "../../Instructor/Pages/StudentsPage";
 function DashboardRoutes() {
   return (
     <Routes>
@@ -92,11 +98,11 @@ function DashboardRoutes() {
             </ProtectedRoute>
           }
         />
-          <Route
+        <Route
           path="/instructor-dashboard"
           element={
             <ProtectedRoute>
-  <InstructorDashboard />
+              <InstructorDashboard />
             </ProtectedRoute>
           }
         />
@@ -113,6 +119,14 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
   <InstructorSchedule/>
+            </ProtectedRoute>
+          }
+        />
+         <Route
+          path="/instructor-students"
+          element={
+            <ProtectedRoute>
+  <StudentsPage/>
             </ProtectedRoute>
           }
         />
@@ -289,6 +303,22 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <Subscribers />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="contact-us"
+          element={
+            <ProtectedRoute>
+              <Contact />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="menus/setup"
+          element={
+            <ProtectedRoute>
+              <MenuSetup />
             </ProtectedRoute>
           }
         />
