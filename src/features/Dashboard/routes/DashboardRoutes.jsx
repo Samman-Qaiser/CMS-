@@ -31,11 +31,16 @@ import Contact from "../../CMS/pages/Contact";
 import InstructorDashboard from "../../Instructor/Pages/Instructordashboard";
 import MenuSetup from "../../CMS/pages/MenuSetup";
 
+
+
 import CommentForm from "../../CMS/components/CommentForm";
 import Subscribers from "../../CMS/pages/Subscribers";
 import InstructorCourses from "../../Instructor/Pages/InstructorCourses";
 import InstructorSchedule from "../../Instructor/Pages/InstructorSchedule";
 import StudentsPage from "../../Instructor/Pages/StudentsPage";
+import InstructorTransactions from "../../Instructor/Pages/InstructorTransactions";
+import InstructorResources from "../../Instructor/Pages/InstructorResources";
+import InstructorLiveClass from "../../Instructor/Pages/InstructorLiveClass";
 function DashboardRoutes() {
   return (
     <Routes>
@@ -125,6 +130,31 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <StudentsPage />
+            </ProtectedRoute>
+          }
+        />
+          <Route
+          path="/instructor-transactions"
+          element={
+            <ProtectedRoute>
+  <InstructorTransactions/>
+            </ProtectedRoute>
+          }
+        />
+           <Route
+          path="/instructor-resources"
+          element={
+            <ProtectedRoute>
+  <InstructorResources/>
+            </ProtectedRoute>
+          }
+        />
+        
+           <Route
+          path="/instructor-liveclass"
+          element={
+            <ProtectedRoute>
+  <InstructorLiveClass/>
             </ProtectedRoute>
           }
         />
