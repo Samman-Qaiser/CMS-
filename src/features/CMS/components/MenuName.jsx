@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Reorder } from "framer-motion";
 import { BsChevronDown, BsArrowsMove, BsTrash } from "react-icons/bs";
 import { MenuItemForm } from "./MenuItemForm";
 
@@ -12,12 +12,13 @@ const MenuName = ({
   onRemoveItem,
   onUpdateItem,
   onDeleteMenu,
+  onReorder,
 }) => {
   const [openItem, setOpenItem] = useState(null);
 
   return (
     <div className="bg-white dark:bg-[#292d4a] rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-      {/* Header Section */}
+      {/* Header Section (Unchanged) */}
       <div className="bg-primary p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-4 w-full sm:w-auto">
           <h3 className="text-white font-bold text-lg whitespace-nowrap">
@@ -32,13 +33,14 @@ const MenuName = ({
         </div>
         <button
           onClick={() => onSave(activeMenuName, menuItems)}
-          className="cursor-pointer active:scale-95 transition-all px-3 py-1 bg-primary hover:bg-primary-dark rounded-lg text-white font-bold "
+          className="cursor-pointer active:scale-95 transition-all px-3 py-1 bg-primary hover:bg-primary-dark rounded-lg text-white font-bold"
         >
           Save Menu
         </button>
       </div>
 
       <div className="p-6 space-y-4 min-h-[400px]">
+        {/* Helper Text */}
         <div className="mb-6">
           <h4 className="text-sm font-bold text-gray-700 dark:text-gray-200">
             Menu Structure
@@ -46,7 +48,7 @@ const MenuName = ({
           <p className="text-xs text-gray-400">
             {isAddingNew
               ? "Add menu items from the left."
-              : "Drag each item into the order you prefer."}
+              : "Drag the move icon to reorder items."}
           </p>
         </div>
 
@@ -55,10 +57,17 @@ const MenuName = ({
             <p className="text-gray-400 italic">No items added yet.</p>
           </div>
         ) : (
-          <div className="space-y-3">
+          /* Reorder.Group */
+          <Reorder.Group
+            axis="y"
+            values={menuItems}
+            onReorder={onReorder}
+            className="space-y-3"
+          >
             {menuItems.map((item) => (
-              <div
+              <Reorder.Item
                 key={item.id}
+                value={item}
                 className={`border rounded-xl overflow-hidden bg-white dark:bg-[#2e3458] transition-colors ${
                   openItem === item.id
                     ? "border-primary/50 shadow-md"
@@ -66,16 +75,18 @@ const MenuName = ({
                 }`}
               >
                 {/* Accordion Header */}
-                <div
-                  className="flex items-center p-4 cursor-pointer select-none"
-                  onClick={() =>
-                    setOpenItem(openItem === item.id ? null : item.id)
-                  }
-                >
-                  <div className="text-primary mr-4">
+                <div className="flex items-center p-4 select-none">
+                  {/* The Drag Handle */}
+                  <div className="text-primary mr-4 cursor-grab active:cursor-grabbing">
                     <BsArrowsMove size={18} />
                   </div>
-                  <div className="flex-1 flex items-center justify-between">
+
+                  <div
+                    className="flex-1 flex items-center justify-between cursor-pointer"
+                    onClick={() =>
+                      setOpenItem(openItem === item.id ? null : item.id)
+                    }
+                  >
                     <p
                       className={`text-xs font-medium ${openItem === item.id ? "text-primary" : "text-gray-700 dark:text-gray-200"}`}
                     >
@@ -115,17 +126,17 @@ const MenuName = ({
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </div>
+              </Reorder.Item>
             ))}
-          </div>
+          </Reorder.Group>
         )}
       </div>
 
-      {/* Footer Save Section */}
+      {/* Footer */}
       <div className="p-4 bg-gray-50 dark:bg-black/10 border-t border-gray-200 flex items-center justify-between">
         <button
           type="button"
-          onClick={onDeleteMenu} 
+          onClick={onDeleteMenu}
           className="flex items-center gap-2 cursor-pointer active:scale-95 transition-all text-red-500 hover:bg-red-50 p-2 rounded-lg font-bold"
         >
           <BsTrash size={20} />

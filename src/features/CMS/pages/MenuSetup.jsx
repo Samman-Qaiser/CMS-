@@ -28,6 +28,9 @@ const MenuSetup = () => {
     setActiveMenu("");
     setCurrentMenuItems([]);
   };
+  const handleReorder = (newOrder) => {
+    setCurrentMenuItems(newOrder);
+  };
 
   const handleAddToMenu = (selectedItems) => {
     const newItemsWithIds = selectedItems.map((item) => ({
@@ -129,6 +132,7 @@ const MenuSetup = () => {
             activeMenuName={activeMenu}
             isAddingNew={isAddingNew}
             menuItems={currentMenuItems}
+            onReorder={handleReorder}
             onSave={handleSaveMenu}
             onDeleteMenu={() => handleDeleteMenu(activeMenu)}
             onUpdateName={setActiveMenu}
