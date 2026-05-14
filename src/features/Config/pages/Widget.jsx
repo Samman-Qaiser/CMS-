@@ -1,7 +1,99 @@
-const Widget = () => {
-  return (
-    <div>Widget</div>
-  )
-}
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
-export default Widget
+const WIDGET_CONFIG = [
+  { id: "showRecentPost", label: "Show Recent Post Widget" },
+  { id: "showTag", label: "Show Tag Widget" },
+  { id: "showSidebar", label: "Show Sidebar" },
+  { id: "showSearch", label: "Show Search Widget" },
+  { id: "showCategory", label: "Show Category Widget" },
+  { id: "showArchive", label: "Show Archive Widget" },
+];
+
+const Widget = () => {
+  const navigate = useNavigate();
+
+  const [widgets, setWidgets] = useState({
+    showRecentPost: true,
+    showTag: true,
+    showSidebar: true,
+    showSearch: true,
+    showCategory: true,
+    showArchive: true,
+  });
+
+  const handleChange = (e) => {
+    const { name, checked } = e.target;
+    setWidgets((prev) => ({ ...prev, [name]: checked }));
+  };
+
+  const handleSave = (e) => {
+    e.preventDefault();
+
+    Swal.fire({
+      title: "Settings Saved!",
+      text: "Widget configurations have been updated successfully.",
+      icon: "success",
+      confirmButtonColor: "var(--primary)",
+      background: document.documentElement.classList.contains("dark")
+        ? "#292d4a"
+        : "#fff",
+      color: document.documentElement.classList.contains("dark")
+        ? "#fff"
+        : "#545454",
+    });
+  };
+
+  return (
+    <div className="bg-white dark:bg-[#292d4a] rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden max-w-6xl mx-auto animate-fadeIn">
+      {/* Header Section */}
+      <div className="py-6 px-8 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+        <h3 className="text-primary font-medium text-lg">Configurations</h3>
+        <button
+          onClick={() => navigate("/dashboard/configurations/add-config")}
+          className="bg-primary text-white px-6 py-2 rounded-lg font-semibold hover:opacity-90 transition-all active:scale-95 text-sm"
+        >
+          Add Config
+        </button>
+      </div>
+
+      {/* Form Section */}
+      <form onSubmit={handleSave} className="p-8 space-y-8">
+        <div className="space-y-5"> 
+          {WIDGET_CONFIG.map((item) => (
+            <div
+              key={item.id}
+              className="grid grid-cols-1 md:grid-cols-3 items-center gap-4"
+            >
+              <label className="text-content-text text-sm font-medium">
+                {item.label}
+              </label>
+              <div className="md:col-span-2">
+                <input
+                  type="checkbox"
+                  name={item.id}
+                  checked={widgets[item.id]}
+                  onChange={handleChange}
+                  className="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary accent-primary cursor-pointer transition-all"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Action Footer */}
+        <div className="pt-6 border-t border-gray-100 dark:border-gray-700">
+          <button
+            type="submit"
+            className="px-10 py-3 bg-primary text-white font-bold rounded-xl shadow-lg hover:opacity-90 active:scale-95 transition-all"
+          >
+            Save
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default Widget;

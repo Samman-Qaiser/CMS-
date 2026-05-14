@@ -56,6 +56,25 @@ const ConfigForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // 1. Validation Check
+    if (!formData.name.trim() || !formData.value.trim()) {
+      Swal.fire({
+        title: "Error!",
+        text: "Name and Value fields are required.",
+        icon: "error",
+        confirmButtonColor: "#ef4444", // Red color for error
+        background: document.documentElement.classList.contains("dark")
+          ? "#292d4a"
+          : "#fff",
+        color: document.documentElement.classList.contains("dark")
+          ? "#fff"
+          : "#545454",
+      });
+      return; // Stop execution here
+    }
+
+    // 2. Proceed if valid
     console.log("Form Submitted:", formData);
 
     Swal.fire({
@@ -127,6 +146,7 @@ const ConfigForm = () => {
                   <input
                     type="text"
                     name="name"
+                    required
                     value={formData.name}
                     onChange={handleChange}
                     placeholder="Site.favicon"
@@ -140,6 +160,7 @@ const ConfigForm = () => {
                   </label>
                   <input
                     type="text"
+                    required
                     name="value"
                     value={formData.value}
                     onChange={handleChange}
