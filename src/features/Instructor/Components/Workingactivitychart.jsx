@@ -50,7 +50,7 @@ export default function WorkActivity() {
             <span className="text-content-text text-xs">Application Sent</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-orange-400 inline-block" />
+            <span className="w-3 h-3 rounded-full bg-secondary inline-block" />
             <span className="text-content-text text-xs">Application Answered</span>
           </div>
           <div className="flex items-center gap-1.5">
