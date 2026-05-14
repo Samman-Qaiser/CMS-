@@ -403,7 +403,7 @@ function DashboardRoutes() {
           }
         />
         <Route
-          path="email-read"
+          path="email-read/:id"
           element={
             <ProtectedRoute>
               <EmailRead />
