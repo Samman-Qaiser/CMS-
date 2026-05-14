@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { CheckCircle, Clock, PauseCircle, AlertCircle } from 'lucide-react';
 
 const OrdersPage = () => {
@@ -13,6 +13,12 @@ const OrdersPage = () => {
     { id: "#187", name: "Cristofer Henric", email: "cristofer@example.com", date: "30/04/2020", shipTo: "Cristofer Henric, 1 Infinite Loop, Cupertino, California 90210 Via Flat Rate", status: "Completed" },
     { id: "#188", name: "Brate Lee", email: "lee@example.com", date: "29/04/2020", shipTo: "Brate Lee, 1 Infinite Loop, Cupertino, California 90210 Via Link Road", status: "On Hold" },
   ];
+
+  // State to track which rows are selected
+  const [selectedRows, setSelectedRows] = useState([]);
+  
+  // State for select all checkbox
+  const [selectAll, setSelectAll] = useState(false);
 
   // Helper function for status styles
   const getStatusStyle = (status) => {
@@ -30,11 +36,42 @@ const OrdersPage = () => {
     }
   };
 
+  // Handle individual row selection
+  const handleRowSelect = (orderId) => {
+    setSelectedRows(prev => {
+      if (prev.includes(orderId)) {
+        const newSelected = prev.filter(id => id !== orderId);
+        // Update selectAll state if not all rows are selected
+        setSelectAll(newSelected.length === orders.length);
+        return newSelected;
+      } else {
+        const newSelected = [...prev, orderId];
+        // Update selectAll state if all rows are now selected
+        setSelectAll(newSelected.length === orders.length);
+        return newSelected;
+      }
+    });
+  };
+
+  // Handle select all
+  const handleSelectAll = () => {
+    if (selectAll) {
+      // Unselect all
+      setSelectedRows([]);
+      setSelectAll(false);
+    } else {
+      // Select all
+      const allOrderIds = orders.map(order => order.id);
+      setSelectedRows(allOrderIds);
+      setSelectAll(true);
+    }
+  };
+
   return (
-    <div className="min-h-screen  font-sans text-header-text">
+    <div className="min-h-screen font-sans">
       {/* Breadcrumb */}
       <div className="p-4 bg-white dark:bg-[#252b48] rounded-lg mb-6 text-sm">
-        <span className="text--header-text font-bold">Shop</span> 
+        <span className="text-header-text font-bold">Shop</span> 
         <span className="mx-2 opacity-50">/</span> 
         <span className="text-header-text">Product Order</span>
       </div>
@@ -46,7 +83,12 @@ const OrdersPage = () => {
             <thead>
               <tr className="text-header-text border-b border-slate-700/50">
                 <th className="p-5 w-12 text-center">
-                  <input type="checkbox" className="accent-primary" />
+                  <input 
+                    type="checkbox" 
+                    className="accent-primary"
+                    checked={selectAll}
+                    onChange={handleSelectAll}
+                  />
                 </th>
                 <th className="p-5 font-bold text-sm uppercase tracking-wider">Order</th>
                 <th className="p-5 font-bold text-sm uppercase tracking-wider">Date</th>
@@ -60,13 +102,18 @@ const OrdersPage = () => {
                 return (
                   <tr key={index} className="hover:bg-white/5 transition-colors">
                     <td className="p-5 text-center">
-                      <input type="checkbox" className="accent-primary" />
+                      <input 
+                        type="checkbox" 
+                        className="accent-primary"
+                        checked={selectedRows.includes(order.id)}
+                        onChange={() => handleRowSelect(order.id)}
+                      />
                     </td>
                     <td className="p-5">
                       <div className="text-header-text font-bold text-sm">
-                        {order.id} <span className="font-normal  text-xs italic">by</span> {order.name}
+                        {order.id} <span className="font-normal text-xs italic">by</span> {order.name}
                       </div>
-                      <div className="text-xs ">{order.email}</div>
+                      <div className="text-xs">{order.email}</div>
                     </td>
                     <td className="p-5 text-sm whitespace-nowrap opacity-80">
                       {order.date}
@@ -86,8 +133,6 @@ const OrdersPage = () => {
             </tbody>
           </table>
         </div>
-        
-    
       </div>
     </div>
   );
