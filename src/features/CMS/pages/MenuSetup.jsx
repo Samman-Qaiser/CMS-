@@ -5,6 +5,7 @@ import Menu from "../components/Menu";
 import MenuTypes from "../components/MenuTypes";
 import MenuName from "../components/MenuName";
 import { initialMenusData } from "../components/pagesData";
+import Swal from "sweetalert2";
 
 const MenuSetup = () => {
   // states management
@@ -27,6 +28,9 @@ const MenuSetup = () => {
     setActiveMenu("");
     setCurrentMenuItems([]);
   };
+  const handleReorder = (newOrder) => {
+    setCurrentMenuItems(newOrder);
+  };
 
   const handleAddToMenu = (selectedItems) => {
     const newItemsWithIds = selectedItems.map((item) => ({
@@ -40,16 +44,50 @@ const MenuSetup = () => {
     setCurrentMenuItems((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const handleUpdateItemLabel = (id, newLabel) => {
+  // handler to update any property of a menu item
+  const handleUpdateItem = (id, updates) => {
     setCurrentMenuItems((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, label: newLabel } : item,
-      ),
+      prev.map((item) => (item.id === id ? { ...item, ...updates } : item)),
     );
+  };
+  const handleDeleteMenu = (menuName) => {
+    if (!menuName) return;
+
+    Swal.fire({
+      title: "Are you sure?",
+      text: `You are about to delete "${menuName}". This cannot be undone!`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#ef4444",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // 1. Remove from allMenusContent
+        setAllMenusContent((prev) => {
+          const newContent = { ...prev };
+          delete newContent[menuName];
+          return newContent;
+        });
+
+        setMenus((prev) => prev.filter((m) => m !== menuName));
+        setActiveMenu(menus[0] || "");
+
+        Swal.fire("Deleted!", "Your menu has been removed.", "success");
+      }
+    });
   };
 
   const handleSaveMenu = (newName, itemsToSave) => {
-    if (!newName.trim()) return;
+    if (!newName.trim()) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Please enter a menu name!",
+        confirmButtonColor: "var(--primary)",
+      });
+      return;
+    }
 
     setAllMenusContent((prev) => ({
       ...prev,
@@ -60,14 +98,24 @@ const MenuSetup = () => {
       setMenus((prev) => [...prev, newName]);
     }
 
-    console.log(`Saved ${newName} with ${itemsToSave.length} items.`);
+    // 2. Trigger the Success Alert
+    Swal.fire({
+      title: "Success!",
+      text: `${newName} has been saved successfully.`,
+      icon: "success",
+      timer: 2000,
+      showConfirmButton: false,
+      toast: true,
+      position: "top-end",
+      timerProgressBar: true,
+    });
 
     setActiveMenu(newName);
     setIsAddingNew(false);
   };
 
   return (
-    <div className="p-4 space-y-6 bg-gray-50 dark:bg-[#1a1c2e] min-h-screen">
+    <div className="p-4 space-y-6 min-h-screen">
       <ScreenOptions />
       <Menu
         activeMenu={activeMenu}
@@ -84,10 +132,12 @@ const MenuSetup = () => {
             activeMenuName={activeMenu}
             isAddingNew={isAddingNew}
             menuItems={currentMenuItems}
+            onReorder={handleReorder}
             onSave={handleSaveMenu}
+            onDeleteMenu={() => handleDeleteMenu(activeMenu)}
             onUpdateName={setActiveMenu}
             onRemoveItem={handleRemoveItem}
-            onUpdateItemLabel={handleUpdateItemLabel}
+            onUpdateItem={handleUpdateItem}
           />
         </div>
       </div>
