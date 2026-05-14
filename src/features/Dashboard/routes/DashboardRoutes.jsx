@@ -41,6 +41,8 @@ import StudentsPage from "../../Instructor/Pages/StudentsPage";
 import InstructorTransactions from "../../Instructor/Pages/InstructorTransactions";
 import InstructorResources from "../../Instructor/Pages/InstructorResources";
 import InstructorLiveClass from "../../Instructor/Pages/InstructorLiveClass";
+import Configurations from "../../Config/pages/Configurations";
+import ConfigForm from "../../Config/components/ConfigForm";
 function DashboardRoutes() {
   return (
     <Routes>
@@ -133,28 +135,28 @@ function DashboardRoutes() {
             </ProtectedRoute>
           }
         />
-          <Route
+        <Route
           path="/instructor-transactions"
           element={
             <ProtectedRoute>
-  <InstructorTransactions/>
+              <InstructorTransactions />
             </ProtectedRoute>
           }
         />
-           <Route
+        <Route
           path="/instructor-resources"
           element={
             <ProtectedRoute>
-  <InstructorResources/>
+              <InstructorResources />
             </ProtectedRoute>
           }
         />
-        
-           <Route
+
+        <Route
           path="/instructor-liveclass"
           element={
             <ProtectedRoute>
-  <InstructorLiveClass/>
+              <InstructorLiveClass />
             </ProtectedRoute>
           }
         />
@@ -347,6 +349,30 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <MenuSetup />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="configurations"
+          element={
+            <ProtectedRoute>
+              <Configurations />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="configurations/add-config"
+          element={
+            <ProtectedRoute>
+              <ConfigForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="configurations/edit-config/:id?"
+          element={
+            <ProtectedRoute>
+              <ConfigForm />
             </ProtectedRoute>
           }
         />
