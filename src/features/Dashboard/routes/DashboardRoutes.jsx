@@ -22,7 +22,7 @@ import CoursesPage from "../../Courses/Pages/CoursePage";
 import CourseDetail1 from "../../Courses/Pages/Coursedetail1";
 import BlogCategories from "../../CMS/components/BlogCategories";
 import CourseDetail2 from "../../Courses/Pages/Coursedetail2";
-
+import ProfilePage from "../../Apps/Pages/ProfilePage";
 import BlogTags from "../../CMS/components/BlogTags";
 
 import Comments from "../../CMS/pages/Comments";
@@ -340,6 +340,7 @@ function DashboardRoutes() {
             </ProtectedRoute>
           }
         />
+            
         <Route
           path="contact-us"
           element={
@@ -357,7 +358,14 @@ function DashboardRoutes() {
           }
         />
         <Route
-          path="configurations"
+          path="app-profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+             </ProtectedRoute>
+             }
+         />
+        <Route  path="configurations"
           element={
             <ProtectedRoute>
               <ConfigLayout />
