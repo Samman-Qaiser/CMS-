@@ -58,7 +58,6 @@ import EmailRead from "../../Apps/Pages/EmailRead";
 import EmailInbox from "../../Apps/Pages/EmailInbox";
 import EmailCompose from "../../Apps/Pages/EmailCompose";
 import ProductGrid from "../../Apps/Pages/ProductGridPage";
-import ProductListItem from "../../Apps/components/ProductListItem";
 import ProductListPage from "../../Apps/Pages/ProductListPage";
 function DashboardRoutes() {
   return (
@@ -431,26 +430,51 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <OrdersPage />
-             </ProtectedRoute>
-             }
-         />
-          <Route
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="ecom-product-grid"
           element={
             <ProtectedRoute>
-              <ProductGrid/>
-             </ProtectedRoute>
-             }
-         />
-         <Route
+              <ProductGrid />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="ecom-product-list"
           element={
             <ProtectedRoute>
-              <ProductListPage/>
-             </ProtectedRoute>
-             }
-         />
-        <Route  path="configurations"
+              <ProductListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="email-compose"
+          element={
+            <ProtectedRoute>
+              <EmailCompose />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="email-inbox"
+          element={
+            <ProtectedRoute>
+              <EmailInbox />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="email-read/:id"
+          element={
+            <ProtectedRoute>
+              <EmailRead />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="configurations"
           element={
             <ProtectedRoute>
               <ConfigLayout />
