@@ -13,8 +13,7 @@ const AllConfigurations = () => {
       showCancelButton: true,
       confirmButtonColor: "var(--primary)",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-      // Custom styling for dark mode compatibility if needed
+      confirmButtonText: "Yes, delete it!", 
       background: document.documentElement.classList.contains("dark")
         ? "#292d4a"
         : "#fff",

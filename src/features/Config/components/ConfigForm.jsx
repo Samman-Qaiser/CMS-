@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { useLocation, useParams, useNavigate } from "react-router-dom"; // Added useNavigate
+import { useState, useEffect } from "react";
+import { useLocation, useParams, useNavigate } from "react-router-dom"; 
 import { LuLayoutGrid } from "react-icons/lu";
 import { MdOutlineSettings } from "react-icons/md";
-import Swal from "sweetalert2"; // Added Swal
+import Swal from "sweetalert2"; 
 import ConfigHeader from "./ConfigHeader";
 
 const ConfigForm = () => {
   const { id } = useParams();
   const location = useLocation();
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();  
   const [activeTab, setActiveTab] = useState("settings");
 
   const [formData, setFormData] = useState({

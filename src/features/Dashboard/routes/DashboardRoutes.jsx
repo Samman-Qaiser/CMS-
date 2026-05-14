@@ -31,8 +31,6 @@ import Contact from "../../CMS/pages/Contact";
 import InstructorDashboard from "../../Instructor/Pages/Instructordashboard";
 import MenuSetup from "../../CMS/pages/MenuSetup";
 
-
-
 import CommentForm from "../../CMS/components/CommentForm";
 import Subscribers from "../../CMS/pages/Subscribers";
 import InstructorCourses from "../../Instructor/Pages/InstructorCourses";
@@ -43,6 +41,11 @@ import InstructorResources from "../../Instructor/Pages/InstructorResources";
 import InstructorLiveClass from "../../Instructor/Pages/InstructorLiveClass";
 import Configurations from "../../Config/pages/Configurations";
 import ConfigForm from "../../Config/components/ConfigForm";
+import Site from "../../Config/pages/Site";
+import Reading from "../../Config/pages/Reading";
+import Social from "../../Config/pages/Social";
+import Theme from "../../Config/pages/Theme";
+import Widget from "../../Config/pages/Widget";
 function DashboardRoutes() {
   return (
     <Routes>
@@ -373,6 +376,46 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <ConfigForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="configurations/prefix/Site"
+          element={
+            <ProtectedRoute>
+              <Site />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="configurations/prefix/Reading"
+          element={
+            <ProtectedRoute>
+              <Reading />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="configurations/prefix/Social"
+          element={
+            <ProtectedRoute>
+              <Social />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="configurations/prefix/Widget"
+          element={
+            <ProtectedRoute>
+              <Widget />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="configurations/prefix/Theme"
+          element={
+            <ProtectedRoute>
+              <Theme />
             </ProtectedRoute>
           }
         />
