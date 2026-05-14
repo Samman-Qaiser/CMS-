@@ -54,6 +54,9 @@ import InvoicePage from "../Pages/InvoicePage";
 import CheckoutPage from "../../Apps/Pages/CheckoutPage";
 import ProductDetailPage from "../../Apps/Pages/ProductDetailPage";
 import OrdersPage from "../../Apps/Pages/OrderPage";
+import EmailRead from "../../Apps/Pages/EmailRead";
+import EmailInbox from "../../Apps/Pages/EmailInbox";
+import EmailCompose from "../../Apps/Pages/EmailCompose";
 function DashboardRoutes() {
   return (
     <Routes>
@@ -347,7 +350,7 @@ function DashboardRoutes() {
             </ProtectedRoute>
           }
         />
-            
+
         <Route
           path="contact-us"
           element={
@@ -369,18 +372,18 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <ProfilePage />
-             </ProtectedRoute>
-             }
-         />
-          <Route
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="post-details"
           element={
             <ProtectedRoute>
               <Postdetails />
-             </ProtectedRoute>
-             }
-         />
-            <Route
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="app-calender"
           element={
             <ProtectedRoute>
