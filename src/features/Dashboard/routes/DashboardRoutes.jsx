@@ -49,6 +49,11 @@ import Widget from "../../Config/pages/Widget";
 import Postdetails from "../../Apps/Pages/Postdetails";
 import AppCalender from "../../Apps/Pages/Calender";
 import ConfigLayout from "../../Config/layout/ConfigLayout";
+import CustomersPage from "../../Apps/Pages/CustomersPage";
+import InvoicePage from "../Pages/InvoicePage";
+import CheckoutPage from "../../Apps/Pages/CheckoutPage";
+import ProductDetailPage from "../../Apps/Pages/ProductDetailPage";
+import OrdersPage from "../../Apps/Pages/OrderPage";
 import EmailRead from "../../Apps/Pages/EmailRead";
 import EmailInbox from "../../Apps/Pages/EmailInbox";
 import EmailCompose from "../../Apps/Pages/EmailCompose";
@@ -383,6 +388,46 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <AppCalender />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="ecom-customers"
+          element={
+            <ProtectedRoute>
+              <CustomersPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="ecom-invoice"
+          element={
+            <ProtectedRoute>
+              <InvoicePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="ecom-checkout"
+          element={
+            <ProtectedRoute>
+              <CheckoutPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="ecom-product-detail"
+          element={
+            <ProtectedRoute>
+              <ProductDetailPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="ecom-product-order"
+          element={
+            <ProtectedRoute>
+              <OrdersPage />
             </ProtectedRoute>
           }
         />
