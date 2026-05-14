@@ -46,6 +46,8 @@ import Reading from "../../Config/pages/Reading";
 import Social from "../../Config/pages/Social";
 import Theme from "../../Config/pages/Theme";
 import Widget from "../../Config/pages/Widget";
+import Postdetails from "../../Apps/Pages/Postdetails";
+import AppCalender from "../../Apps/Pages/Calender";
 function DashboardRoutes() {
   return (
     <Routes>
@@ -361,6 +363,22 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <ProfilePage />
+             </ProtectedRoute>
+             }
+         />
+          <Route
+          path="post-details"
+          element={
+            <ProtectedRoute>
+              <Postdetails />
+             </ProtectedRoute>
+             }
+         />
+            <Route
+          path="app-calender"
+          element={
+            <ProtectedRoute>
+              <AppCalender />
              </ProtectedRoute>
              }
          />
