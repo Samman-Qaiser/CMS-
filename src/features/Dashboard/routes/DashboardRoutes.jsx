@@ -48,6 +48,7 @@ import Theme from "../../Config/pages/Theme";
 import Widget from "../../Config/pages/Widget";
 import Postdetails from "../../Apps/Pages/Postdetails";
 import AppCalender from "../../Apps/Pages/Calender";
+import ConfigLayout from "../../Config/layout/ConfigLayout";
 function DashboardRoutes() {
   return (
     <Routes>
@@ -385,66 +386,19 @@ function DashboardRoutes() {
         <Route  path="configurations"
           element={
             <ProtectedRoute>
-              <Configurations />
+              <ConfigLayout />
             </ProtectedRoute>
           }
-        />
-        <Route
-          path="configurations/add-config"
-          element={
-            <ProtectedRoute>
-              <ConfigForm />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="configurations/edit-config/:id?"
-          element={
-            <ProtectedRoute>
-              <ConfigForm />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="configurations/prefix/Site"
-          element={
-            <ProtectedRoute>
-              <Site />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="configurations/prefix/Reading"
-          element={
-            <ProtectedRoute>
-              <Reading />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="configurations/prefix/Social"
-          element={
-            <ProtectedRoute>
-              <Social />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="configurations/prefix/Widget"
-          element={
-            <ProtectedRoute>
-              <Widget />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="configurations/prefix/Theme"
-          element={
-            <ProtectedRoute>
-              <Theme />
-            </ProtectedRoute>
-          }
-        />
+        >
+          <Route index element={<Configurations />} />
+          <Route path="add-config" element={<ConfigForm />} />
+          <Route path="edit-config/:id?" element={<ConfigForm />} />
+          <Route path="prefix/Site" element={<Site />} />
+          <Route path="prefix/Reading" element={<Reading />} />
+          <Route path="prefix/Social" element={<Social />} />
+          <Route path="prefix/Widget" element={<Widget />} />
+          <Route path="prefix/Theme" element={<Theme />} />
+        </Route>
       </Route>
     </Routes>
   );
