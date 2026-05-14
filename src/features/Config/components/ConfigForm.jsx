@@ -3,7 +3,6 @@ import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { LuLayoutGrid } from "react-icons/lu";
 import { MdOutlineSettings } from "react-icons/md";
 import Swal from "sweetalert2"; 
-import ConfigHeader from "./ConfigHeader";
 
 const ConfigForm = () => {
   const { id } = useParams();
@@ -79,7 +78,6 @@ const ConfigForm = () => {
 
   return (
     <>
-      <ConfigHeader />
       <div className="bg-white dark:bg-[#292d4a] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
         <div className="py-6 px-8 border-b border-gray-100 dark:border-gray-700">
           <h3 className="text-primary font-bold text-xl">
