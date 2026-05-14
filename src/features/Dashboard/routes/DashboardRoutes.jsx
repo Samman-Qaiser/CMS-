@@ -49,6 +49,9 @@ import Widget from "../../Config/pages/Widget";
 import Postdetails from "../../Apps/Pages/Postdetails";
 import AppCalender from "../../Apps/Pages/Calender";
 import ConfigLayout from "../../Config/layout/ConfigLayout";
+import EmailRead from "../../Apps/Pages/EmailRead";
+import EmailInbox from "../../Apps/Pages/EmailInbox";
+import EmailCompose from "../../Apps/Pages/EmailCompose";
 function DashboardRoutes() {
   return (
     <Routes>
@@ -342,7 +345,7 @@ function DashboardRoutes() {
             </ProtectedRoute>
           }
         />
-            
+
         <Route
           path="contact-us"
           element={
@@ -364,26 +367,51 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <ProfilePage />
-             </ProtectedRoute>
-             }
-         />
-          <Route
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="post-details"
           element={
             <ProtectedRoute>
               <Postdetails />
-             </ProtectedRoute>
-             }
-         />
-            <Route
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="app-calender"
           element={
             <ProtectedRoute>
               <AppCalender />
-             </ProtectedRoute>
-             }
-         />
-        <Route  path="configurations"
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="email-compose"
+          element={
+            <ProtectedRoute>
+              <EmailCompose />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="email-inbox"
+          element={
+            <ProtectedRoute>
+              <EmailInbox />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="email-read"
+          element={
+            <ProtectedRoute>
+              <EmailRead />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="configurations"
           element={
             <ProtectedRoute>
               <ConfigLayout />
