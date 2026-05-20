@@ -1,12 +1,14 @@
-import React from 'react';
+import { useState } from 'react'; 
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios'; 
 import { setCredentials } from '../redux/Slice/authSlice';
 
 const SignUp = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);  
   
   const { 
     register, 
@@ -18,22 +20,56 @@ const SignUp = () => {
   // Password confirmation check karne ke liye
   const password = watch("password");
 
-  const onSubmit = (data) => {
-    // Redux store mein user data save karna
-    dispatch(setCredentials({ 
-      user: {
+  // 2. handle Async Axios request
+  const onSubmit = async (data) => {
+    setLoading(true);
+
+    const baseUrl =
+      import.meta.env?.VITE_BACKEND_URL ||
+      "https://cms-backend-ashen.vercel.app";
+
+    try {
+      // making the POST API request using Axios
+      const response = await axios.post(`${baseUrl}/api/auth/signup`, {
         firstName: data.firstName,
         lastName: data.lastName,
+        username: data.username,
         email: data.email,
-        username: data.username
-      },
-      role: 'User', // Default role
-      isAuthenticated: true 
-    }));
+        password: data.password,
+        confirmPassword: data.confirmPassword,
+      });
 
-    console.log("Registered Data:", data);
-    navigate('/'); // Redirect to login
-  };
+      // Save user details into Redux store
+      dispatch(
+        setCredentials({
+          user: response.data.user || {
+            firstName: data.firstName,
+            lastName: data.lastName,
+            email: data.email,
+            username: data.username,
+          },
+          role: response.data.role || "User",
+          isAuthenticated: true,
+          token: response.data.token || null, 
+        }),
+      );
+
+      console.log("API Response Success:", response.data);
+      alert("Registration Successful!");
+      navigate("/"); // Redirect to homepage/login
+    } catch (error) { 
+      console.error(
+        "API Response Error:",
+        error.response?.data || error.message,
+      );
+      alert(
+        error.response?.data?.message ||
+          "Something went wrong during registration.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-bg-main p-4 font-poppins">
@@ -136,9 +172,12 @@ const SignUp = () => {
           {/* Submit Button */}
           <button 
             type="submit" 
-            className="w-full py-3 mt-4 bg-primary text-white font-bold rounded-lg hover:bg-secondary shadow-lg transition-all active:scale-[0.98]"
+            disabled={loading}  
+            className={`w-full py-3 mt-4 text-white font-bold rounded-lg shadow-lg transition-all active:scale-[0.98] ${
+              loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-primary hover:bg-secondary'
+            }`}
           >
-            Sign me up
+            {loading ? 'Signing you up...' : 'Sign me up'}
           </button>
         </form>
 
