@@ -1,18 +1,19 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../../public/logo-full.png";
 import axios from "axios";
 
 function ForgotPassword() {
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  // 3. Modified onSubmit to handle Async Axios request
   const onSubmit = async (data) => {
     setLoading(true);
 
@@ -21,27 +22,25 @@ function ForgotPassword() {
       "https://cms-backend-ashen.vercel.app";
 
     try {
-      // 4. Send POST request with the email payload
       const response = await axios.post(`${baseUrl}/api/auth/forgot-password`, {
         email: data.email,
       });
 
       console.log("API Response Success:", response.data);
 
-      // Extract token if backend sends it back directly in the response payload 
-      const receivedToken = response.data?.token || response.data?.resetToken;
+      // 1. Extract the token from the end of the resetUrl string
+      const resetUrl = response.data?.resetUrl;
+      const receivedToken = resetUrl ? resetUrl.split("/").pop() : null;
 
       if (receivedToken) {
-        alert(
-          `👉 [TESTING MODE] Your reset token is: ${receivedToken}\n\nYou can manually visit: http://localhost:5173/reset-password/${receivedToken}`,
-        );
+        // 2. Instantly redirect using the extracted token
+        navigate(`/reset-password/${receivedToken}`);
       } else {
         alert(
           response.data?.message || `Reset link has been sent to ${data.email}`,
         );
       }
     } catch (error) {
-      // 5. Handle errors
       console.error(
         "API Response Error:",
         error.response?.data || error.message,
@@ -95,7 +94,6 @@ function ForgotPassword() {
             )}
           </div>
 
-          {/* 6. Dynamic Submit Button with disabled loading UI */}
           <button
             type="submit"
             disabled={loading}
