@@ -5,6 +5,7 @@ import { BsPencil, BsEye, BsEyeSlash } from "react-icons/bs";
 import defaultAvatar from "/public/images/default_avatar.jpg";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 export const UserForm = () => {
   const { id } = useParams();
@@ -78,7 +79,12 @@ export const UserForm = () => {
           "Error fetching user data:",
           error.response?.data || error.message,
         );
-        alert("Failed to load user profile data.");
+        Swal.fire({
+          title: "Error!",
+          text: "Failed to load user profile data.",
+          icon: "error",
+          confirmButtonColor: "var(--primary)",
+        });
       } finally {
         setLoading(false);
       }
@@ -134,20 +140,35 @@ export const UserForm = () => {
       }
 
       console.log("Form Action Success:", response.data);
-      alert(
-        response.data?.message ||
+
+      // SweetAlert Success Notification
+      await Swal.fire({
+        title: "Success!",
+        text:
+          response.data?.message ||
           `User successfully ${id ? "updated" : "added"}!`,
-      );
+        icon: "success",
+        confirmButtonColor: "#4CBC9A",
+        timer: 2000,
+        timerProgressBar: true,
+      });
+
       navigate(-1);
     } catch (error) {
       console.error(
         "Form Action Error:",
         error.response?.data || error.message,
       );
-      alert(
-        error.response?.data?.message ||
+
+      // SweetAlert Error Notification
+      Swal.fire({
+        title: "Oops...",
+        text:
+          error.response?.data?.message ||
           "An error occurred while saving user data.",
-      );
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+      });
     } finally {
       setLoading(false);
     }
@@ -321,7 +342,6 @@ export const UserForm = () => {
         </div>
 
         {/* Row 5: Passwords */}
-        {/* Row 5: Passwords */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pb-6">
           <PasswordField
             label="Password"
@@ -330,7 +350,7 @@ export const UserForm = () => {
             errors={errors}
             showPassword={showPassword}
             setShowPassword={setShowPassword}
-            required={!id} // Only required on new user registration setups
+            required={!id}
           />
           <PasswordField
             label="Confirm Password"
@@ -342,9 +362,7 @@ export const UserForm = () => {
             required={!id}
             isFilled={false}
             validate={(value) => {
-              // If we are editing and both password fields are empty
               if (id && !watch("password") && !value) return true;
-              // Otherwise, confirm both typed values match exactly
               return value === watch("password") || "Passwords do not match";
             }}
           />
@@ -376,7 +394,7 @@ export const UserForm = () => {
   );
 };
 
-// --- Form Input Field Sub-components remain identically structured ---
+// --- Sub-components (InputField, SelectField, PasswordField) remain unchanged ---
 const InputField = ({
   label,
   name,

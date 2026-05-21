@@ -63,7 +63,6 @@ const Login = () => {
         }),
       );
 
-      alert("Sign-In Successful!");
       navigate("/dashboard");
     } catch (error) {
       // 6. Handle errors 
