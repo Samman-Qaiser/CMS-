@@ -23,7 +23,7 @@ import {
 export const ROLES = {
   ADMIN:   'admin',
   MANAGER: 'manager',
-  USER:    'user',
+  CUSTOMER: 'customer',
 }
 
 // ============================================================
@@ -37,9 +37,10 @@ export const ALL_NAV_ITEMS = [
     label: 'nav.user',
     badge: 'nav.modules',
     icon: BsPerson,
-    roles: [ROLES.ADMIN],
+    roles: [ROLES.ADMIN , ROLES.MANAGER] ,
     children: [
-      { id: 'users',       label: 'nav.users',       path: '/dashboard/users',       roles: [ROLES.ADMIN] },
+      { id: 'users',       label: 'nav.users',       path: '/dashboard/users',      
+         roles: [ROLES.ADMIN ,ROLES.MANAGER] },
       { id: 'groups',      label: 'nav.groups',      path: '/dashboard/groups',      roles: [ROLES.ADMIN] },
       { id: 'permissions', label: 'nav.permissions', path: '/dashboard/permissions', roles: [ROLES.ADMIN] },
     ],
@@ -98,15 +99,15 @@ export const ALL_NAV_ITEMS = [
     id: 'dashboard',
     label: 'nav.dashboard',
     icon: BsGrid,
-    roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.USER],
+    roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.CUSTOMER],
     children: [
-      { id: 'dashboard-light',       label: 'nav.dashboardLight', path: '/dashboard/index',        roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.USER] },
-      { id: 'dashboard-dark',        label: 'nav.dashboardDark',  path: '/dashboard/index-2',      roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.USER] },
+      { id: 'dashboard-light',       label: 'nav.dashboardLight', path: '/dashboard/index',        roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.CUSTOMER] },
+      { id: 'dashboard-dark',        label: 'nav.dashboardDark',  path: '/dashboard/index-2',      roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.CUSTOMER] },
       { id: 'dashboard-schedule',    label: 'nav.schedule',       path: '/dashboard/schedule',     roles: [ROLES.ADMIN, ROLES.MANAGER] },
       { id: 'dashboard-instructors', label: 'nav.instructors',    path: '/dashboard/instructors',  roles: [ROLES.ADMIN, ROLES.MANAGER] },
-      { id: 'dashboard-message',     label: 'nav.message',        path: '/dashboard/message',      roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.USER] },
+      { id: 'dashboard-message',     label: 'nav.message',        path: '/dashboard/message',      roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.CUSTOMER] },
       { id: 'dashboard-activity',    label: 'nav.activity',       path: '/dashboard/activity',     roles: [ROLES.ADMIN, ROLES.MANAGER] },
-      { id: 'dashboard-profile',     label: 'nav.profile',        path: '/dashboard/profile',      roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.USER] },
+      { id: 'dashboard-profile',     label: 'nav.profile',        path: '/dashboard/profile',      roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.CUSTOMER] },
     ],
   },
 
@@ -115,9 +116,9 @@ export const ALL_NAV_ITEMS = [
     id: 'courses',
     label: 'nav.courses',
     icon: BsBook,
-    roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.USER],
+    roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.CUSTOMER],
     children: [
-      { id: 'courses-all',       label: 'nav.courses',        path: '/dashboard/courses',          roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.USER] },
+      { id: 'courses-all',       label: 'nav.courses',        path: '/dashboard/courses',          roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.CUSTOMER] },
       { id: 'courses-details-1', label: 'nav.coursesDetails1',path: '/dashboard/course-details-1', roles: [ROLES.ADMIN, ROLES.MANAGER] },
       { id: 'courses-details-2', label: 'nav.coursesDetails2',path: '/dashboard/course-details-2', roles: [ROLES.ADMIN, ROLES.MANAGER] },
     ],
@@ -145,33 +146,33 @@ export const ALL_NAV_ITEMS = [
     id: 'apps',
     label: 'nav.apps',
     icon: BsInfoCircle,
-    roles: [ROLES.ADMIN, ROLES.MANAGER],
+    roles: [ROLES.ADMIN, ROLES.MANAGER ,ROLES.CUSTOMER],
     children: [
-      { id: 'apps-profile',      label: 'nav.profile',     path: '/dashboard/app-profile',  roles: [ROLES.ADMIN, ROLES.MANAGER] },
-      { id: 'apps-post-details', label: 'nav.postDetails', path: '/dashboard/post-details', roles: [ROLES.ADMIN, ROLES.MANAGER] },
+      { id: 'apps-profile',      label: 'nav.profile',     path: '/dashboard/app-profile',  roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER] },
+      { id: 'apps-post-details', label: 'nav.postDetails', path: '/dashboard/post-details', roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER] },
       {
         id: 'apps-email',
         label: 'nav.email',
-        roles: [ROLES.ADMIN, ROLES.MANAGER],
+        roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER],
         children: [
-          { id: 'email-compose', label: 'nav.compose', path: '/dashboard/email-compose', roles: [ROLES.ADMIN, ROLES.MANAGER] },
-          { id: 'email-inbox',   label: 'nav.inbox',   path: '/dashboard/email-inbox',   roles: [ROLES.ADMIN, ROLES.MANAGER] },
-          { id: 'email-read',    label: 'nav.read',    path: '/dashboard/email-read',    roles: [ROLES.ADMIN, ROLES.MANAGER] },
+          { id: 'email-compose', label: 'nav.compose', path: '/dashboard/email-compose', roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER] },
+          { id: 'email-inbox',   label: 'nav.inbox',   path: '/dashboard/email-inbox',   roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER] },
+          { id: 'email-read',    label: 'nav.read',    path: '/dashboard/email-read',    roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER] },
         ],
       },
-      { id: 'apps-calendar', label: 'nav.calendar', path: '/dashboard/app-calender', roles: [ROLES.ADMIN, ROLES.MANAGER] },
+      { id: 'apps-calendar', label: 'nav.calendar', path: '/dashboard/app-calender', roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER] },
       {
         id: 'apps-shop',
         label: 'nav.shop',
-        roles: [ROLES.ADMIN, ROLES.MANAGER],
+        roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER],
         children: [
-          { id: 'shop-product-grid',   label: 'nav.productGrid',    path: '/dashboard/ecom-product-grid',   roles: [ROLES.ADMIN, ROLES.MANAGER] },
-          { id: 'shop-product-list',   label: 'nav.productList',    path: '/dashboard/ecom-product-list',   roles: [ROLES.ADMIN, ROLES.MANAGER] },
-          { id: 'shop-product-detail', label: 'nav.productDetails', path: '/dashboard/ecom-product-detail', roles: [ROLES.ADMIN, ROLES.MANAGER] },
-          { id: 'shop-order',          label: 'nav.order',          path: '/dashboard/ecom-product-order',  roles: [ROLES.ADMIN, ROLES.MANAGER] },
+          { id: 'shop-product-grid',   label: 'nav.productGrid',    path: '/dashboard/ecom-product-grid',   roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER] },
+          { id: 'shop-product-list',   label: 'nav.productList',    path: '/dashboard/ecom-product-list',   roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER] },
+          { id: 'shop-product-detail', label: 'nav.productDetails', path: '/dashboard/ecom-product-detail', roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER] },
+          { id: 'shop-order',          label: 'nav.order',          path: '/dashboard/ecom-product-order',  roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER] },
           { id: 'shop-checkout',       label: 'nav.checkout',       path: '/dashboard/ecom-checkout',       roles: [ROLES.ADMIN, ROLES.MANAGER] },
-          { id: 'shop-invoice',        label: 'nav.invoice',        path: '/dashboard/ecom-invoice',        roles: [ROLES.ADMIN, ROLES.MANAGER] },
-          { id: 'shop-customers',      label: 'nav.customers',      path: '/dashboard/ecom-customers',      roles: [ROLES.ADMIN, ROLES.MANAGER] },
+          { id: 'shop-invoice',        label: 'nav.invoice',        path: '/dashboard/ecom-invoice',        roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER] },
+          { id: 'shop-customers',      label: 'nav.customers',      path: '/dashboard/ecom-customers',      roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER] },
         ],
       },
     ],
@@ -182,14 +183,14 @@ export const ALL_NAV_ITEMS = [
     id: 'charts',
     label: 'nav.charts',
     icon: BsPieChart,
-    roles: [ROLES.ADMIN, ROLES.MANAGER],
+    roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER],
     children: [
-      { id: 'chart-flot',      label: 'nav.flot',      path: '/dashboard/chart-flot',      roles: [ROLES.ADMIN, ROLES.MANAGER] },
-      { id: 'chart-morris',    label: 'nav.morris',    path: '/dashboard/chart-morris',    roles: [ROLES.ADMIN, ROLES.MANAGER] },
-      { id: 'chart-chartjs',   label: 'nav.chartjs',   path: '/dashboard/chart-chartjs',   roles: [ROLES.ADMIN, ROLES.MANAGER] },
-      { id: 'chart-chartist',  label: 'nav.chartist',  path: '/dashboard/chart-chartist',  roles: [ROLES.ADMIN, ROLES.MANAGER] },
-      { id: 'chart-sparkline', label: 'nav.sparkline', path: '/dashboard/chart-sparkline', roles: [ROLES.ADMIN, ROLES.MANAGER] },
-      { id: 'chart-peity',     label: 'nav.peity',     path: '/dashboard/chart-peity',     roles: [ROLES.ADMIN, ROLES.MANAGER] },
+      { id: 'chart-flot',      label: 'nav.flot',      path: '/dashboard/chart-flot',      roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER] },
+      { id: 'chart-morris',    label: 'nav.morris',    path: '/dashboard/chart-morris',    roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER] },
+      { id: 'chart-chartjs',   label: 'nav.chartjs',   path: '/dashboard/chart-chartjs',   roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER] },
+      { id: 'chart-chartist',  label: 'nav.chartist',  path: '/dashboard/chart-chartist',  roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER] },
+      { id: 'chart-sparkline', label: 'nav.sparkline', path: '/dashboard/chart-sparkline', roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER] },
+      { id: 'chart-peity',     label: 'nav.peity',     path: '/dashboard/chart-peity',     roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER] },
     ],
   },
 
@@ -198,24 +199,24 @@ export const ALL_NAV_ITEMS = [
     id: 'bootstrap',
     label: 'nav.bootstrap',
     icon: BsStar,
-    roles: [ROLES.ADMIN],
+    roles: [ROLES.ADMIN,ROLES.MANAGER,ROLES.CUSTOMER],
     children: [
-      { id: 'ui-accordion',    label: 'nav.accordion',    path: '/dashboard/ui-accordion',    roles: [ROLES.ADMIN] },
-      { id: 'ui-alert',        label: 'nav.alert',        path: '/dashboard/ui-alert',        roles: [ROLES.ADMIN] },
-      { id: 'ui-badge',        label: 'nav.badge',        path: '/dashboard/ui-badge',        roles: [ROLES.ADMIN] },
-      { id: 'ui-button',       label: 'nav.button',       path: '/dashboard/ui-button',       roles: [ROLES.ADMIN] },
-      { id: 'ui-modal',        label: 'nav.modal',        path: '/dashboard/ui-modal',        roles: [ROLES.ADMIN] },
+      { id: 'ui-accordion',    label: 'nav.accordion',    path: '/dashboard/ui-accordion',    roles: [ROLES.ADMIN,ROLES.MANAGER,ROLES.CUSTOMER] },
+      { id: 'ui-alert',        label: 'nav.alert',        path: '/dashboard/ui-alert',        roles: [ROLES.ADMIN,ROLES.MANAGER,ROLES.CUSTOMER] },
+      { id: 'ui-badge',        label: 'nav.badge',        path: '/dashboard/ui-badge',        roles: [ROLES.ADMIN,ROLES.MANAGER,ROLES.CUSTOMER] },
+      { id: 'ui-button',       label: 'nav.button',       path: '/dashboard/ui-button',       roles: [ROLES.ADMIN,ROLES.MANAGER,ROLES.CUSTOMER] },
+      { id: 'ui-modal',        label: 'nav.modal',        path: '/dashboard/ui-modal',        roles: [ROLES.ADMIN,ROLES.MANAGER,ROLES.CUSTOMER] },
       { id: 'ui-button-group', label: 'nav.buttonGroup',  path: '/dashboard/ui-button-group', roles: [ROLES.ADMIN] },
-      { id: 'ui-list-group',   label: 'nav.listGroup',    path: '/dashboard/ui-list-group',   roles: [ROLES.ADMIN] },
+      { id: 'ui-list-group',   label: 'nav.listGroup',    path: '/dashboard/ui-list-group',   roles: [ROLES.ADMIN,ROLES.MANAGER,ROLES.CUSTOMER] },
       { id: 'ui-card',         label: 'nav.cards',        path: '/dashboard/ui-card',         roles: [ROLES.ADMIN] },
-      { id: 'ui-carousel',     label: 'nav.carousel',     path: '/dashboard/ui-carousel',     roles: [ROLES.ADMIN] },
-      { id: 'ui-dropdown',     label: 'nav.dropdown',     path: '/dashboard/ui-dropdown',     roles: [ROLES.ADMIN] },
-      { id: 'ui-popover',      label: 'nav.popover',      path: '/dashboard/ui-popover',      roles: [ROLES.ADMIN] },
-      { id: 'ui-progressbar',  label: 'nav.progressbar',  path: '/dashboard/ui-progressbar',  roles: [ROLES.ADMIN] },
-      { id: 'ui-tab',          label: 'nav.tab',          path: '/dashboard/ui-tab',          roles: [ROLES.ADMIN] },
-      { id: 'ui-typography',   label: 'nav.typography',   path: '/dashboard/ui-typography',   roles: [ROLES.ADMIN] },
+      { id: 'ui-carousel',     label: 'nav.carousel',     path: '/dashboard/ui-carousel',     roles: [ROLES.ADMIN,ROLES.MANAGER,ROLES.CUSTOMER] },
+      { id: 'ui-dropdown',     label: 'nav.dropdown',     path: '/dashboard/ui-dropdown',     roles: [ROLES.ADMIN,ROLES.MANAGER,ROLES.CUSTOMER] },
+      { id: 'ui-popover',      label: 'nav.popover',      path: '/dashboard/ui-popover',      roles: [ROLES.ADMIN,ROLES.MANAGER,ROLES.CUSTOMER] },
+      { id: 'ui-progressbar',  label: 'nav.progressbar',  path: '/dashboard/ui-progressbar',  roles: [ROLES.ADMIN,ROLES.MANAGER,ROLES.CUSTOMER] },
+      { id: 'ui-tab',          label: 'nav.tab',          path: '/dashboard/ui-tab',          roles: [ROLES.ADMIN,ROLES.MANAGER,ROLES.CUSTOMER] },
+      { id: 'ui-typography',   label: 'nav.typography',   path: '/dashboard/ui-typography',   roles: [ROLES.ADMIN,ROLES.MANAGER,ROLES.CUSTOMER] },
       { id: 'ui-pagination',   label: 'nav.pagination',   path: '/dashboard/ui-pagination',   roles: [ROLES.ADMIN] },
-      { id: 'ui-grid',         label: 'nav.grid',         path: '/dashboard/ui-grid',         roles: [ROLES.ADMIN] },
+      { id: 'ui-grid',         label: 'nav.grid',         path: '/dashboard/ui-grid',         roles: [ROLES.ADMIN,ROLES.MANAGER,ROLES.CUSTOMER] },
     ],
   },
 
@@ -224,15 +225,15 @@ export const ALL_NAV_ITEMS = [
     id: 'plugins',
     label: 'nav.plugins',
     icon: BsHeart,
-    roles: [ROLES.ADMIN],
+    roles: [ROLES.ADMIN,ROLES.MANAGER,ROLES.CUSTOMER],
     children: [
-      { id: 'uc-select2',      label: 'nav.select2',      path: '/dashboard/uc-select2',      roles: [ROLES.ADMIN] },
-      { id: 'uc-nestable',     label: 'nav.nestedTable',  path: '/dashboard/uc-nestable',     roles: [ROLES.ADMIN] },
-      { id: 'uc-noui-slider',  label: 'nav.nouiSlider',   path: '/dashboard/uc-noui-slider',  roles: [ROLES.ADMIN] },
-      { id: 'uc-sweetalert',   label: 'nav.sweetAlert',   path: '/dashboard/uc-sweetalert',   roles: [ROLES.ADMIN] },
-      { id: 'uc-toastr',       label: 'nav.toastr',       path: '/dashboard/uc-toastr',       roles: [ROLES.ADMIN] },
-      { id: 'map-jqvmap',      label: 'nav.jqvMap',       path: '/dashboard/map-jqvmap',      roles: [ROLES.ADMIN] },
-      { id: 'uc-lightgallery', label: 'nav.lightGallery', path: '/dashboard/uc-lightgallery', roles: [ROLES.ADMIN] },
+      { id: 'uc-select2',      label: 'nav.select2',      path: '/dashboard/uc-select2',      roles: [ROLES.ADMIN,ROLES.MANAGER,ROLES.CUSTOMER] },
+      { id: 'uc-nestable',     label: 'nav.nestedTable',  path: '/dashboard/uc-nestable',     roles: [ROLES.ADMIN,ROLES.MANAGER,ROLES.CUSTOMER] },
+      { id: 'uc-noui-slider',  label: 'nav.nouiSlider',   path: '/dashboard/uc-noui-slider',  roles: [ROLES.ADMIN,ROLES.MANAGER,ROLES.CUSTOMER] },
+      { id: 'uc-sweetalert',   label: 'nav.sweetAlert',   path: '/dashboard/uc-sweetalert',   roles: [ROLES.ADMIN,ROLES.MANAGER,ROLES.CUSTOMER] },
+      { id: 'uc-toastr',       label: 'nav.toastr',       path: '/dashboard/uc-toastr',       roles: [ROLES.ADMIN,ROLES.MANAGER,ROLES.CUSTOMER] },
+      { id: 'map-jqvmap',      label: 'nav.jqvMap',       path: '/dashboard/map-jqvmap',      roles: [ROLES.ADMIN,ROLES.MANAGER,ROLES.CUSTOMER] },
+      { id: 'uc-lightgallery', label: 'nav.lightGallery', path: '/dashboard/uc-lightgallery', roles: [ROLES.ADMIN,ROLES.MANAGER,ROLES.CUSTOMER] },
     ],
   },
 
@@ -242,7 +243,7 @@ export const ALL_NAV_ITEMS = [
     label: 'nav.widget',
     path: '/dashboard/widget-basic',
     icon: BsGearWide,
-    roles: [ROLES.ADMIN],
+    roles: [ROLES.ADMIN ,ROLES.MANAGER,ROLES.CUSTOMER],
   },
 
   // 12. FORMS
@@ -250,13 +251,13 @@ export const ALL_NAV_ITEMS = [
     id: 'forms',
     label: 'nav.forms',
     icon: BsFileEarmarkCheck,
-    roles: [ROLES.ADMIN, ROLES.MANAGER],
+    roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER],
     children: [
-      { id: 'form-element',    label: 'nav.formElements', path: '/dashboard/form-element',    roles: [ROLES.ADMIN, ROLES.MANAGER] },
-      { id: 'form-wizard',     label: 'nav.wizard',       path: '/dashboard/form-wizard',     roles: [ROLES.ADMIN, ROLES.MANAGER] },
-      { id: 'form-ckeditor',   label: 'nav.ckEditor',     path: '/dashboard/form-ckeditor',   roles: [ROLES.ADMIN, ROLES.MANAGER] },
-      { id: 'form-pickers',    label: 'nav.pickers',      path: '/dashboard/form-pickers',    roles: [ROLES.ADMIN, ROLES.MANAGER] },
-      { id: 'form-validation', label: 'nav.formValidate', path: '/dashboard/form-validation', roles: [ROLES.ADMIN, ROLES.MANAGER] },
+      { id: 'form-element',    label: 'nav.formElements', path: '/dashboard/form-element',    roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER] },
+      { id: 'form-wizard',     label: 'nav.wizard',       path: '/dashboard/form-wizard',     roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER] },
+      { id: 'form-ckeditor',   label: 'nav.ckEditor',     path: '/dashboard/form-ckeditor',   roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER] },
+      { id: 'form-pickers',    label: 'nav.pickers',      path: '/dashboard/form-pickers',    roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER] },
+      { id: 'form-validation', label: 'nav.formValidate', path: '/dashboard/form-validation', roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER] },
     ],
   },
 
@@ -265,10 +266,10 @@ export const ALL_NAV_ITEMS = [
     id: 'table',
     label: 'nav.table',
     icon: BsFileEarmarkSpreadsheet,
-    roles: [ROLES.ADMIN, ROLES.MANAGER],
+    roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER],
     children: [
-      { id: 'table-bootstrap', label: 'nav.bootstrap', path: '/dashboard/table-bootstrap-basic', roles: [ROLES.ADMIN, ROLES.MANAGER] },
-      { id: 'table-datatable', label: 'nav.datatable', path: '/dashboard/table-datatable-basic', roles: [ROLES.ADMIN, ROLES.MANAGER] },
+      { id: 'table-bootstrap', label: 'nav.bootstrap', path: '/dashboard/table-bootstrap-basic', roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER] },
+      { id: 'table-datatable', label: 'nav.datatable', path: '/dashboard/table-datatable-basic', roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER] },
     ],
   },
 
@@ -277,7 +278,7 @@ export const ALL_NAV_ITEMS = [
     id: 'pages',
     label: 'nav.pages',
     icon: BsFileEarmarkBreak,
-    roles: [ROLES.ADMIN],
+    roles: [ROLES.ADMIN ,ROLES.MANAGER,ROLES.CUSTOMER],
     children: [
       {
         id: 'pages-error',
@@ -286,13 +287,13 @@ export const ALL_NAV_ITEMS = [
         children: [
           { id: 'error-400', label: 'nav.error400', path: '/dashboard/page-error-400', roles: [ROLES.ADMIN] },
           { id: 'error-403', label: 'nav.error403', path: '/dashboard/page-error-403', roles: [ROLES.ADMIN] },
-          { id: 'error-404', label: 'nav.error404', path: '/dashboard/page-error-404', roles: [ROLES.ADMIN] },
+          { id: 'error-404', label: 'nav.error404', path: '/dashboard/page-error-404', roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER] },
           { id: 'error-500', label: 'nav.error500', path: '/dashboard/page-error-500', roles: [ROLES.ADMIN] },
           { id: 'error-503', label: 'nav.error503', path: '/dashboard/page-error-503', roles: [ROLES.ADMIN] },
         ],
       },
-      { id: 'page-lock-screen', label: 'nav.lockScreen', path: '/dashboard/page-lock-screen', roles: [ROLES.ADMIN] },
-      { id: 'page-empty',       label: 'nav.emptyPage',  path: '/dashboard/empty-page',        roles: [ROLES.ADMIN] },
+      { id: 'page-lock-screen', label: 'nav.lockScreen', path: '/dashboard/page-lock-screen', roles: [ROLES.ADMIN ,ROLES.MANAGER,ROLES.CUSTOMER] },
+      { id: 'page-empty',       label: 'nav.emptyPage',  path: '/dashboard/empty-page',        roles: [ROLES.ADMIN,ROLES.MANAGER,ROLES.CUSTOMER] },
     ],
   },
 ]
@@ -302,10 +303,10 @@ export const ALL_NAV_ITEMS = [
 // ============================================================
 export const getNavItemsByRole = (role) => {
   if (!role) return []
-  const normalizedRole = role.toLowerCase()
+  const normalizedRole = role.toLowerCase().trim()
   const filterItems = (items) => {
     return items
-      .filter((item) => item.roles.includes(normalizedRole))
+      .filter((item) => item.roles && item.roles.some(r => r.toLowerCase() === normalizedRole))
       .map((item) => ({
         ...item,
         ...(item.children && {
