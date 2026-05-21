@@ -171,8 +171,8 @@ const UserTable = ({ users = [], refreshUsers }) => {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
+      <div className="w-full">
+        <table className="overflow-x-scroll text-left border-collapse">
           <thead>
             <tr className="text-content-text font-semibold text-sm">
               <th className="py-4 px-2 pl-8">
@@ -185,13 +185,13 @@ const UserTable = ({ users = [], refreshUsers }) => {
                   }
                 />
               </th>
-              <th className="py-4 px-2 text-sm font-medium">Full Name</th>
-              <th className="py-4 px-2 text-sm font-medium">Email</th>
-              <th className="py-4 px-2 text-sm font-medium">Gender</th>
-              <th className="py-4 px-2 text-sm font-medium">Groups</th>
-              <th className="py-4 px-2 text-sm font-medium">Mobile</th>
-              <th className="py-4 px-2 text-sm font-medium">Date Of Birth</th>
-              <th className="py-4 px-2 text-sm font-medium text-center">
+              <th className="py-4 px-2 w-50 text-sm font-medium">Email</th>
+              <th className="py-4 px-2 w-50 text-sm font-medium">Gender</th>
+              <th className="py-4 px-2 w-50  text-sm font-medium">Full Name</th>
+              <th className="py-4 px-2 w-50 text-sm font-medium">Groups</th>
+              <th className="py-4 px-2 w-50 text-sm font-medium">Mobile</th>
+              <th className="py-4 px-2 w-50 text-sm font-medium">Date Of Birth</th>
+              <th className="py-4 px-2 w-50 text-sm font-medium text-center">
                 Status
               </th>
               <th className="py-4 px-2 text-sm font-medium">Action</th>

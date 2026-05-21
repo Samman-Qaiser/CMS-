@@ -43,12 +43,12 @@ const SignUp = () => {
       dispatch(
         setCredentials({
           user: response.data.user || {
-            firstName: data.firstName,
-            lastName: data.lastName,
-            email: data.email,
-            username: data.username,
+            firstName: data.user.firstName,
+            lastName: data.user.lastName,
+            email: data.user.email,
+            username: data.user.username,
           },
-          role: response.data.role || "User",
+          role: response.data.user.role || "User",
           isAuthenticated: true,
           token: response.data.token || null, 
         }),

@@ -40,7 +40,7 @@ const Users = () => {
         mobile: user.phoneNumber || "",
         dob: user.dateOfBirth ? user.dateOfBirth.split("T")[0] : "N/A",
         status: user.isActive ? "Active" : "Inactive",
-        img: user.profileImage || "https://i.pravatar.cc/150?u=fallback",
+        img: user.profileImage || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgs2DOOnn9pY67TodjACV0st9VwO1Q-ZdxOA&s",
       }));
 
       setUsers(mappedUsers);
