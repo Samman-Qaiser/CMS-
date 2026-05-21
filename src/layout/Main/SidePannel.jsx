@@ -112,7 +112,7 @@ export default function RightPanel() {
          
           >
             <img
-              src="https://i.pravatar.cc/40?img=1"
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgs2DOOnn9pY67TodjACV0st9VwO1Q-ZdxOA&s"
               alt="Profile"
               className="w-full h-full object-cover"
             />

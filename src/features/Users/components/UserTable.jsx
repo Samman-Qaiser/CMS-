@@ -149,10 +149,10 @@ const UserTable = ({ users = [], refreshUsers }) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white dark:bg-[#292d4a] mt-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden"
+      className="bg-white w-full dark:bg-[#292d4a] mt-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden"
     >
       {/* Header Action Bar */}
-      <div className="p-6 flex justify-between items-center border-b border-gray-50 dark:border-gray-800">
+      <div className="p-6 max-w-full flex justify-between items-center border-b border-gray-50 dark:border-gray-800">
         <h2 className="text-xl font-semibold text-primary">Users</h2>
         <div className="flex gap-3">
           <button
@@ -171,8 +171,8 @@ const UserTable = ({ users = [], refreshUsers }) => {
       </div>
 
       {/* Table */}
-      <div className="w-full">
-        <table className="overflow-x-scroll text-left border-collapse">
+ <div className="">
+  <table className="text-left border-collapse">
           <thead>
             <tr className="text-content-text font-semibold text-sm">
               <th className="py-4 px-2 pl-8">
@@ -185,13 +185,13 @@ const UserTable = ({ users = [], refreshUsers }) => {
                   }
                 />
               </th>
-              <th className="py-4 px-2 w-50 text-sm font-medium">Email</th>
-              <th className="py-4 px-2 w-50 text-sm font-medium">Gender</th>
-              <th className="py-4 px-2 w-50  text-sm font-medium">Full Name</th>
-              <th className="py-4 px-2 w-50 text-sm font-medium">Groups</th>
-              <th className="py-4 px-2 w-50 text-sm font-medium">Mobile</th>
-              <th className="py-4 px-2 w-50 text-sm font-medium">Date Of Birth</th>
-              <th className="py-4 px-2 w-50 text-sm font-medium text-center">
+              <th className="py-4 px-2  text-sm font-medium">Email</th>
+              <th className="py-4 px-2  text-sm font-medium">Gender</th>
+              <th className="py-4 px-2   text-sm font-medium">Full Name</th>
+              <th className="py-4 px-2  text-sm font-medium">Groups</th>
+              <th className="py-4 px-2  text-sm font-medium">Mobile</th>
+              <th className="py-4 px-2  text-sm font-medium">Date Of Birth</th>
+              <th className="py-4 px-2  text-sm font-medium text-center">
                 Status
               </th>
               <th className="py-4 px-2 text-sm font-medium">Action</th>

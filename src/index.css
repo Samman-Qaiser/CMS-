@@ -62,7 +62,7 @@
   body {
     @apply bg-bg-main text-content-text transition-all duration-300;
     font-family: 'Poppins', sans-serif;
-    overflow-x: hidden;
+  overflow-x: hidden;
   }
 }
 
