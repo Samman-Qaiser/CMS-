@@ -93,8 +93,7 @@ const PageForm = () => {
                   ? pageData.author?._id || pageData.author?.id || ""
                   : pageData.author || "",
               status: pageData.status || "draft",
-              visibility: pageData.visibility || "public",
-              // Map backend "publishedAt" down to frontend "publishOn" input element
+              visibility: pageData.visibility || "public", 
               publishOn: pageData.publishedAt
                 ? pageData.publishedAt.split("T")[0]
                 : "",
@@ -138,18 +137,16 @@ const PageForm = () => {
 
       const finalAuthor = data.author || "6a0afff01777cf4ad2216901";
 
-      // 1. Compile schema-compliant clean payload data structure
       const cleanData = {
         ...data,
         author: finalAuthor,
-        publishedAt: data.publishOn || null, // Remap field correctly to Mongoose schema target
+        publishedAt: data.publishOn || null,  
         order: Number(data.order) || 0,
       };
-      delete cleanData.publishOn; // Purge unmapped reference from transmission
+      delete cleanData.publishOn;  
 
       let response;
 
-      // 2. Transmit through FormData or JSON conditional structures
       if (imageFile || typeof featuredImage === "string") {
         const formData = new FormData();
 
