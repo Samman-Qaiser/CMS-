@@ -1,3 +1,4 @@
+import axios from "axios";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import {
@@ -10,7 +11,7 @@ import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 
-const UserTable = ({ users = [] }) => {
+const UserTable = ({ users = [], refreshUsers }) => {
   const [selectedUsers, setSelectedUsers] = useState([]);
 
   // --- Pagination State ---
@@ -47,7 +48,7 @@ const UserTable = ({ users = [] }) => {
     }
   };
 
-  // Handle the Delete Button Click
+  // --- Dynamic Multi-Delete Logic ---
   const handleDeleteClick = () => {
     if (selectedUsers.length === 0) {
       Swal.fire({
@@ -59,27 +60,53 @@ const UserTable = ({ users = [] }) => {
     } else {
       Swal.fire({
         title: "Are you sure?",
-        text: `Deleting ${selectedUsers.length} users!`,
+        text: `Deleting ${selectedUsers.length} users permanently!`,
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#ef4444",
         cancelButtonColor: "#a0aec0",
-        confirmButtonText: "Delete",
+        confirmButtonText: "Delete All",
         background: document.documentElement.classList.contains("dark")
           ? "#292d4a"
           : "#fff",
         color: document.documentElement.classList.contains("dark")
           ? "#fff"
           : "#000",
-      }).then((result) => {
+      }).then(async (result) => {
         if (result.isConfirmed) {
-          console.log("Deleting users:", selectedUsers);
-          setSelectedUsers([]);
+          try {
+            const baseUrl =
+              import.meta.env?.VITE_BACKEND_URL ||
+              "https://cms-backend-ashen.vercel.app";
+
+            await Promise.all(
+              selectedUsers.map((id) =>
+                axios.delete(`${baseUrl}/api/users/${id}`),
+              ),
+            );
+
+            Swal.fire(
+              "Deleted!",
+              `${selectedUsers.length} users removed successfully.`,
+              "success",
+            );
+            setSelectedUsers([]);  
+
+            if (refreshUsers) refreshUsers();  
+          } catch (error) {
+            console.error("Batch delete failure:", error);
+            Swal.fire(
+              "Error!",
+              "An error occurred while removing the selected users.",
+              "error",
+            );
+          }
         }
       });
     }
   };
 
+  // --- Single Delete Logic ---
   const handleDelete = (userId, userName) => {
     Swal.fire({
       title: "Are you sure?",
@@ -95,10 +122,25 @@ const UserTable = ({ users = [] }) => {
       color: document.documentElement.classList.contains("dark")
         ? "#fff"
         : "#000",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        console.log(`Deleting user: ${userId}`);
-        Swal.fire("Deleted!", "User removed.", "success");
+        try {
+          const baseUrl =
+            import.meta.env?.VITE_BACKEND_URL ||
+            "https://cms-backend-ashen.vercel.app";
+
+          await axios.delete(`${baseUrl}/api/users/${userId}`);
+
+          Swal.fire("Deleted!", "User removed successfully.", "success");
+          if (refreshUsers) refreshUsers();
+        } catch (error) {
+          console.error("Delete call failure:", error);
+          Swal.fire(
+            "Error!",
+            error.response?.data?.message || "Could not remove user.",
+            "error",
+          );
+        }
       }
     });
   };
@@ -117,7 +159,7 @@ const UserTable = ({ users = [] }) => {
             onClick={handleDeleteClick}
             className="px-6 py-2 rounded-lg border border-primary text-primary font-semibold hover:bg-primary hover:text-white transition-colors"
           >
-            Delete
+            Delete Selected
           </button>
           <Link
             to="/dashboard/add-user"
@@ -172,7 +214,7 @@ const UserTable = ({ users = [] }) => {
                   <div className="flex items-center gap-3">
                     <img
                       src={user.img}
-                      className="w-10 h-10 rounded-full border border-gray-100"
+                      className="w-10 h-10 rounded-full border border-gray-100 object-cover"
                       alt=""
                     />
                     <span className="font-medium text-gray-600 dark:text-gray-300">
@@ -201,7 +243,9 @@ const UserTable = ({ users = [] }) => {
                   {user.dob}
                 </td>
                 <td className="py-4 px-2 text-[12px] text-center">
-                  <div className="w-3 h-3 rounded-full bg-green-500 mx-auto"></div>
+                  <div
+                    className={`w-3 h-3 rounded-full mx-auto ${user.status === "Active" ? "bg-green-500" : "bg-red-400"}`}
+                  ></div>
                 </td>
                 <td className="py-4 px-2 text-[12px]">
                   <div className="flex gap-2">

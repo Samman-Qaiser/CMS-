@@ -4,49 +4,18 @@ import { motion } from "framer-motion";
 import { BsPencil, BsEye, BsEyeSlash } from "react-icons/bs";
 import defaultAvatar from "/public/images/default_avatar.jpg";
 import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 
 export const UserForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(defaultAvatar);
 
-  const allUsers = [
-    {
-      id: 1,
-      name: "Khesh Mehra",
-      email: "manager@example.com",
-      gender: "Male",
-      group: "Manager",
-      mobile: "9652588652",
-      dob: "1996-08-24",
-      status: "Active",
-      img: "https://i.pravatar.cc/150?u=1",
-    },
-    {
-      id: 2,
-      name: "Ravi Sharma",
-      email: "customer@example.com",
-      gender: "Male",
-      group: "Customer",
-      mobile: "9654752251",
-      dob: "1996-08-10",
-      status: "Active",
-      img: "https://i.pravatar.cc/150?u=2",
-    },
-    {
-      id: 3,
-      name: "Gaurav Nagar",
-      email: "admin@example.com",
-      gender: "Male",
-      group: "Admin",
-      mobile: "9785255135",
-      dob: "1996-08-24",
-      status: "Active",
-      img: "https://i.pravatar.cc/150?u=3",
-    },
-  ];
+  // Track raw file state for API submission and visual preview URL separately
+  const [imageFile, setImageFile] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(defaultAvatar);
+  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -63,37 +32,134 @@ export const UserForm = () => {
     },
   });
 
+  // Fetch the existing user profile details dynamically if an ID is provided
   useEffect(() => {
-    if (id) {
-      const userToEdit = allUsers.find((u) => u.id === parseInt(id));
-      if (userToEdit) {
-        const [firstName, ...lastNameParts] = userToEdit.name.split(" ");
-        reset({
-          firstName: firstName,
-          lastName: lastNameParts.join(" "),
-          email: userToEdit.email,
-          username: userToEdit.email.split("@")[0],
-          phoneNumber: userToEdit.mobile,
-          gender: userToEdit.gender,
-          role: userToEdit.group,
-          dob: userToEdit.dob,
-          isActive: userToEdit.status === "Active",
-        });
-        setSelectedImage(userToEdit.img);
+    const fetchUserData = async () => {
+      if (!id) return;
+
+      setLoading(true);
+      const baseUrl =
+        import.meta.env?.VITE_BACKEND_URL ||
+        "https://cms-backend-ashen.vercel.app";
+
+      try {
+        const response = await axios.get(`${baseUrl}/api/users/${id}`);
+        // Extract the user data safely based on typical API nesting structures
+        const user = response.data?.user || response.data;
+
+        if (user) {
+          reset({
+            firstName: user.firstName || "",
+            lastName: user.lastName || "",
+            email: user.email || "",
+            username: user.username || user.email?.split("@")[0] || "",
+            phoneNumber: user.phoneNumber || "",
+            // Capitalise the initial letter to properly fit your visual select components
+            gender: user.gender
+              ? user.gender.charAt(0).toUpperCase() + user.gender.slice(1)
+              : "",
+            role: user.role
+              ? user.role.charAt(0).toUpperCase() + user.role.slice(1)
+              : "",
+            dob: user.dateOfBirth ? user.dateOfBirth.split("T")[0] : "",
+            isActive: user.isActive !== undefined ? user.isActive : true,
+            facebookUrl: user.facebookUrl || "",
+            twitterUrl: user.twitterUrl || "",
+            linkedinUrl: user.linkedinUrl || "",
+            about: user.about || "",
+          });
+
+          if (user.profileImage) {
+            setSelectedImage(user.profileImage);
+          }
+        }
+      } catch (error) {
+        console.error(
+          "Error fetching user data:",
+          error.response?.data || error.message,
+        );
+        alert("Failed to load user profile data.");
+      } finally {
+        setLoading(false);
       }
-    }
+    };
+
+    fetchUserData();
   }, [id, reset]);
 
-  const onSubmit = (data) => {
-    console.log(id ? "Update API Call" : "Create API Call", data);
-    navigate(-1);
+  const onSubmit = async (data) => {
+    setLoading(true);
+    const baseUrl =
+      import.meta.env?.VITE_BACKEND_URL ||
+      "https://cms-backend-ashen.vercel.app";
+
+    const formData = new FormData();
+    formData.append("firstName", data.firstName || "");
+    formData.append("lastName", data.lastName || "");
+    formData.append("username", data.username);
+    formData.append("email", data.email);
+
+    // Passwords are only required or appended if filled out during edits
+    if (data.password) {
+      formData.append("password", data.password);
+    }
+
+    // Force lowercase strings to satisfy backend enum validation rules
+    if (data.role) formData.append("role", data.role.toLowerCase());
+    if (data.gender) formData.append("gender", data.gender.toLowerCase());
+
+    formData.append("phoneNumber", data.phoneNumber);
+    formData.append("dateOfBirth", data.dob);
+    formData.append("isActive", data.isActive);
+    formData.append("facebookUrl", data.facebookUrl || "");
+    formData.append("twitterUrl", data.twitterUrl || "");
+    formData.append("linkedinUrl", data.linkedinUrl || "");
+    formData.append("about", data.about || "");
+
+    if (imageFile) {
+      formData.append("profileImage", imageFile);
+    }
+
+    try {
+      let response;
+      if (id) {
+        // Updated target endpoint layout to hit: {{base_url}}/api/users/:id
+        response = await axios.put(`${baseUrl}/api/users/${id}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      } else {
+        response = await axios.post(`${baseUrl}/api/users/add`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      }
+
+      console.log("Form Action Success:", response.data);
+      alert(
+        response.data?.message ||
+          `User successfully ${id ? "updated" : "added"}!`,
+      );
+      navigate(-1);
+    } catch (error) {
+      console.error(
+        "Form Action Error:",
+        error.response?.data || error.message,
+      );
+      alert(
+        error.response?.data?.message ||
+          "An error occurred while saving user data.",
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCancel = () => navigate(-1);
 
   const handleImageChange = (event) => {
-    if (event.target.files?.[0]) {
-      setSelectedImage(URL.createObjectURL(event.target.files[0]));
+    const file = event.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      setSelectedImage(URL.createObjectURL(file));
     }
   };
 
@@ -150,10 +216,9 @@ export const UserForm = () => {
               label="UserName"
               name="username"
               register={register}
-              placeholder="admin@example.com"
+              placeholder="admin"
               required
               errors={errors}
-              isFilled={true}
             />
             <InputField
               label="Email"
@@ -177,7 +242,6 @@ export const UserForm = () => {
 
         {/* Row 2: Status, Role, Gender, DOB */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 items-center">
-          {/* Is Active Checkbox */}
           <div className="flex items-center gap-2 pt-6">
             <input
               type="checkbox"
@@ -257,6 +321,7 @@ export const UserForm = () => {
         </div>
 
         {/* Row 5: Passwords */}
+        {/* Row 5: Passwords */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pb-6">
           <PasswordField
             label="Password"
@@ -265,7 +330,7 @@ export const UserForm = () => {
             errors={errors}
             showPassword={showPassword}
             setShowPassword={setShowPassword}
-            required
+            required={!id} // Only required on new user registration setups
           />
           <PasswordField
             label="Confirm Password"
@@ -274,19 +339,28 @@ export const UserForm = () => {
             errors={errors}
             showPassword={showConfirmPassword}
             setShowPassword={setShowConfirmPassword}
-            required
+            required={!id}
             isFilled={false}
-            validate={(value) =>
-              value === watch("password") || "Passwords do not match"
-            }
+            validate={(value) => {
+              // If we are editing and both password fields are empty
+              if (id && !watch("password") && !value) return true;
+              // Otherwise, confirm both typed values match exactly
+              return value === watch("password") || "Passwords do not match";
+            }}
           />
         </div>
+
         <div className="flex gap-4 pt-4 border-t border-gray-50 dark:border-gray-800">
           <button
             type="submit"
-            className="px-8 py-3 rounded-xl text-white bg-[#4CBC9A] hover:bg-[#3a9b7e] font-bold transition-transform hover:scale-105 active:scale-95"
+            disabled={loading}
+            className={`px-8 py-3 rounded-xl text-white font-bold transition-transform hover:scale-105 active:scale-95 ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-[#4CBC9A] hover:bg-[#3a9b7e]"
+            }`}
           >
-            {id ? "Update" : "Save"}
+            {loading ? "Saving..." : id ? "Update" : "Save"}
           </button>
           <button
             type="button"
@@ -302,6 +376,7 @@ export const UserForm = () => {
   );
 };
 
+// --- Form Input Field Sub-components remain identically structured ---
 const InputField = ({
   label,
   name,
@@ -326,14 +401,9 @@ const InputField = ({
         required: required ? "This field is required." : false,
       })}
       placeholder={placeholder}
-      className={`w-full px-4 py-3 rounded-xl border bg-transparent outline-none transition-all ${
-        errors?.[name]
-          ? "border-red-500"
-          : "border-gray-200 dark:border-gray-600"
-      } ${isFilled ? "bg-blue-50/50" : ""}`}
+      className={`w-full px-4 py-3 rounded-xl border bg-transparent outline-none transition-all ${errors?.[name] ? "border-red-500" : "border-gray-200 dark:border-gray-600"} ${isFilled ? "bg-blue-50/50" : ""}`}
       style={{ color: "var(--content-text)" }}
     />
-    {/* Error message */}
     {errors?.[name] && (
       <p className="text-red-500 text-xs mt-1">{errors[name].message}</p>
     )}
@@ -363,11 +433,7 @@ const SelectField = ({
       render={({ field }) => (
         <select
           {...field}
-          className={`w-full px-4 py-3 rounded-xl border bg-transparent outline-none transition-all cursor-pointer appearance-none ${
-            errors?.[name]
-              ? "border-red-500"
-              : "border-gray-200 dark:border-gray-600"
-          }`}
+          className={`w-full px-4 py-3 rounded-xl border bg-transparent outline-none transition-all cursor-pointer appearance-none ${errors?.[name] ? "border-red-500" : "border-gray-200 dark:border-gray-600"}`}
           style={{ color: field.value ? "var(--content-text)" : "#9ca3af" }}
         >
           <option value="" disabled>
@@ -410,13 +476,9 @@ const PasswordField = ({
         type={showPassword ? "text" : "password"}
         {...register(name, {
           required: required ? "This field is required." : false,
-          validate: validate,
+          validate,
         })}
-        className={`w-full px-4 py-3 rounded-xl border bg-transparent outline-none transition-all ${
-          errors?.[name]
-            ? "border-red-500"
-            : "border-gray-200 dark:border-gray-600"
-        } ${isFilled ? "bg-blue-50/50" : ""}`}
+        className={`w-full px-4 py-3 rounded-xl border bg-transparent outline-none transition-all ${errors?.[name] ? "border-red-500" : "border-gray-200 dark:border-gray-600"} ${isFilled ? "bg-blue-50/50" : ""}`}
         style={{ color: "var(--content-text)" }}
       />
       <button

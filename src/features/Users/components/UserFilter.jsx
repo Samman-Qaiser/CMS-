@@ -31,19 +31,22 @@ const UserFilter = ({ onFilter }) => {
       group: "Select Group",
     };
     reset(defaultValues);
+    setValue("group", "Select Group");
+
     if (onFilter) {
       onFilter(defaultValues);
     }
   };
 
   return (
-    <div className=" bg-white dark:bg-[#292d4a] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 ">
+    <div className="bg-white dark:bg-[#292d4a] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
       {/* Header with Toggle */}
       <div className="p-5 flex items-center justify-between">
         <h2 className="text-xl font-bold" style={{ color: "var(--primary)" }}>
           Filter
         </h2>
         <button
+          type="button"
           onClick={() => setIsOpen(!isOpen)}
           className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
           style={{ backgroundColor: "var(--primary)", color: "white" }}
@@ -61,7 +64,6 @@ const UserFilter = ({ onFilter }) => {
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3 }}
           >
-            {/* Grid Form Implementation */}
             <form
               onSubmit={handleSubmit(onSubmit)}
               className="px-6 pb-8 pt-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end"
@@ -116,7 +118,13 @@ const UserFilter = ({ onFilter }) => {
                       className="absolute top-[110%] left-0 w-full bg-white dark:bg-[#32375a] border border-gray-100 dark:border-gray-600 rounded-lg shadow-xl z-20 overflow-hidden"
                     >
                       <div className="p-2">
-                        <div className="p-3 font-bold text-gray-800 dark:text-white border-b border-gray-50 dark:border-gray-700">
+                        <div
+                          onClick={() => {
+                            setValue("group", "Select Group");
+                            setIsDropdownOpen(false);
+                          }}
+                          className="p-3 font-bold text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 cursor-pointer border-b border-gray-50 dark:border-gray-700"
+                        >
                           Select Group
                         </div>
                         {groups.map((group) => (
@@ -137,7 +145,7 @@ const UserFilter = ({ onFilter }) => {
                 </AnimatePresence>
               </div>
 
-              {/* Buttons Grid Section */}
+              {/* Action Buttons */}
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="submit"
