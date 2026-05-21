@@ -37,19 +37,31 @@ const Pages = () => {
     }
   };
 
-  // --- Initial Mount Load ---
   useEffect(() => {
     fetchPages();
   }, [baseUrl]);
 
-  // --- Filter Logic ---
   const filteredPages = pages.filter((page) => {
+    // Title matching
     const matchTitle = (page.title || "")
       .toLowerCase()
       .includes(filters.title.toLowerCase());
+
+    // Status matching  
     const matchStatus =
-      filters.status === "Select Status" || page.status === filters.status;
-    return matchTitle && matchStatus;
+      filters.status === "Select Status" ||
+      (page.status || "").toLowerCase() === filters.status.toLowerCase();
+
+    // Date truncation string matching 
+    let matchDate = true;
+    if (filters.date) {
+      const targetPublishDate = page.publishedAt
+        ? page.publishedAt.split("T")[0]
+        : "";
+      matchDate = targetPublishDate === filters.date;
+    }
+
+    return matchTitle && matchStatus && matchDate;
   });
 
   return (
@@ -63,7 +75,6 @@ const Pages = () => {
             </span>
           </div>
         ) : (
-          /* FIXED: Handed over the refresh callback invocation trigger directly to the table */
           <PageTable pages={filteredPages} onRefresh={fetchPages} />
         )}
       </div>

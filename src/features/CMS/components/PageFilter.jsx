@@ -12,7 +12,8 @@ const PageFilter = ({ onFilter }) => {
   });
 
   const selectedStatus = watch("status");
-  const statuses = ["Published", "Draft", "Pending"];
+  // Changed to lowercase 
+  const statuses = ["published", "draft", "pending"];
 
   const onSubmit = (data) => onFilter && onFilter(data);
 
@@ -25,7 +26,9 @@ const PageFilter = ({ onFilter }) => {
   return (
     <div className="bg-white dark:bg-[#292d4a] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
       <div className="p-5 flex items-center justify-between">
-        <h2 className="text-xl font-bold text-primary">Filter</h2>
+        <h2 className="text-xl font-bold text-primary dark:text-white">
+          Filter
+        </h2>
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="w-8 h-8 rounded-full flex items-center justify-center bg-primary text-white"
@@ -48,25 +51,25 @@ const PageFilter = ({ onFilter }) => {
               <input
                 {...register("title")}
                 placeholder="Title"
-                className="w-full px-4 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-transparent outline-none focus:ring-1"
+                className="w-full px-4 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-transparent text-gray-700 dark:text-gray-200 outline-none focus:ring-1"
               />
 
               <div className="relative">
                 <div
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="w-full px-4 py-2 text-sm rounded-lg border flex items-center justify-between cursor-pointer border-gray-200 dark:border-gray-600"
+                  className="w-full px-4 py-2 text-sm rounded-lg border flex items-center justify-between cursor-pointer border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200"
                 >
                   <span
                     className={
                       selectedStatus === "Select Status"
                         ? "text-gray-400"
-                        : "text-gray-700 dark:text-gray-200"
+                        : "text-gray-700 dark:text-gray-200 capitalize"
                     }
                   >
                     {selectedStatus}
                   </span>
                   <BsChevronDown
-                    className={isDropdownOpen ? "rotate-180" : ""}
+                    className={`transition-transform ${isDropdownOpen ? "rotate-180" : ""}`}
                   />
                 </div>
                 <AnimatePresence>
@@ -85,7 +88,7 @@ const PageFilter = ({ onFilter }) => {
                               setValue("status", s);
                               setIsDropdownOpen(false);
                             }}
-                            className="p-3 hover:bg-gray-50 dark:hover:bg-white/5 cursor-pointer rounded-lg text-gray-500 hover:text-gray-800 transition-colors"
+                            className="p-3 hover:bg-gray-50 dark:hover:bg-white/5 cursor-pointer rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white capitalize transition-colors"
                           >
                             {s}
                           </div>
@@ -99,7 +102,7 @@ const PageFilter = ({ onFilter }) => {
               <input
                 type="date"
                 {...register("date")}
-                className="w-full px-4 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-transparent outline-none"
+                className="w-full px-4 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-transparent text-gray-700 dark:text-gray-200 outline-none"
               />
 
               <div className="grid grid-cols-2 gap-3">
