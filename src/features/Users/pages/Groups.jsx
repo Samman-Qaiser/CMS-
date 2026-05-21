@@ -9,13 +9,7 @@ import axios from "axios";
 
 const Groups = () => {
   const [loading, setLoading] = useState(true);
-  const [roleCounts, setRoleCounts] = useState({
-    admin: 0,
-    manager: 0,
-    customer: 0,
-  });
 
-  // 1. Define base structural blueprints for groups
   const [groups, setGroups] = useState([
     { id: 1, name: "Admin", userCount: 0, permsCount: 80 },
     { id: 2, name: "Manager", userCount: 0, permsCount: 4 },
@@ -29,11 +23,10 @@ const Groups = () => {
       "https://cms-backend-ashen.vercel.app";
 
     try {
-      // 2. Fetch the current master list of users
+      // Fetch the current master list of users
       const response = await axios.get(`${baseUrl}/api/users`);
       const rawUsers = response.data?.users || response.data || [];
 
-      // 3. Compute structural frequency counts matching role string permutations
       const counts = rawUsers.reduce(
         (acc, user) => {
           const role = (user.role || "").toLowerCase().trim();
@@ -45,7 +38,6 @@ const Groups = () => {
         { admin: 0, manager: 0, customer: 0 },
       );
 
-      // 4. Map calculated real-time figures into your component array layout
       setGroups((prevGroups) =>
         prevGroups.map((g) => {
           const lookupKey = g.name.toLowerCase();

@@ -55,7 +55,6 @@ export const UserForm = () => {
             email: user.email || "",
             username: user.username || user.email?.split("@")[0] || "",
             phoneNumber: user.phoneNumber || "",
-            // Capitalise the initial letter to properly fit your visual select components
             gender: user.gender
               ? user.gender.charAt(0).toUpperCase() + user.gender.slice(1)
               : "",
@@ -105,12 +104,10 @@ export const UserForm = () => {
     formData.append("username", data.username);
     formData.append("email", data.email);
 
-    // Passwords are only required or appended if filled out during edits
     if (data.password) {
       formData.append("password", data.password);
     }
 
-    // Force lowercase strings to satisfy backend enum validation rules
     if (data.role) formData.append("role", data.role.toLowerCase());
     if (data.gender) formData.append("gender", data.gender.toLowerCase());
 
@@ -128,8 +125,7 @@ export const UserForm = () => {
 
     try {
       let response;
-      if (id) {
-        // Updated target endpoint layout to hit: {{base_url}}/api/users/:id
+      if (id) { 
         response = await axios.put(`${baseUrl}/api/users/${id}`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
@@ -394,7 +390,6 @@ export const UserForm = () => {
   );
 };
 
-// --- Sub-components (InputField, SelectField, PasswordField) remain unchanged ---
 const InputField = ({
   label,
   name,
