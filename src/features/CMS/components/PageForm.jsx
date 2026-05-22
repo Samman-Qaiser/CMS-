@@ -16,18 +16,23 @@ const PageForm = () => {
   const isEditMode = Boolean(id);
   const [isLoading, setIsLoading] = useState(false);
   const currentUser = useSelector((state) => state.auth.user);
+  
+  // State to store author display value (email or name)
+  const [authorDisplayValue, setAuthorDisplayValue] = useState("");
+  const [authorIdValue, setAuthorIdValue] = useState("");
+  const [usersList, setUsersList] = useState([]);
 
   const baseUrl =
     import.meta.env?.VITE_BACKEND_URL || "https://cms-backend-ashen.vercel.app";
 
-  const { register, handleSubmit, control, reset } = useForm({
+  const { register, handleSubmit, control, reset, setValue } = useForm({
     defaultValues: {
       title: "",
       content: "",
       excerpt: "",
       slug: "",
       author: currentUser?._id || currentUser?.id || "",
-      status: "draft", // Matches Mongoose schema default fallback
+      status: "draft",
       visibility: "public",
       publishOn: "",
       metaTitle: "",
@@ -38,8 +43,8 @@ const PageForm = () => {
   });
 
   const [isOptionsOpen, setIsOptionsOpen] = useState(true);
-  const [featuredImage, setFeaturedImage] = useState(null); // Used for image preview URI
-  const [imageFile, setImageFile] = useState(null); // Used for raw upload file binary
+  const [featuredImage, setFeaturedImage] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
 
   const [screenOptions, setScreenOptions] = useState({
     PageAttributes: false,
@@ -61,6 +66,40 @@ const PageForm = () => {
     };
   };
 
+  // Fetch all users for edit mode
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get(`${baseUrl}/api/users`);
+      const rawUsers = response.data?.users || response.data || [];
+      const mappedUsers = rawUsers.map((user) => ({
+        id: user._id || user.id,
+        name: `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.email,
+        email: user.email || "",
+      }));
+      setUsersList(mappedUsers);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
+  // Get user email or name by ID
+  const getUserDisplayValue = (userId) => {
+    const user = usersList.find(u => u.id === userId);
+    if (isEditMode) {
+      // In edit mode, show name if available, otherwise email
+      return user?.name || user?.email || userId;
+    } else {
+      // In create mode, show email
+      return user?.email || userId;
+    }
+  };
+
+  // Get user ID by email (for create mode when user changes selection)
+  const getUserIdByEmail = (email) => {
+    const user = usersList.find(u => u.email === email);
+    return user?.id || "";
+  };
+
   // Cleanup object URLs to avoid memory leaks
   useEffect(() => {
     return () => {
@@ -70,30 +109,56 @@ const PageForm = () => {
     };
   }, [featuredImage]);
 
+  // Fetch users on component mount
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  // Set initial author display value when users list is loaded or currentUser changes
+  useEffect(() => {
+    if (usersList.length > 0 && !isEditMode && currentUser) {
+      const userEmail = currentUser?.email || "";
+      const userId = currentUser?._id || currentUser?.id || "";
+      setAuthorDisplayValue(userEmail);
+      setAuthorIdValue(userId);
+      setValue("author", userId); // Set the form value to user ID
+    }
+  }, [usersList, currentUser, isEditMode, setValue]);
+
   // --- Data Fetching and Reset Sync Module ---
   useEffect(() => {
     if (isEditMode) {
       const fetchPageData = async () => {
         try {
           const response = await axios.get(`${baseUrl}/api/pages/${id}`);
-
-          console.log("Full API Response Payload:", response.data);
-
-          const pageData =
-            response.data?.page || response.data?.data || response.data;
+          const pageData = response.data?.page || response.data?.data || response.data;
 
           if (pageData) {
+            const authorId = typeof pageData.author === "object"
+              ? pageData.author?._id || pageData.author?.id || ""
+              : pageData.author || "";
+            
+            setAuthorIdValue(authorId);
+            
+            // Wait for users to be loaded before setting display value
+            if (usersList.length > 0) {
+              const displayValue = getUserDisplayValue(authorId);
+              setAuthorDisplayValue(displayValue);
+            } else {
+              // If users not loaded yet, set a temporary value
+              setAuthorDisplayValue(authorId);
+              // Fetch users again to ensure we have the list
+              await fetchUsers();
+            }
+
             reset({
               title: pageData.title || "",
               content: pageData.content || "",
               excerpt: pageData.excerpt || "",
               slug: pageData.slug || "",
-              author:
-                typeof pageData.author === "object"
-                  ? pageData.author?._id || pageData.author?.id || ""
-                  : pageData.author || "",
+              author: authorId, // Store ID in form
               status: pageData.status || "draft",
-              visibility: pageData.visibility || "public", 
+              visibility: pageData.visibility || "public",
               publishOn: pageData.publishedAt
                 ? pageData.publishedAt.split("T")[0]
                 : "",
@@ -116,8 +181,7 @@ const PageForm = () => {
           Swal.fire({
             icon: "error",
             title: "Failed to load page details",
-            text:
-              error.response?.data?.message || "An unexpected error occurred.",
+            text: error.response?.data?.message || "An unexpected error occurred.",
             ...getSwalThemeColors(),
           });
         }
@@ -125,7 +189,39 @@ const PageForm = () => {
 
       fetchPageData();
     }
-  }, [id, isEditMode, reset, baseUrl]);
+  }, [id, isEditMode, reset, baseUrl, usersList]);
+
+  // Update display value when usersList changes in edit mode
+  useEffect(() => {
+    if (isEditMode && authorIdValue && usersList.length > 0) {
+      const displayValue = getUserDisplayValue(authorIdValue);
+      setAuthorDisplayValue(displayValue);
+    }
+  }, [usersList, isEditMode, authorIdValue]);
+
+  // Handle author input change
+  const handleAuthorChange = (e) => {
+    const value = e.target.value;
+    setAuthorDisplayValue(value);
+    
+    // Try to find user by email (for create mode) or by name/email (for edit mode)
+    let userId = "";
+    if (isEditMode) {
+      // In edit mode, try to find by name or email
+      const user = usersList.find(u => 
+        u.name.toLowerCase() === value.toLowerCase() || 
+        u.email.toLowerCase() === value.toLowerCase()
+      );
+      userId = user?.id || value;
+    } else {
+      // In create mode, try to find by email
+      const user = usersList.find(u => u.email.toLowerCase() === value.toLowerCase());
+      userId = user?.id || value;
+    }
+    
+    setAuthorIdValue(userId);
+    setValue("author", userId); // Update form value with ID
+  };
 
   // --- Process and Submit Handler ---
   const onSubmit = async (data) => {
@@ -135,15 +231,16 @@ const PageForm = () => {
         ? `${baseUrl}/api/pages/${id}`
         : `${baseUrl}/api/pages`;
 
-      const finalAuthor = data.author || "6a0afff01777cf4ad2216901";
+      // Use the author ID from state (which is the actual ID, not the display value)
+      const finalAuthor = authorIdValue || data.author || "6a0afff01777cf4ad2216901";
 
       const cleanData = {
         ...data,
         author: finalAuthor,
-        publishedAt: data.publishOn || null,  
+        publishedAt: data.publishOn || null,
         order: Number(data.order) || 0,
       };
-      delete cleanData.publishOn;  
+      delete cleanData.publishOn;
 
       let response;
 
@@ -196,8 +293,7 @@ const PageForm = () => {
       Swal.fire({
         icon: "error",
         title: "Submission Failed",
-        text:
-          error.response?.data?.message ||
+        text: error.response?.data?.message ||
           "Could not connect to the database schema accurately.",
         ...getSwalThemeColors(),
       });
@@ -214,6 +310,25 @@ const PageForm = () => {
       }
       setImageFile(file);
       setFeaturedImage(URL.createObjectURL(file));
+    }
+  };
+
+  // Create datalist options for author input
+  const getAuthorOptions = () => {
+    if (isEditMode) {
+      // In edit mode, show names and emails
+      return usersList.map(user => (
+        <option key={user.id} value={user.name}>
+          {user.name} ({user.email})
+        </option>
+      ));
+    } else {
+      // In create mode, show only emails
+      return usersList.map(user => (
+        <option key={user.id} value={user.email}>
+          {user.email}
+        </option>
+      ));
     }
   };
 
@@ -363,11 +478,27 @@ const PageForm = () => {
             {screenOptions.Author && (
               <FormSection title="Author">
                 <input
-                  {...register("author")}
                   type="text"
-                  placeholder="Paste User ID (e.g. 6a0afff01777cf4ad2216901)"
+                  value={authorDisplayValue}
+                  onChange={handleAuthorChange}
+                  list="author-options"
+                  placeholder={
+                    isEditMode 
+                      ? "Type author name or email" 
+                      : "Type author email (e.g., user@example.com)"
+                  }
                   className="w-full border rounded-lg p-2 dark:bg-[#1e2235] dark:border-gray-600 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
                 />
+                <datalist id="author-options">
+                  {getAuthorOptions()}
+                </datalist>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  {isEditMode 
+                    ? "💡 Select author by name or email" 
+                    : "💡 Select author by email (ID will be saved automatically)"}
+                </p>
+                {/* Hidden input to store the actual author ID for debugging */}
+                <input type="hidden" {...register("author")} value={authorIdValue} />
               </FormSection>
             )}
 
