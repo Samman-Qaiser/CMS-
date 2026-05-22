@@ -3,12 +3,11 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { motion, AnimatePresence } from "framer-motion";
 import { IoChevronUp } from "react-icons/io5";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import FormSection from "./FormSection";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { TipTapEditor } from "./TipTapEditor";
 
 const PageForm = () => {
   const { id } = useParams();
@@ -434,21 +433,9 @@ const PageForm = () => {
                   name="content"
                   control={control}
                   render={({ field }) => (
-                    <CKEditor
-                      editor={ClassicEditor}
-                      data={field.value || ""}
-                      onChange={(event, editor) =>
-                        field.onChange(editor.getData())
-                      }
-                      onReady={(editor) => {
-                        editor.editing.view.change((writer) => {
-                          writer.setStyle(
-                            "height",
-                            "300px",
-                            editor.editing.view.document.getRoot(),
-                          );
-                        });
-                      }}
+                    <TipTapEditor
+                      value={field.value}
+                      onChange={field.onChange}
                     />
                   )}
                 />

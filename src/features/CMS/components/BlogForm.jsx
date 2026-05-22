@@ -3,50 +3,97 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { motion, AnimatePresence } from "framer-motion";
 import { IoChevronUp } from "react-icons/io5";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import FormSection from "./FormSection";
-import { allBlogs } from "./blogsData";
 import Swal from "sweetalert2";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { TipTapEditor } from "./TipTapEditor";
 
 const BlogForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEditMode = Boolean(id);
+  const user = useSelector((state) => state.auth.user);
+  const baseUrl =
+    import.meta.env?.VITE_BACKEND_URL || "https://cms-backend-ashen.vercel.app";
 
-  // Form setup
-  const { register, handleSubmit, control, reset, setValue } = useForm({
-    defaultValues: {
-      title: "",
-      content: "",
-      excerpt: "",
-      slug: "",
-      author: "w3@admin",
-      status: "Published",
-      visibility: "Public",
-      publishOn: "",
-      videoUrl: "",
-      categories: [],
-      tags: "",
-      seoTitle: "",
-      seoKeywords: "",
-      seoDescription: "",
-    },
-  });
+  const { register, handleSubmit, control } = useForm();
 
-  // State management
-  const [isOptionsOpen, setIsOptionsOpen] = useState(true);
+  const [categories, setCategories] = useState([]);
   const [featuredImage, setFeaturedImage] = useState(null);
-  const [showAddCategory, setShowAddCategory] = useState(false); 
-  const [localCategories, setLocalCategories] = useState([
-    "Backend",
-    "Design",
-    "Frontend",
-    "News",
-  ]);
- 
-  const [newCategory, setNewCategory] = useState({ name: "", parent: "None" });
+  const [imageFile, setImageFile] = useState(null);
+  const [isOptionsOpen, setIsOptionsOpen] = useState(true);
 
+  // Tags state for the UI
+  const [tags, setTags] = useState([]);
+  const [allTags, setAllTags] = useState([]); // Tags from database
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [catRes, tagRes] = await Promise.all([
+          axios.get(`${baseUrl}/api/categories`),
+          axios.get(`${baseUrl}/api/tags`),
+        ]);
+        setCategories(catRes.data.categories || []);
+        setAllTags(tagRes.data.tags || []);
+      } catch (err) {
+        console.error("Error fetching dependencies", err);
+      }
+    };
+    fetchData();
+  }, [baseUrl]);
+  const toggleTagSelection = (tag) => {
+    if (tags.includes(tag)) {
+      setTags(tags.filter((t) => t !== tag));
+    } else {
+      setTags([...tags, tag]);
+    }
+  };
+
+  const removeTag = (indexToRemove) => {
+    setTags(tags.filter((_, index) => index !== indexToRemove));
+  };
+  // -----------------------
+
+  const onSubmit = async (data) => {
+    const formData = new FormData();
+    Object.keys(data).forEach((key) => {
+      // Skip the author key from the form data since we are injecting it manually
+      if (key === "author") return;
+
+      if (key === "categories") {
+        formData.append("categories", JSON.stringify(data.categories));
+      } else {
+        formData.append(key, data[key]);
+      }
+    });
+
+    if (user?.id) {
+      formData.append("author", user.id);
+    }
+
+    formData.append("tags", JSON.stringify(tags));
+    if (imageFile) formData.append("featuredImage", imageFile);
+
+    try {
+      if (isEditMode) {
+        await axios.put(`${baseUrl}/api/blogs/${id}`, formData);
+      } else {
+        await axios.post(`${baseUrl}/api/blogs`, formData);
+      }
+      Swal.fire("Success", "Blog saved successfully!", "success");
+      navigate("/dashboard/blogs");
+    } catch (err) {
+      console.error("Full Error:", err.response?.data || err.message);
+
+      Swal.fire(
+        "Error",
+        err.response?.data?.message || "Operation failed",
+        "error",
+      );
+    }
+  };
   const [screenOptions, setScreenOptions] = useState({
     Categories: true,
     FeaturedImage: true,
@@ -58,80 +105,12 @@ const BlogForm = () => {
     Tags: true,
   });
 
-  const [tags, setTags] = useState([]);  
-  const [tagInput, setTagInput] = useState("");
- 
-  useEffect(() => {
-    setValue("tags", tags);
-  }, [tags, setValue]);
-
-  const handleTagKeyDown = (e) => {
-    if (e.key === "," || e.key === "Enter") {
-      e.preventDefault();
-      const val = tagInput.trim().replace(/,/g, "");
-      if (val && !tags.includes(val)) {
-        setTags([...tags, val]);
-        setTagInput("");
-      }
-    } else if (e.key === "Backspace" && !tagInput && tags.length > 0) { 
-      setTags(tags.slice(0, -1));
-    }
-  };
-
-  const removeTag = (indexToRemove) => {
-    setTags(tags.filter((_, index) => index !== indexToRemove));
-  };
-  useEffect(() => {
-    if (isEditMode) {
-      const blog = allBlogs.find((b) => b.id === parseInt(id));
-      if (blog) {
-        setScreenOptions({
-          Categories: true, 
-          FeaturedImage: true,
-          Video: true,
-          Excerpt: true,
-          Slug: true,
-          Author: true,
-          SEO: true,
-          Tags: true,
-        });
-
-        reset({
-          ...blog,
-          seoTitle: blog.seo?.blogTitle || "",
-          seoKeywords: blog.seo?.metaKeywords || "",
-          seoDescription: blog.seo?.metaDescription || "",
-          tags: blog.tags?.join(", ") || "",
-        });
-      }
-    } else {
-      setScreenOptions({
-        Categories: true,
-        FeaturedImage: true,
-        Video: true,
-        Excerpt: true,
-        Slug: true,
-        Author: true,
-        SEO: true,
-        Tags: true,
-      });
-    }
-  }, [id, isEditMode, reset]);
-
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (file) setFeaturedImage(URL.createObjectURL(file));
-  };
-
-  const onSubmit = (data) => {
-    console.log("Saving Blog:", data);
-    Swal.fire({
-      icon: "success",
-      title: isEditMode ? "Blog Updated!" : "Blog Created!",
-      timer: 1500,
-      showConfirmButton: false,
-    });
-    setTimeout(() => navigate("/dashboard/blogs"), 1500);
+    if (file) {
+      setImageFile(file);
+      setFeaturedImage(URL.createObjectURL(file));
+    }
   };
 
   return (
@@ -223,20 +202,7 @@ const BlogForm = () => {
               name="content"
               control={control}
               render={({ field }) => (
-                <CKEditor
-                  editor={ClassicEditor}
-                  data={field.value}
-                  onChange={(event, editor) => field.onChange(editor.getData())}
-                  onReady={(editor) =>
-                    editor.editing.view.change((writer) =>
-                      writer.setStyle(
-                        "height",
-                        "300px",
-                        editor.editing.view.document.getRoot(),
-                      ),
-                    )
-                  }
-                />
+                <TipTapEditor value={field.value} onChange={field.onChange} />
               )}
             />
           </FormSection>
@@ -262,14 +228,10 @@ const BlogForm = () => {
 
           {screenOptions.Author && (
             <FormSection title="Author">
-              <select
-                {...register("author")}
-                className="w-full border rounded-lg p-2 dark:bg-[#1e2235]"
-              >
-                <option value="w3@admin">w3@admin</option>
-                <option value="w3@manager">w3@manager</option>
-                <option value="w3@customer">w3@customer</option>
-              </select>
+              <div className="p-2 border rounded-lg bg-gray-50 dark:bg-[#1e2235] text-gray-500">
+                {user?.id})
+              </div>
+              <input type="hidden" {...register("author")} value={user?.id} />
             </FormSection>
           )}
 
@@ -304,20 +266,20 @@ const BlogForm = () => {
                 {...register("status")}
                 className="w-full border rounded-lg p-2 dark:bg-[#1e2235]"
               >
-                <option>Published</option>
-                <option>Draft</option>
-                <option>Pending</option>
+                <option value="published">Published</option>
+                <option value="pending">Pending</option>
+                <option value="draft">Draft</option>
               </select>
               <select
                 {...register("visibility")}
                 className="w-full border rounded-lg p-2 dark:bg-[#1e2235]"
               >
-                <option>Public</option>
-                <option>Password Protected</option>
-                <option>Private</option>
+                <option value="public">Public</option>
+                <option value="password_protected">Password Protected</option>
+                <option value="private">Private</option>
               </select>
               <input
-                {...register("publishOn")}
+                {...register("publishedAt")}
                 type="date"
                 className="w-full border rounded-lg p-2 dark:bg-[#1e2235]"
               />
@@ -330,113 +292,27 @@ const BlogForm = () => {
             </div>
           </FormSection>
 
-          {/* Categories Row */}
-          {/* Categories Row */}
           <FormSection title="Categories">
-            <div className="space-y-2 max-h-40 overflow-y-auto mb-4 custom-scrollbar">
-              {localCategories.map((cat) => (
+            <div className="space-y-2 max-h-40 overflow-y-auto">
+              {categories.map((cat) => (
                 <label
-                  key={cat}
-                  className="flex items-center space-x-2 text-sm dark:text-gray-300 cursor-pointer"
+                  key={cat._id}
+                  className="flex items-center space-x-2 text-sm"
                 >
                   <input
                     type="checkbox"
-                    value={cat}
+                    value={cat._id}
                     {...register("categories")}
-                    className="rounded border-gray-300 text-primary focus:ring-primary"
                   />
-                  <span>{cat}</span>
+                  <span>{cat.name}</span>
                 </label>
               ))}
             </div>
-
-            <button
-              type="button"
-              onClick={() => setShowAddCategory(!showAddCategory)}
-              className="text-primary text-sm font-semibold underline mb-2 block"
-            >
-              {showAddCategory ? "- Hide Options" : "+ Add New Category"}
-            </button>
-
-            {showAddCategory && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mt-3 space-y-3 p-3 bg-gray-50 dark:bg-white/5 rounded-lg border border-gray-100 dark:border-gray-700"
-              >
-                <div>
-                  <label className="text-[11px] uppercase font-bold text-gray-400 mb-1 block">
-                    Category Name
-                  </label>
-                  <input
-                    type="text"
-                    value={newCategory.name}
-                    className="w-full text-sm p-2 border rounded dark:bg-[#1e2235] dark:border-gray-600 outline-none focus:border-primary"
-                    onChange={(e) =>
-                      setNewCategory({ ...newCategory, name: e.target.value })
-                    }
-                  />
-                </div>
-
-                <div>
-                  <label className="text-[11px] uppercase font-bold text-gray-400 mb-1 block">
-                    Parent Category
-                  </label>
-                  <select
-                    value={newCategory.parent}
-                    className="w-full text-sm p-2 border rounded dark:bg-[#1e2235] dark:border-gray-600 outline-none"
-                    onChange={(e) =>
-                      setNewCategory({ ...newCategory, parent: e.target.value })
-                    }
-                  >
-                    <option value="None">— Parent Category —</option>
-                    {localCategories.map((cat) => (
-                      <option key={cat} value={cat}>
-                        {cat}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (newCategory.name.trim()) {
-                      setLocalCategories([
-                        ...localCategories,
-                        newCategory.name,
-                      ]);
-                      setNewCategory({ name: "", parent: "None" });
-                      setShowAddCategory(false);
-                    }
-                  }}
-                  className="w-full bg-primary hover:bg-primary-dark text-white transition-colors text-sm py-1.5 rounded font-bold"
-                >
-                  Save
-                </button>
-              </motion.div>
-            )}
           </FormSection>
 
-          {/* Featured Image Row */}
           <FormSection title="Featured Image">
-            <div className="border-2 border-dashed border-gray-100 dark:border-gray-700 rounded-xl p-4 text-center min-h-[150px] flex items-center justify-center mb-4">
-              {featuredImage ? (
-                <img
-                  src={featuredImage}
-                  alt="Preview"
-                  className="max-h-[130px] rounded-lg"
-                />
-              ) : (
-                <span className="text-gray-400 text-sm">No image selected</span>
-              )}
-            </div>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="text-xs w-full file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-primary/10 file:text-primary"
-            />
+            <input type="file" onChange={handleImageChange} />
+            {featuredImage && <img src={featuredImage} className="mt-2 h-20" />}
           </FormSection>
 
           {/* Video URL Row */}
@@ -450,40 +326,50 @@ const BlogForm = () => {
 
           {/* Tags Row */}
           <FormSection title="Tags">
-            <div className="flex flex-wrap gap-2 p-2 border rounded-lg dark:bg-[#1e2235] dark:border-gray-600 min-h-[42px] focus-within:ring-1 focus-within:ring-primary transition-all">
-           
-              {tags.map((tag, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-1 bg-primary dark:bg-primary/20 text-white dark:text-primary px-2 py-1 rounded text-xs font-medium border border-gray-200 dark:border-primary/30"
+            {/* Selected Tags Display */}
+            <div className="flex flex-wrap gap-2 mb-3">
+              {tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="bg-primary text-white px-2 py-1 rounded text-xs flex items-center gap-1"
                 >
-                  <span>{tag}</span>
+                  {tag}
                   <button
                     type="button"
-                    onClick={() => removeTag(index)}
-                    className="hover:text-red-500 transition-colors"
+                    onClick={() => removeTag(tags.indexOf(tag))}
                   >
                     &times;
                   </button>
-                </div>
+                </span>
               ))}
- 
-              <input
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                onKeyDown={handleTagKeyDown}
-                placeholder={tags.length === 0 ? "tag1, tag2..." : ""}
-                className="flex-1 bg-transparent outline-none text-sm min-w-[60px] dark:text-white"
-              />
             </div>
-            <p className="text-[10px] text-gray-400 mt-2 italic">
-              Separate tags with commas or the Enter key
+            <select
+              className="..."
+              onChange={(e) => {
+                const selectedTagId = e.target.value;
+                if (selectedTagId && !tags.includes(selectedTagId)) {
+                  setTags([...tags, selectedTagId]);
+                }
+                e.target.value = "";
+              }}
+            >
+              <option value="">Select a tag...</option>
+              {allTags.map((tag) => (
+                <option key={tag._id} value={tag._id}>
+                  {" "}
+                  {/* Use _id here */}
+                  {tag.name}
+                </option>
+              ))}
+            </select>
+            <p className="text-[10px] text-gray-400 mt-2">
+              Select tags from the list to add them.
             </p>
           </FormSection>
         </div>
       </form>
     </div>
   );
-};;
+};
 
 export default BlogForm;
