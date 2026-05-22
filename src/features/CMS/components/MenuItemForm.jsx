@@ -2,17 +2,22 @@ import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 
 export const MenuItemForm = ({ item, onUpdateItem, onRemoveItem, onClose }) => {
-  const { register, watch } = useForm({
+  const { register, watch, reset } = useForm({
     defaultValues: item,
-  });
+  })
 
-  //  listens for ANY change in the form and pushes it up immediately
+  // ✅ item change hone pe reset karo
   useEffect(() => {
-    const subscription = watch((value) => { 
-      onUpdateItem(item.id, value);
-    });
-    return () => subscription.unsubscribe();
-  }, [watch, item.id, onUpdateItem]);
+    reset(item)
+  }, [item._id || item.id])
+
+  useEffect(() => {
+    const subscription = watch((value) => {
+      // ✅ _id ya id dono check karo
+      onUpdateItem(item._id || item.id, value)
+    })
+    return () => subscription.unsubscribe()
+  }, [watch, item._id, item.id, onUpdateItem])
 
   return (
     <div className="px-6 pb-6 pt-2 space-y-5 border-t border-gray-50 dark:border-gray-800">
@@ -71,7 +76,7 @@ export const MenuItemForm = ({ item, onUpdateItem, onRemoveItem, onClose }) => {
       <div className="flex items-center gap-4 text-xs pt-2">
         <button
           type="button"
-          onClick={() => onRemoveItem(item.id)}
+          onClick={() => onRemoveItem(item._id || item.id)}
           className="text-red-500 font-medium hover:underline"
         >
           Remove
@@ -86,5 +91,5 @@ export const MenuItemForm = ({ item, onUpdateItem, onRemoveItem, onClose }) => {
         </button>
       </div>
     </div>
-  );
-};
+  )
+}

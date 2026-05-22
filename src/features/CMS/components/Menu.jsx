@@ -1,14 +1,13 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from "react";
 import { BsChevronDown, BsPlus } from "react-icons/bs";
 
 const Menu = ({ activeMenu, setActiveMenu, menus, onAddClick }) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [localSelected, setLocalSelected] = useState(activeMenu);
- 
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [localSelected, setLocalSelected] = useState(activeMenu)
+
   useEffect(() => {
-    setLocalSelected(activeMenu);
-  }, [activeMenu]);
+    setLocalSelected(activeMenu)
+  }, [activeMenu])
 
   return (
     <div className="bg-white dark:bg-[#292d4a] rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 transition-all">
@@ -34,7 +33,8 @@ const Menu = ({ activeMenu, setActiveMenu, menus, onAddClick }) => {
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="w-full flex items-center justify-between px-4 py-2 bg-white dark:bg-[#2e3458] border border-primary rounded-xl text-gray-500 dark:text-gray-300 transition-all"
             >
-              <span>{localSelected || "Select a menu..."}</span>
+              {/* ✅ name show karo */}
+              <span>{localSelected?.name || "Select a menu..."}</span>
               <BsChevronDown
                 className={`transition-transform ${isDropdownOpen ? "rotate-180" : ""}`}
               />
@@ -44,18 +44,18 @@ const Menu = ({ activeMenu, setActiveMenu, menus, onAddClick }) => {
               <div className="absolute top-[calc(100%+8px)] left-0 w-full bg-white dark:bg-[#2e3458] shadow-xl border border-gray-100 dark:border-gray-700 rounded-xl z-20 overflow-hidden">
                 {menus.map((menu) => (
                   <div
-                    key={menu}
+                    key={menu._id} // ✅ _id use karo
                     onClick={() => {
-                      setLocalSelected(menu);
-                      setIsDropdownOpen(false);
+                      setLocalSelected(menu) // ✅ poora object
+                      setIsDropdownOpen(false)
                     }}
                     className={`px-4 py-2 cursor-pointer transition-colors ${
-                      localSelected === menu
+                      localSelected?._id === menu._id
                         ? "bg-gray-100 dark:bg-white/10 text-gray-900"
                         : "text-gray-500 hover:bg-gray-50"
                     }`}
                   >
-                    {menu}
+                    {menu.name} {/* ✅ name show karo */}
                   </div>
                 ))}
               </div>
@@ -63,7 +63,7 @@ const Menu = ({ activeMenu, setActiveMenu, menus, onAddClick }) => {
           </div>
 
           <button
-            onClick={() => setActiveMenu(localSelected)}
+            onClick={() => setActiveMenu(localSelected)} // ✅ poora object bhejo
             className="px-6 py-2 bg-primary text-white font-bold rounded-xl hover:opacity-90 transition-all"
           >
             Select
@@ -71,7 +71,7 @@ const Menu = ({ activeMenu, setActiveMenu, menus, onAddClick }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Menu;
+export default Menu
