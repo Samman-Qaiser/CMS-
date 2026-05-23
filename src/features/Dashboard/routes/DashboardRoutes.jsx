@@ -59,8 +59,14 @@ import EmailInbox from "../../Apps/Pages/EmailInbox";
 import EmailCompose from "../../Apps/Pages/EmailCompose";
 import ProductGrid from "../../Apps/Pages/ProductGridPage";
 import ProductListPage from "../../Apps/Pages/ProductListPage";
-import ContactAdminForm from "../../CMS/pages/ContactAdminForm";
+import BecomeInstructor from "../../../components/SidePannel/BecomeInstructor";
+import { useSelector } from "react-redux";
+import DropProfile from "../../../components/SidePannel/Profile";
+import InstructorApplications from "../../../components/SidePannel/InstructorApplications";
 function DashboardRoutes() {
+
+   const user = useSelector((state) => state.auth.user);
+   console.log('dashboard user',user)
   return (
     <Routes>
       <Route element={<MainLayout />}>
@@ -69,6 +75,31 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <MainScreen />
+            </ProtectedRoute>
+          }
+        />
+ <Route
+          path="/profile-page"
+          element={
+            <ProtectedRoute>
+             <DropProfile />
+            </ProtectedRoute>
+          }
+        />
+        
+          <Route
+          path="/become-instructor"
+          element={
+            <ProtectedRoute>
+             <BecomeInstructor userId={user?.id} />
+            </ProtectedRoute>
+          }
+        />
+          <Route
+          path="/admin/instructor-applications"
+          element={
+            <ProtectedRoute>
+             <InstructorApplications/>
             </ProtectedRoute>
           }
         />

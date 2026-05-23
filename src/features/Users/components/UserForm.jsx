@@ -279,7 +279,7 @@ export const UserForm = () => {
             name="role"
             control={control}
             placeholder="Select the Role"
-            options={["Admin", "Manager", "Customer"]}
+            options={["Admin", "Manager", "Customer","Instructor"]}
           />
           <SelectField
             label="Gender"
