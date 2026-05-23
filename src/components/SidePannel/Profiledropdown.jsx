@@ -1,27 +1,50 @@
 import { useRef, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux"; 
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/Slice/authSlice";
-import { BsPerson, BsEnvelope, BsKey, BsBoxArrowRight, BsTelephone } from "react-icons/bs";
-import { BsPerson, BsEnvelope, BsKey, BsBoxArrowRight } from "react-icons/bs";
+import {
+  BsPerson,
+  BsEnvelope,
+  BsKey,
+  BsBoxArrowRight,
+  BsTelephone,
+} from "react-icons/bs";
 import { FaGraduationCap } from "react-icons/fa6";
-
 
 export default function ProfileDropdown({ onClose }) {
   const ref = useRef(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-const user = useSelector((state) => state.auth.user);
-const menuItems = [
-  { icon: BsPerson,   label: "Profile",         path: "/dashboard/profile-page" },
-  { icon: BsEnvelope, label: "Inbox",            path: "/dashboard/contact-us" },
-  { icon: BsKey,      label: "Change Password",  path: "/change-password" },
+  const user = useSelector((state) => state.auth.user);
 
-  ...(user?.role === 'customer' ? [
-    { icon: FaGraduationCap, label: "Become Instructor", path: "/dashboard/become-instructor" }
-  ] : []),
-];
+  const menuItems = [
+    { icon: BsPerson, label: "Profile", path: "/dashboard/profile-page" },
+    { icon: BsEnvelope, label: "Inbox", path: "/dashboard/contact-us" },
+    { icon: BsKey, label: "Change Password", path: "/change-password" },
+
+    // Conditional Logic: Add Contact only if NOT admin 
+    ...(user?.role !== "admin"
+      ? [
+          {
+            icon: BsTelephone,
+            label: "Contact Admin",
+            path: "/dashboard/contact-admin-form",
+          },
+        ]
+      : []),
+
+    ...(user?.role === "customer"
+      ? [
+          {
+            icon: FaGraduationCap,
+            label: "Become Instructor",
+            path: "/dashboard/become-instructor",
+          },
+        ]
+      : []),
+  ];
+
   useEffect(() => {
     const handler = (e) => {
       if (ref.current && !ref.current.contains(e.target)) onClose();
