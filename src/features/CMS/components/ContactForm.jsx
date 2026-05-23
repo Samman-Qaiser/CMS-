@@ -1,10 +1,30 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
+import Swal from "sweetalert2";
+import axios from "axios";
 
 const ContactForm = ({ onSave, editData, onCancel }) => {
   const { register, handleSubmit, reset } = useForm();
+  const baseUrl =
+    import.meta.env?.VITE_BACKEND_URL || "https://cms-backend-ashen.vercel.app";
 
+  const onSubmit = async (data) => {
+    try {
+      await axios.post(`${baseUrl}/api/emails/send`, {
+        to: data.email, 
+        subject: `New Message from ${data.name}`,
+        message: `Phone: ${data.phone}\n\nMessage: ${data.message}`,
+      });
+
+      Swal.fire("Success", "Email sent successfully!", "success");
+      onSave(data);
+      reset();
+    } catch (err) {
+      console.error("Email Error:", err);
+      Swal.fire("Error", "Failed to send email", "error");
+    }
+  };
   useEffect(() => {
     if (editData) {
       reset(editData);
@@ -22,7 +42,7 @@ const ContactForm = ({ onSave, editData, onCancel }) => {
       <h3 className="text-primary font-bold text-lg mb-6">
         {editData ? "Edit Contact" : "Add Contact"}
       </h3>
-      <form onSubmit={handleSubmit(onSave)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="space-y-2">
             <label className="text-sm font-semibold text-gray-400">Name</label>
@@ -62,7 +82,7 @@ const ContactForm = ({ onSave, editData, onCancel }) => {
         <div className="flex gap-3">
           <button
             type="submit"
-            className="bg-primary text-white px-8 py-2 rounded-lg font-bold shadow-lg shadow-primary/20 hover:scale-105 transition-all"
+            className="bg-primary cursor-pointer text-white px-8 py-2 rounded-lg font-bold shadow-lg shadow-primary/20 hover:scale-105 transition-all"
           >
             {editData ? "Update" : "Submit"}
           </button>

@@ -24,14 +24,19 @@ const ContactTable = ({ contacts = [], onEdit, onDelete }) => {
   const currentItems = contacts.slice(indexOfFirstItem, indexOfLastItem);
 
   const confirmDelete = (id) => {
+    console.log("ID to delete:", id);
     Swal.fire({
       title: "Are you sure?",
+      text: "You won't be able to revert this!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#ef4444",
-      confirmButtonText: "Delete",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Yes, delete it!",
     }).then((result) => {
-      if (result.isConfirmed && onDelete) onDelete(id);
+      if (result.isConfirmed && onDelete) {
+        onDelete(id);
+      }
     });
   };
 
@@ -65,7 +70,7 @@ const ContactTable = ({ contacts = [], onEdit, onDelete }) => {
             <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
               {currentItems.map((contact) => (
                 <tr
-                  key={contact.id}
+                  key={contact._id}
                   className="hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors"
                 >
                   <td className="py-4 px-6 text-sm font-medium text-gray-700 dark:text-gray-200">
@@ -81,21 +86,21 @@ const ContactTable = ({ contacts = [], onEdit, onDelete }) => {
                     {contact.message}
                   </td>
                   <td className="py-4 px-2">
-                    <div className="flex justify-center gap-2"> 
+                    <div className="flex justify-center gap-2">
                       <button
                         onClick={() => setSelectedContact(contact)}
                         className="p-2 bg-primary/10 text-primary rounded-lg hover:bg-primary hover:text-white transition-all shadow-sm"
                       >
                         <BsEye size={16} />
                       </button>
-                      <button
+                      {/* <button
                         onClick={() => onEdit(contact)}
                         className="p-2 bg-primary/10 text-primary rounded-lg hover:bg-primary hover:text-white transition-all shadow-sm"
                       >
                         <BsPencilSquare size={16} />
-                      </button>
+                      </button> */}
                       <button
-                        onClick={() => confirmDelete(contact.id)}
+                        onClick={() => confirmDelete(contact._id)}
                         className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all shadow-sm"
                       >
                         <BsTrash size={16} />
