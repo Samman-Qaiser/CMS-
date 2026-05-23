@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,31 +11,83 @@ import {
 } from "react-icons/bs";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 import Swal from "sweetalert2";
-import { commentsData } from "../components/blogsData";
+import axios from "axios";
 
 const Comments = () => {
-  const [comments, setComments] = useState(commentsData);
+  const [comments, setComments] = useState([]);
   const [isOpen, setIsOpen] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  // --- Checkbox Selection State ---
   const [selectedComments, setSelectedComments] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
-  // --- React Hook Form ---
+  const baseUrl =
+    import.meta.env?.VITE_BACKEND_URL || "https://cms-backend-ashen.vercel.app";
+
   const { register, handleSubmit, reset, setValue, watch } = useForm({
-    defaultValues: {
-      name: "",
-      email: "",
-      status: "Select Status",
-    },
+    defaultValues: { name: "", email: "", status: "Select Status" },
   });
 
   const selectedStatus = watch("status");
   const statuses = ["pending", "approved", "spam", "trash"];
 
-  // --- Pagination State ---
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  // --- Fetch Comments ---
+  const fetchComments = async () => {
+    try {
+      const res = await axios.get(`${baseUrl}/api/comments`);
+      setComments(res.data.comments || res.data || []);
+    } catch (err) {
+      console.error("Error fetching comments:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchComments();
+  }, []);
+
+  const onSubmit = (data) => {
+    const filtered = comments.filter((item) => {
+      // Use item.name instead of item.author
+      const nameMatch = item.name
+        ?.toLowerCase()
+        .includes(data.name.toLowerCase());
+      const emailMatch = item.email
+        ?.toLowerCase()
+        .includes(data.email.toLowerCase());
+      const statusMatch =
+        data.status === "Select Status" || item.status === data.status;
+      return nameMatch && emailMatch && statusMatch;
+    });
+    setComments(filtered);
+    setCurrentPage(1);
+  };
+
+  const handleClear = () => {
+    reset({ name: "", email: "", status: "Select Status" });
+    fetchComments();
+  };
+
+  // --- Delete Logic ---
+  const handleDelete = async (id, author) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: `Delete comment from ${author}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#ef4444",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`${baseUrl}/api/comments/${id}`);
+        Swal.fire("Deleted!", "Comment removed successfully.", "success");
+        fetchComments();
+      } catch (err) {
+        Swal.fire("Error", "Failed to delete comment.", err.response?.data?.message || err.message, "error");
+      }
+    }
+  };
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -52,65 +104,16 @@ const Comments = () => {
   // --- Checkbox Logic ---
   const handleCheckboxChange = (id) => {
     setSelectedComments((prev) =>
-      prev.includes(id)
-        ? prev.filter((itemId) => itemId !== id)
-        : [...prev, id],
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
     );
   };
 
   const handleSelectAll = (e) => {
     if (e.target.checked) {
-      setSelectedComments(currentItems.map((item) => item.id));
+      setSelectedComments(currentItems.map((item) => item._id));
     } else {
       setSelectedComments([]);
     }
-  };
-
-  // --- Filter Logic ---
-  const onSubmit = (data) => {
-    const filtered = commentsData.filter((item) => {
-      const nameMatch = item.author
-        .toLowerCase()
-        .includes(data.name.toLowerCase());
-      const emailMatch = item.email
-        .toLowerCase()
-        .includes(data.email.toLowerCase());
-      const statusMatch =
-        data.status === "Select Status" || item.status === data.status;
-      return nameMatch && emailMatch && statusMatch;
-    });
-    setComments(filtered);
-    setCurrentPage(1);
-    setSelectedComments([]);
-  };
-
-  const handleClear = () => {
-    reset({ name: "", email: "", status: "Select Status" });
-    setComments(commentsData);
-    setCurrentPage(1);
-    setSelectedComments([]);
-  };
-
-  const handleDelete = (id, author) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: `Delete comment from ${author}?`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#ef4444",
-      cancelButtonColor: "var(--primary)",
-      confirmButtonText: "Yes, delete it!",
-      background: document.documentElement.classList.contains("dark")
-        ? "#292d4a"
-        : "#fff",
-      color: document.documentElement.classList.contains("dark")
-        ? "#fff"
-        : "#000",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire("Deleted!", "Comment moved to trash.", "success");
-      }
-    });
   };
 
   const getStatusStyle = (status) => {
@@ -270,26 +273,30 @@ const Comments = () => {
             <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
               {currentItems.map((item) => (
                 <tr
-                  key={item.id}
+                  key={item._id}
                   className="hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors"
                 >
                   <td className="py-4 px-2 pl-8">
                     <input
                       type="checkbox"
-                      checked={selectedComments.includes(item.id)}
-                      onChange={() => handleCheckboxChange(item.id)}
+                      checked={selectedComments.includes(item._id)}
+                      onChange={() => handleCheckboxChange(item._id)}
                     />
                   </td>
                   <td className="py-4 px-2 text-[12px] font-medium">
                     {item.email}
                   </td>
                   <td className="py-4 px-2 text-[12px]">
-                    <Link
-                      to="#"
-                      className="text-primary font-semibold hover:underline"
-                    >
-                      {item.post}
-                    </Link>
+                    {item.blog ? (
+                      <Link
+                        to="#"
+                        className="text-primary font-semibold hover:underline"
+                      >
+                        {item.blog.title}
+                      </Link>
+                    ) : (
+                      <span className="text-gray-400 italic">No Blog</span>
+                    )}
                   </td>
                   <td className="py-4 px-2 text-center">
                     <div className="flex items-center justify-start gap-2">
@@ -301,18 +308,24 @@ const Comments = () => {
                     </div>
                   </td>
                   <td className="py-4 px-2 text-[12px] text-gray-500 italic">
-                    {item.date}
+                    {item.createdAt
+                      ? new Date(item.createdAt).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })
+                      : "N/A"}
                   </td>
                   <td className="py-4 px-2">
                     <div className="flex gap-2">
                       <Link
-                        to={`/dashboard/edit-comment/${item.id}`} 
+                        to={`/dashboard/edit-comment/${item._id}`}
                         className="p-2 bg-emerald-100 text-emerald-600 rounded-lg hover:bg-emerald-200 transition-colors"
                       >
                         <BsPencilSquare size={16} />
                       </Link>
                       <button
-                        onClick={() => handleDelete(item.id, item.author)}
+                        onClick={() => handleDelete(item._id, item.name)}
                         className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
                       >
                         <BsTrash size={16} />
