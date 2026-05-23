@@ -22,7 +22,7 @@
     "apexcharts": "^5.10.6",
     "axios": "^1.16.1",
     "ckeditor5": "^48.0.1",
-    "ckeditor5-premium-features": "^48.0.1",
+    "ckeditor5-premium-features": "^0.0.1",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.38.0",
     "i18next": "^26.0.10",

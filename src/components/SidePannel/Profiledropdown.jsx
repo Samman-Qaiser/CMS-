@@ -1,21 +1,27 @@
 // src/components/RightPanel/ProfileDropdown.jsx
 import { useRef, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/Slice/authSlice";
 import { BsPerson, BsEnvelope, BsKey, BsBoxArrowRight } from "react-icons/bs";
+import { FaGraduationCap } from "react-icons/fa6";
 
-const menuItems = [
-  { icon: BsPerson,  label: "Profile",         path: "/profile" },
-  { icon: BsEnvelope,label: "Inbox",           path: "/inbox" },
-  { icon: BsKey,     label: "Change Password", path: "/change-password" },
-];
 
 export default function ProfileDropdown({ onClose }) {
   const ref      = useRef(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+const user = useSelector((state) => state.auth.user);
+const menuItems = [
+  { icon: BsPerson,   label: "Profile",         path: "/dashboard/profile-page" },
+  { icon: BsEnvelope, label: "Inbox",            path: "/dashboard/contact-us" },
+  { icon: BsKey,      label: "Change Password",  path: "/change-password" },
+
+  ...(user?.role === 'customer' ? [
+    { icon: FaGraduationCap, label: "Become Instructor", path: "/dashboard/become-instructor" }
+  ] : []),
+];
   useEffect(() => {
     const handler = (e) => {
       if (ref.current && !ref.current.contains(e.target)) onClose();

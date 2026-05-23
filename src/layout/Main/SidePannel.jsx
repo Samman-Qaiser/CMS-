@@ -61,11 +61,44 @@ export default function RightPanel() {
   const [activePanel, setActivePanel] = useState(null);
   const [profileOpen, setProfileOpen] = useState(false);
   const [fetchedUser, setFetchedUser] = useState(null);
+  const [pendingCount, setPendingCount] = useState(0); // ✅ Real-time pending count state
   const profileRef = useRef(null);
 
   const user = useSelector((state) => state.auth.user);
   const baseUrl =
     import.meta.env?.VITE_BACKEND_URL || "https://cms-backend-ashen.vercel.app";
+
+  // ✅ Function to fetch pending instructor applications count
+  const fetchPendingCount = async () => {
+    try {
+      const token = localStorage.getItem("token"); // Assuming token is stored in localStorage
+      const { data } = await axios.get(
+        `${baseUrl}/api/users/instructor-applications`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setPendingCount(data.pendingCount || 0);
+    } catch (error) {
+      console.error("Error fetching pending count:", error);
+      // Agar error aaye toh count 0 rakhdo
+      setPendingCount(0);
+    }
+  };
+
+  // ✅ Fetch count on component mount
+  useEffect(() => {
+    fetchPendingCount();
+    
+    // ✅ Optional: Auto-refresh every 30 seconds (real-time effect)
+    const interval = setInterval(() => {
+      fetchPendingCount();
+    }, 30000); // 30 seconds mein refresh ho jayega
+    
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, []);
 
   // Fetch full user data by ID to get the profileImage URL
   useEffect(() => {
@@ -97,6 +130,11 @@ export default function RightPanel() {
   const handlePanelClick = (key) => {
     setActivePanel((prev) => (prev === key ? null : key));
     setProfileOpen(false);
+    
+    // ✅ Jab notification panel open ho, toh fresh count fetch karo
+    if (key === 'notification') {
+      fetchPendingCount();
+    }
   };
 
   const handleProfileClick = () => {
@@ -134,7 +172,7 @@ export default function RightPanel() {
             icon={FaBell}
             myKey="notification"
             activeKey={activePanel}
-            badge={7}
+            badge={pendingCount} // ✅ Real-time badge count
             onClick={handlePanelClick}
           />
           <PanelIconBtn

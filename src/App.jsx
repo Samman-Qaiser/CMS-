@@ -7,6 +7,8 @@ import ForgotPassword from './auth/ForgotPassword'
 import DashboardRoutes from './features/Dashboard/routes/DashboardRoutes'
 import ResetPassword from "./auth/ResetPassword";
 import PublicRoute from "./route/PublicRoute";
+import ProtectedRoute from "./route/ProtectedRoute";
+
 
 
 const App = () => {
@@ -14,6 +16,8 @@ const App = () => {
     <ThemeProvider>
       <BrowserRouter>
         <Routes>
+   
+     
 
           {/* Protected Dashboard */}
           <Route
