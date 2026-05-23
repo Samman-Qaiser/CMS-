@@ -59,6 +59,7 @@ import EmailInbox from "../../Apps/Pages/EmailInbox";
 import EmailCompose from "../../Apps/Pages/EmailCompose";
 import ProductGrid from "../../Apps/Pages/ProductGridPage";
 import ProductListPage from "../../Apps/Pages/ProductListPage";
+import ContactAdminForm from "../../CMS/pages/ContactAdminForm";
 function DashboardRoutes() {
   return (
     <Routes>
@@ -490,6 +491,14 @@ function DashboardRoutes() {
           <Route path="prefix/Widget" element={<Widget />} />
           <Route path="prefix/Theme" element={<Theme />} />
         </Route>
+        <Route
+          path="contact-admin-form"
+          element={
+            <ProtectedRoute>
+              <ContactAdminForm />
+            </ProtectedRoute>
+          }
+        />
       </Route>
     </Routes>
   );

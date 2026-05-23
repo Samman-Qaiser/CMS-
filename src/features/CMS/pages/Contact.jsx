@@ -1,11 +1,12 @@
 import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
+import Swal from "sweetalert2"; 
 import ContactFilter from "../components/ContactFilter";
 import ContactForm from "../components/ContactForm";
 import ContactTable from "../components/ContactTable";
 
 const Contact = () => {
-  const [contacts, setContacts] = useState([]); 
+  const [contacts, setContacts] = useState([]);
   const [editData, setEditData] = useState(null);
   const [appliedFilters, setAppliedFilters] = useState({
     name: "",
@@ -16,7 +17,6 @@ const Contact = () => {
   const baseUrl =
     import.meta.env?.VITE_BACKEND_URL || "https://cms-backend-ashen.vercel.app";
 
-  // Fetch contacts from API
   const fetchContacts = async () => {
     try {
       const res = await axios.get(`${baseUrl}/api/contacts`);
@@ -30,7 +30,6 @@ const Contact = () => {
     fetchContacts();
   }, []);
 
-  // Filtered logic remains the same
   const filteredContacts = useMemo(() => {
     return contacts.filter((item) => {
       return (
@@ -42,24 +41,40 @@ const Contact = () => {
       );
     });
   }, [contacts, appliedFilters]);
- 
+
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${baseUrl}/api/contacts/${id}`);
-      fetchContacts();  
+      console.log("Deleting contact ID:", id); 
+      const res = await axios.delete(`${baseUrl}/api/contacts/${id}`);
+      console.log("Delete successful:", res);
+      fetchContacts();
+      Swal.fire("Deleted!", "Contact has been removed.", "success");
     } catch (err) {
-      console.error("Delete error", err);
+      console.error("Full Error Object:", err);
+      Swal.fire(
+        "Error",
+        err.response?.data?.message || "Check console for error details",
+        "error",
+      );
     }
   };
 
   return (
     <div className="p-6 space-y-6">
       <ContactFilter onFilter={setAppliedFilters} />
+
       <ContactForm
-        onSave={fetchContacts}
+        onSave={() =>
+          Swal.fire(
+            "Success",
+            "Email notification sent successfully!",
+            "success",
+          )
+        }
         editData={editData}
         onCancel={() => setEditData(null)}
       />
+
       <ContactTable
         contacts={filteredContacts}
         onEdit={(contact) => setEditData(contact)}

@@ -1,20 +1,35 @@
-// src/components/RightPanel/ProfileDropdown.jsx
 import { useRef, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux"; 
 import { logout } from "../../redux/Slice/authSlice";
-import { BsPerson, BsEnvelope, BsKey, BsBoxArrowRight } from "react-icons/bs";
-
-const menuItems = [
-  { icon: BsPerson,  label: "Profile",         path: "/profile" },
-  { icon: BsEnvelope,label: "Inbox",           path: "/inbox" },
-  { icon: BsKey,     label: "Change Password", path: "/change-password" },
-];
+import { BsPerson, BsEnvelope, BsKey, BsBoxArrowRight, BsTelephone } from "react-icons/bs";
 
 export default function ProfileDropdown({ onClose }) {
-  const ref      = useRef(null);
+  const ref = useRef(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  
+  const user = useSelector((state) => state.auth.user);
+  const isAdmin = user?.role === "admin";
+
+  const allMenuItems = [
+    { icon: BsPerson,    label: "Profile",         path: "/profile" },
+    { icon: BsEnvelope,  label: "Inbox",           path: "/inbox" },
+    { icon: BsKey,       label: "Change Password", path: "/change-password" },
+    { 
+      icon: BsTelephone, 
+      label: "Contact", 
+      path: "/dashboard/contact-admin-form" 
+    },
+  ];
+
+  // 3. Filter menu items: hide contact if user is admin
+  const menuItems = allMenuItems.filter(item => {
+    if (item.label === "Contact" && isAdmin) {
+      return false;
+    }
+    return true;
+  });
 
   useEffect(() => {
     const handler = (e) => {
@@ -44,7 +59,6 @@ export default function ProfileDropdown({ onClose }) {
       `}</style>
 
       <ul className="py-2">
-        {/* Normal nav items */}
         {menuItems.map(({ icon: Icon, label, path }) => (
           <li key={label}>
             <NavLink
@@ -59,7 +73,6 @@ export default function ProfileDropdown({ onClose }) {
           </li>
         ))}
 
-        {/* Logout — dispatch + navigate */}
         <li>
           <button
             onClick={handleLogout}
