@@ -7,7 +7,6 @@ import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 
 const BlogTable = ({ blogs = [], onDeleteSuccess }) => {
-  // Added optional callback to refresh list
   const [selectedBlogs, setSelectedBlogs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -79,7 +78,6 @@ const BlogTable = ({ blogs = [], onDeleteSuccess }) => {
     }
   };
 
-  // --- Single Delete Logic ---
   const handleDelete = async (_id, title) => {
     const result = await Swal.fire({
       title: "Are you sure?",
@@ -94,9 +92,9 @@ const BlogTable = ({ blogs = [], onDeleteSuccess }) => {
       try {
         await axios.delete(`${baseUrl}/api/blogs/${_id}`);
         Swal.fire("Deleted!", "Blog removed.", "success");
-        if (onDeleteSuccess) onDeleteSuccess(); // Refresh parent state
+        if (onDeleteSuccess) onDeleteSuccess();
       } catch (err) {
-        Swal.fire("Error", "Failed to delete blog", "error");
+        Swal.fire("Error", "Failed to delete blog", err);
       }
     }
   };
@@ -179,13 +177,19 @@ const BlogTable = ({ blogs = [], onDeleteSuccess }) => {
                   </span>
                 </td>
                 <td className="py-4 px-2 text-[12px] text-gray-500 whitespace-nowrap">
-                  {blog.publishedAt ? new Date(blog.publishedAt).toLocaleDateString() : "N/A"}
+                  {blog.publishedAt
+                    ? new Date(blog.publishedAt).toLocaleDateString()
+                    : "N/A"}
                 </td>
                 <td className="py-4 px-2 text-[12px] text-gray-400">
-                  {blog.createdAt}
+                  {blog.createdAt
+                    ? new Date(blog.createdAt).toLocaleDateString()
+                    : "N/A"}
                 </td>
                 <td className="py-4 px-2 text-[12px] text-gray-400">
-                  {blog.updatedAt}
+                  {blog.updatedAt
+                    ? new Date(blog.updatedAt).toLocaleDateString()
+                    : "N/A"}
                 </td>
                 <td className="py-4 px-2 text-center">
                   <button

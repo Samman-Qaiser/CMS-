@@ -13,20 +13,22 @@ const BlogForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEditMode = Boolean(id);
-  const user = useSelector((state) => state.auth.user);
-  const baseUrl =
-    import.meta.env?.VITE_BACKEND_URL || "https://cms-backend-ashen.vercel.app";
-
-  const { register, handleSubmit, control } = useForm();
-
+  const [defaultValues, setDefaultValues] = useState({});
   const [categories, setCategories] = useState([]);
   const [featuredImage, setFeaturedImage] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [isOptionsOpen, setIsOptionsOpen] = useState(true);
+  const user = useSelector((state) => state.auth.user);
+  const baseUrl =
+    import.meta.env?.VITE_BACKEND_URL || "https://cms-backend-ashen.vercel.app";
+
+  const { register, handleSubmit, control } = useForm({
+    values: defaultValues,
+  });
 
   // Tags state for the UI
   const [tags, setTags] = useState([]);
-  const [allTags, setAllTags] = useState([]); // Tags from database
+  const [allTags, setAllTags] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,56 +39,76 @@ const BlogForm = () => {
         ]);
         setCategories(catRes.data.categories || []);
         setAllTags(tagRes.data.tags || []);
+
+        if (isEditMode) {
+          const blogRes = await axios.get(`${baseUrl}/api/blogs/${id}`);
+          const blog = blogRes.data.blog;
+
+          setDefaultValues({
+            title: blog.title,
+            excerpt: blog.excerpt,
+            content: blog.content,
+            slug: blog.slug,
+            status: blog.status,
+            visibility: blog.visibility,
+            videoUrl: blog.videoUrl,
+            seoTitle: blog.metaTitle,
+            seoKeywords: blog.metaKeywords,
+            seoDescription: blog.metaDescription,
+            publishedAt: blog.publishedAt ? blog.publishedAt.split("T")[0] : "",
+            categories: blog.categories.map((c) => c._id),
+          });
+
+          setTags(blog.tags.map((t) => t._id));
+          if (blog.featuredImage) setFeaturedImage(blog.featuredImage);
+        }
       } catch (err) {
-        console.error("Error fetching dependencies", err);
+        console.error("Error fetching data", err);
+        Swal.fire("Error", "Could not load blog data", "error");
       }
     };
     fetchData();
-  }, [baseUrl]);
-  const toggleTagSelection = (tag) => {
-    if (tags.includes(tag)) {
-      setTags(tags.filter((t) => t !== tag));
-    } else {
-      setTags([...tags, tag]);
-    }
-  };
+  }, [id, baseUrl, isEditMode]);
+
 
   const removeTag = (indexToRemove) => {
     setTags(tags.filter((_, index) => index !== indexToRemove));
   };
-  // -----------------------
 
   const onSubmit = async (data) => {
     const formData = new FormData();
-    Object.keys(data).forEach((key) => {
-      // Skip the author key from the form data since we are injecting it manually
-      if (key === "author") return;
+    formData.append("title", data.title || "");
+    formData.append("excerpt", data.excerpt || "");
+    formData.append("content", data.content || ""); 
+    formData.append("slug", data.slug || "");
+    formData.append("status", data.status || "draft");
+    formData.append("visibility", data.visibility || "public");
+    formData.append("videoUrl", data.videoUrl || "");
+    formData.append("metaTitle", data.seoTitle || "");
+    formData.append("metaKeywords", data.seoKeywords || "");
+    formData.append("metaDescription", data.seoDescription || "");
 
-      if (key === "categories") {
-        formData.append("categories", JSON.stringify(data.categories));
-      } else {
-        formData.append(key, data[key]);
-      }
-    });
-
-    if (user?.id) {
-      formData.append("author", user.id);
-    }
-
+    // Arrays and special fields
+    formData.append("categories", JSON.stringify(data.categories || []));
     formData.append("tags", JSON.stringify(tags));
+    if (user?.id) formData.append("author", user.id);
+
+    // File
     if (imageFile) formData.append("featuredImage", imageFile);
 
     try {
+      const config = { headers: { "Content-Type": "multipart/form-data" } };
+
       if (isEditMode) {
-        await axios.put(`${baseUrl}/api/blogs/${id}`, formData);
+        await axios.put(`${baseUrl}/api/blogs/${id}`, formData, config);
       } else {
-        await axios.post(`${baseUrl}/api/blogs`, formData);
+        await axios.post(`${baseUrl}/api/blogs`, formData, config);
       }
+
       Swal.fire("Success", "Blog saved successfully!", "success");
       navigate("/dashboard/blogs");
     } catch (err) {
-      console.error("Full Error:", err.response?.data || err.message);
-
+      console.error("Submission Error:", err.response?.data);
       Swal.fire(
         "Error",
         err.response?.data?.message || "Operation failed",
@@ -328,20 +350,23 @@ const BlogForm = () => {
           <FormSection title="Tags">
             {/* Selected Tags Display */}
             <div className="flex flex-wrap gap-2 mb-3">
-              {tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="bg-primary text-white px-2 py-1 rounded text-xs flex items-center gap-1"
-                >
-                  {tag}
-                  <button
-                    type="button"
-                    onClick={() => removeTag(tags.indexOf(tag))}
+              {tags.map((tagId) => {
+                const tagObj = allTags.find((t) => t._id === tagId);
+                return (
+                  <span
+                    key={tagId}
+                    className="bg-primary text-white px-2 py-1 rounded text-xs flex items-center gap-1"
                   >
-                    &times;
-                  </button>
-                </span>
-              ))}
+                    {tagObj?.name}
+                    <button
+                      type="button"
+                      onClick={() => removeTag(tags.indexOf(tagId))}
+                    >
+                      &times;
+                    </button>
+                  </span>
+                );
+              })}
             </div>
             <select
               className="..."
@@ -357,7 +382,6 @@ const BlogForm = () => {
               {allTags.map((tag) => (
                 <option key={tag._id} value={tag._id}>
                   {" "}
-                  {/* Use _id here */}
                   {tag.name}
                 </option>
               ))}

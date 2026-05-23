@@ -55,7 +55,10 @@ const Blogs = () => {
     <div>
       <div className="flex flex-col gap-6">
         <BlogFilter onFilter={setFilters} />
-        <BlogTable blogs={filteredBlogs} onDeleteSuccess={fetchBlogs} />
+        <BlogTable
+          blogs={filteredBlogs}
+          onDeleteSuccess={() => fetchBlogs(filters)}
+        />
       </div>
     </div>
   );
