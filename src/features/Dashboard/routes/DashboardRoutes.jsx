@@ -63,6 +63,7 @@ import BecomeInstructor from "../../../components/SidePannel/BecomeInstructor";
 import { useSelector } from "react-redux";
 import DropProfile from "../../../components/SidePannel/Profile";
 import InstructorApplications from "../../../components/SidePannel/InstructorApplications";
+import ContactAdminForm from "../../CMS/pages/ContactAdminForm";
 function DashboardRoutes() {
 
    const user = useSelector((state) => state.auth.user);
