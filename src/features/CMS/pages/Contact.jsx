@@ -1,63 +1,69 @@
-import { useState, useMemo } from "react";
-import { contactData } from "../components/blogsData";
+import { useState, useEffect, useMemo } from "react";
+import axios from "axios";
 import ContactFilter from "../components/ContactFilter";
 import ContactForm from "../components/ContactForm";
 import ContactTable from "../components/ContactTable";
 
 const Contact = () => {
-  const [contacts, setContacts] = useState(contactData);
+  const [contacts, setContacts] = useState([]); 
   const [editData, setEditData] = useState(null);
-
-  // Filter state
   const [appliedFilters, setAppliedFilters] = useState({
     name: "",
     email: "",
     phone: "",
   });
 
-  // --- Handlers ---
-  const handleSave = (formData) => {
-    if (editData) {
-      setContacts((prev) =>
-        prev.map((c) => (c.id === editData.id ? { ...formData, id: c.id } : c)),
-      );
-      setEditData(null);
-    } else {
-      setContacts([{ ...formData, id: Date.now() }, ...contacts]);
+  const baseUrl =
+    import.meta.env?.VITE_BACKEND_URL || "https://cms-backend-ashen.vercel.app";
+
+  // Fetch contacts from API
+  const fetchContacts = async () => {
+    try {
+      const res = await axios.get(`${baseUrl}/api/contacts`);
+      setContacts(res.data.contacts || res.data || []);
+    } catch (err) {
+      console.error("Error fetching contacts:", err);
     }
   };
 
-  const handleFilter = (filters) => {
-    setAppliedFilters(filters);
-  };
+  useEffect(() => {
+    fetchContacts();
+  }, []);
 
-  // --- Filtering Logic ---
+  // Filtered logic remains the same
   const filteredContacts = useMemo(() => {
     return contacts.filter((item) => {
       return (
-        item.name.toLowerCase().includes(appliedFilters.name.toLowerCase()) &&
-        item.email.toLowerCase().includes(appliedFilters.email.toLowerCase()) &&
-        item.phone.includes(appliedFilters.phone)
+        item.name?.toLowerCase().includes(appliedFilters.name.toLowerCase()) &&
+        item.email
+          ?.toLowerCase()
+          .includes(appliedFilters.email.toLowerCase()) &&
+        item.phone?.includes(appliedFilters.phone)
       );
     });
   }, [contacts, appliedFilters]);
+ 
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${baseUrl}/api/contacts/${id}`);
+      fetchContacts();  
+    } catch (err) {
+      console.error("Delete error", err);
+    }
+  };
 
   return (
     <div className="p-6 space-y-6">
-      <ContactFilter onFilter={handleFilter} />
-
+      <ContactFilter onFilter={setAppliedFilters} />
       <ContactForm
-        onSave={handleSave}
+        onSave={fetchContacts}
         editData={editData}
         onCancel={() => setEditData(null)}
       />
-
       <ContactTable
         contacts={filteredContacts}
-        onEdit={(contact) => {
-          setEditData(contact);
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        }}
+        onEdit={(contact) => setEditData(contact)}
+        onDelete={handleDelete}
       />
     </div>
   );
