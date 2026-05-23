@@ -12,7 +12,7 @@ const BlogFilter = ({ onFilter }) => {
   });
 
   const selectedStatus = watch("status");
-  const statuses = ["Published", "Draft", "Pending"];
+  const statuses = ["published", "draft", "pending"];
 
   const onSubmit = (data) => onFilter && onFilter(data);
 
@@ -85,7 +85,7 @@ const BlogFilter = ({ onFilter }) => {
                               setValue("status", s);
                               setIsDropdownOpen(false);
                             }}
-                            className="p-3 hover:bg-gray-50 dark:hover:bg-white/5 cursor-pointer rounded-lg text-gray-500 hover:text-gray-800 transition-colors"
+                            className="p-3 hover:bg-gray-50 dark:hover:bg-white/5 cursor-pointer rounded-lg capitalize"
                           >
                             {s}
                           </div>

@@ -1,3 +1,4 @@
+import axios from "axios";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { BsTrash, BsPencilSquare, BsPlusLg, BsCopy } from "react-icons/bs";
@@ -5,10 +6,13 @@ import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 
-const BlogTable = ({ blogs = [] }) => {
+const BlogTable = ({ blogs = [], onDeleteSuccess }) => {
+  // Added optional callback to refresh list
   const [selectedBlogs, setSelectedBlogs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+  const baseUrl =
+    import.meta.env?.VITE_BACKEND_URL || "https://cms-backend-ashen.vercel.app";
 
   const indexOfLast = currentPage * itemsPerPage;
   const indexOfFirst = indexOfLast - itemsPerPage;
@@ -22,14 +26,14 @@ const BlogTable = ({ blogs = [] }) => {
     }
   };
 
-  const handleCheckboxChange = (id) => {
+  const handleCheckboxChange = (_id) => {
     setSelectedBlogs((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
+      prev.includes(_id) ? prev.filter((item) => item !== _id) : [...prev, _id],
     );
   };
 
   const handleSelectAll = (e) => {
-    setSelectedBlogs(e.target.checked ? currentBlogs.map((b) => b.id) : []);
+    setSelectedBlogs(e.target.checked ? currentBlogs.map((b) => b._id) : []);
   };
 
   const handleCopy = (url) => {
@@ -45,61 +49,56 @@ const BlogTable = ({ blogs = [] }) => {
   };
 
   // --- Bulk Delete Logic ---
-  const handleDeleteClick = () => {
+  const handleDeleteClick = async () => {
     if (selectedBlogs.length === 0) {
-      Swal.fire({
-        title: "Oops...",
-        text: "Please Select Blogs To Delete",
-        icon: "info",
-        confirmButtonColor: "var(--primary)",
-      });
-    } else {
-      Swal.fire({
-        title: "Are you sure?",
-        text: `Deleting ${selectedBlogs.length} blogs!`,
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#ef4444",
-        cancelButtonColor: "#a0aec0",
-        confirmButtonText: "Delete",
-        background: document.documentElement.classList.contains("dark")
-          ? "#292d4a"
-          : "#fff",
-        color: document.documentElement.classList.contains("dark")
-          ? "#fff"
-          : "#000",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          console.log("Deleting blogs:", selectedBlogs);
-          setSelectedBlogs([]);
-          Swal.fire("Deleted!", "Selected blogs have been removed.", "success");
-        }
-      });
+      Swal.fire("Oops...", "Please Select Blogs To Delete", "info");
+      return;
+    }
+
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: `Deleting ${selectedBlogs.length} blogs!`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#ef4444",
+      confirmButtonText: "Delete",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        // Assuming your backend handles bulk delete via array of IDs
+        await axios.post(`${baseUrl}/api/blogs/delete-many`, {
+          ids: selectedBlogs,
+        });
+        Swal.fire("Deleted!", "Selected blogs have been removed.", "success");
+        setSelectedBlogs([]);
+        if (onDeleteSuccess) onDeleteSuccess(); // Refresh parent state
+      } catch (err) {
+        Swal.fire("Error", "Failed to delete blogs", "error");
+      }
     }
   };
 
   // --- Single Delete Logic ---
-  const handleDelete = (id, title) => {
-    Swal.fire({
+  const handleDelete = async (_id, title) => {
+    const result = await Swal.fire({
       title: "Are you sure?",
       text: `Delete blog: ${title}?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#ef4444",
-      cancelButtonColor: "var(--primary)",
       confirmButtonText: "Yes, delete it!",
-      background: document.documentElement.classList.contains("dark")
-        ? "#292d4a"
-        : "#fff",
-      color: document.documentElement.classList.contains("dark")
-        ? "#fff"
-        : "#000",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        console.log(`Deleting blog: ${id}`);
-        Swal.fire("Deleted!", "Blog removed.", "success");
-      }
     });
+
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`${baseUrl}/api/blogs/${_id}`);
+        Swal.fire("Deleted!", "Blog removed.", "success");
+        if (onDeleteSuccess) onDeleteSuccess(); // Refresh parent state
+      } catch (err) {
+        Swal.fire("Error", "Failed to delete blog", "error");
+      }
+    }
   };
 
   return (
@@ -155,15 +154,15 @@ const BlogTable = ({ blogs = [] }) => {
           <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
             {currentBlogs.map((blog) => (
               <tr
-                key={blog.id}
+                key={blog._id}
                 className="hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors text-[13px]"
               >
                 <td className="py-4 px-4 pl-8">
                   <input
                     type="checkbox"
                     className="w-4 h-4"
-                    checked={selectedBlogs.includes(blog.id)}
-                    onChange={() => handleCheckboxChange(blog.id)}
+                    checked={selectedBlogs.includes(blog._id)}
+                    onChange={() => handleCheckboxChange(blog._id)}
                   />
                 </td>
                 <td className="py-4 px-2 text-[12px] font-medium text-gray-700 dark:text-gray-200">
@@ -180,7 +179,7 @@ const BlogTable = ({ blogs = [] }) => {
                   </span>
                 </td>
                 <td className="py-4 px-2 text-[12px] text-gray-500 whitespace-nowrap">
-                  {blog.publishOn}
+                  {blog.publishedAt ? new Date(blog.publishedAt).toLocaleDateString() : "N/A"}
                 </td>
                 <td className="py-4 px-2 text-[12px] text-gray-400">
                   {blog.createdAt}
@@ -199,13 +198,13 @@ const BlogTable = ({ blogs = [] }) => {
                 <td className="py-4 px-4">
                   <div className="flex gap-2">
                     <Link
-                      to={`/dashboard/edit-blog/${blog.id}`}
+                      to={`/dashboard/edit-blog/${blog._id}`}
                       className="p-1.5 bg-primary text-white rounded shadow-sm cursor-pointer transition-colors"
                     >
                       <BsPencilSquare size={14} />
                     </Link>
                     <button
-                      onClick={() => handleDelete(blog.id, blog.title)}
+                      onClick={() => handleDelete(blog._id, blog.title)}
                       className="p-1.5 bg-red-500 text-white rounded shadow-sm cursor-pointer transition-colors"
                     >
                       <BsTrash size={14} />
