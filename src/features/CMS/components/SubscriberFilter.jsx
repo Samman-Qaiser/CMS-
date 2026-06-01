@@ -16,7 +16,7 @@ const SubscriberFilter = ({ onFilter }) => {
   });
 
   const selectedStatus = watch("status");
-  const statuses = ["Active", "Inactive"];
+  const statuses = ["active", "inactive"];
 
   const onSubmit = (data) => {
     if (onFilter) onFilter(data);

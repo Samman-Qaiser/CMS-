@@ -8,8 +8,7 @@ const SubscribersPage = () => {
   const [editData, setEditData] = useState(null);
   const [subscribers, setSubscribers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const baseUrl =
-    import.meta.env?.VITE_BACKEND_URL || "https://cms-backend-ashen.vercel.app";
+  const baseUrl = import.meta.env?.VITE_BACKEND_URL || "https://cms-backend-ashen.vercel.app";
 
   useEffect(() => {
     const fetchSubscribers = async () => {
@@ -25,7 +24,6 @@ const SubscribersPage = () => {
     fetchSubscribers();
   }, [baseUrl]);
 
-  // Filter state
   const [appliedFilters, setAppliedFilters] = useState({
     name: "",
     email: "",
@@ -34,19 +32,19 @@ const SubscribersPage = () => {
 
   const handleSave = async (formData) => {
     try {
+      const payload = {
+        ...formData,
+        status: formData.status === "Active" ? "active" : "inactive"
+      };
+
       if (editData) {
-        await axios.put(`${baseUrl}/api/subscribers/${editData._id}`, formData);
+        await axios.put(`${baseUrl}/api/subscribers/${editData._id}`, payload);
         setSubscribers((prev) =>
-          prev.map((s) =>
-            s._id === editData._id ? { ...formData, _id: s._id } : s,
-          ),
+          prev.map((s) => (s._id === editData._id ? { ...payload, _id: s._id } : s))
         );
         setEditData(null);
       } else {
-        const response = await axios.post(
-          `${baseUrl}/api/subscribers`,
-          formData,
-        );
+        const response = await axios.post(`${baseUrl}/api/subscribers`, payload);
         const newSubscriber = response.data.subscriber || response.data;
         setSubscribers([newSubscriber, ...subscribers]);
       }
@@ -55,9 +53,7 @@ const SubscribersPage = () => {
     }
   };
 
-  const handleFilter = (filters) => {
-    setAppliedFilters(filters);
-  };
+  const handleFilter = (filters) => setAppliedFilters(filters);
 
   const handleDelete = async (id) => {
     try {
@@ -70,18 +66,12 @@ const SubscribersPage = () => {
 
   const filteredSubscribers = useMemo(() => {
     return subscribers.filter((sub) => {
-      const nameMatch = (sub.name || "")
-        .toLowerCase()
-        .includes(appliedFilters.name.toLowerCase());
-      const emailMatch = (sub.email || "")
-        .toLowerCase()
-        .includes(appliedFilters.email.toLowerCase());
-
+      const nameMatch = (sub.name || "").toLowerCase().includes(appliedFilters.name.toLowerCase());
+      const emailMatch = (sub.email || "").toLowerCase().includes(appliedFilters.email.toLowerCase());
+      
       const statusMatch =
         appliedFilters.status === "Select Status" ||
-        (appliedFilters.status === "Active"
-          ? sub.status === true
-          : sub.status === false);
+        (sub.status && sub.status.toLowerCase() === appliedFilters.status.toLowerCase());
 
       return nameMatch && emailMatch && statusMatch;
     });
@@ -89,17 +79,12 @@ const SubscribersPage = () => {
 
   return (
     <div className="p-6 space-y-6">
-      {/* 1. Filter Component */}
       <SubscriberFilter onFilter={handleFilter} />
-
-      {/* 2. Add/Edit Form Component */}
       <SubscriberForm
         onSave={handleSave}
         editData={editData}
         onCancel={() => setEditData(null)}
       />
-
-      {/* 3. Table Component   */}
       {loading ? (
         <p>Loading subscribers...</p>
       ) : (
