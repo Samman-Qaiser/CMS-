@@ -70,21 +70,15 @@ const SubscriberForm = ({ onSave, editData, onCancel }) => {
           </div>
 
           <div className="flex items-center gap-8">
-            {["status", "unsubscribe"].map((field) => (
-              <label
-                key={field}
-                className="flex items-center gap-2 cursor-pointer group"
-              >
-                <input
-                  type="checkbox"
-                  {...register(field)}
-                  className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
-                />
-                <span className="text-gray-600 dark:text-gray-300 font-medium capitalize">
-                  {field}
-                </span>
-              </label>
-            ))}
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" {...register("status")} value="active" />
+              <span>Active</span>
+            </label>
+
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" {...register("isUnsubscribed")} />
+              <span>Unsubscribed</span>
+            </label>
           </div>
 
           <div className="flex gap-3">

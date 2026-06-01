@@ -1,12 +1,30 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { subscribersData } from "../components/blogsData";
 import SubscriberFilter from "../components/SubscriberFilter";
 import SubscriberForm from "../components/SubscriberForm";
 import SubscriberTable from "../components/SubscriberTable";
+import axios from "axios";
 
 const SubscribersPage = () => {
-  const [subscribers, setSubscribers] = useState(subscribersData);
   const [editData, setEditData] = useState(null);
+  const [subscribers, setSubscribers] = useState([]); 
+  const [loading, setLoading] = useState(true); 
+  const baseUrl =
+    import.meta.env?.VITE_BACKEND_URL || "https://cms-backend-ashen.vercel.app";
+
+  useEffect(() => {
+    const fetchSubscribers = async () => {
+      try {
+        const res = await axios.get(`${baseUrl}/api/subscribers`);
+        setSubscribers(res.data.subscribers || []);
+      } catch (err) {
+        console.error("Error fetching subscribers:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSubscribers();
+  }, [baseUrl]);
 
   // Filter state
   const [appliedFilters, setAppliedFilters] = useState({
@@ -15,15 +33,26 @@ const SubscribersPage = () => {
     status: "Select Status",
   });
 
-  // --- Handlers ---
-  const handleSave = (formData) => {
-    if (editData) {
-      setSubscribers((prev) =>
-        prev.map((s) => (s.id === editData.id ? { ...formData, id: s.id } : s)),
-      );
-      setEditData(null);
-    } else {
-      setSubscribers([{ ...formData, id: Date.now() }, ...subscribers]);
+  const handleSave = async (formData) => {
+    try {
+      if (editData) {
+        await axios.put(`${baseUrl}/api/subscribers/${editData._id}`, formData);
+        setSubscribers((prev) =>
+          prev.map((s) =>
+            s._id === editData._id ? { ...formData, _id: s._id } : s,
+          ),
+        );
+        setEditData(null);
+      } else {
+        const response = await axios.post(
+          `${baseUrl}/api/subscribers`,
+          formData,
+        );
+        const newSubscriber = response.data.subscriber || response.data;
+        setSubscribers([newSubscriber, ...subscribers]);
+      }
+    } catch (error) {
+      console.error("Failed to save:", error);
     }
   };
 
@@ -63,13 +92,17 @@ const SubscribersPage = () => {
       />
 
       {/* 3. Table Component   */}
-      <SubscriberTable
-        subscribers={filteredSubscribers}
-        onEdit={(sub) => {
-          setEditData(sub);
-          window.scrollTo({ top: 0, behavior: "smooth" });  
-        }} 
-      />
+      {loading ? (
+        <p>Loading subscribers...</p>
+      ) : (
+        <SubscriberTable
+          subscribers={filteredSubscribers}
+          onEdit={(sub) => {
+            setEditData(sub);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+        />
+      )}
     </div>
   );
 };
