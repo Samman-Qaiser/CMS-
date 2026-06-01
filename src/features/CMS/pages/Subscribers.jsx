@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from "react";
-import { subscribersData } from "../components/blogsData";
 import SubscriberFilter from "../components/SubscriberFilter";
 import SubscriberForm from "../components/SubscriberForm";
 import SubscriberTable from "../components/SubscriberTable";
@@ -7,8 +6,8 @@ import axios from "axios";
 
 const SubscribersPage = () => {
   const [editData, setEditData] = useState(null);
-  const [subscribers, setSubscribers] = useState([]); 
-  const [loading, setLoading] = useState(true); 
+  const [subscribers, setSubscribers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const baseUrl =
     import.meta.env?.VITE_BACKEND_URL || "https://cms-backend-ashen.vercel.app";
 
@@ -59,7 +58,16 @@ const SubscribersPage = () => {
   const handleFilter = (filters) => {
     setAppliedFilters(filters);
   };
- 
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${baseUrl}/api/subscribers/${id}`);
+      setSubscribers((prev) => prev.filter((s) => s._id !== id));
+    } catch (error) {
+      console.error("Failed to delete:", error);
+    }
+  };
+
   const filteredSubscribers = useMemo(() => {
     return subscribers.filter((sub) => {
       const nameMatch = (sub.name || "")
@@ -101,6 +109,7 @@ const SubscribersPage = () => {
             setEditData(sub);
             window.scrollTo({ top: 0, behavior: "smooth" });
           }}
+          onDelete={handleDelete}
         />
       )}
     </div>

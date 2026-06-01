@@ -4,7 +4,7 @@ import { BsTrash, BsPencilSquare } from "react-icons/bs";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 import Swal from "sweetalert2";
 
-const SubscriberTable = ({ subscribers = [], onEdit }) => {
+const SubscriberTable = ({ subscribers = [], onEdit, onDelete }) => {
   const [selectedIds, setSelectedIds] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -28,7 +28,6 @@ const SubscriberTable = ({ subscribers = [], onEdit }) => {
     setSelectedIds(e.target.checked ? currentSubs.map((s) => s.id) : []);
   };
 
-  // --- Delete Logic ---
   const confirmDelete = (ids) => {
     const isBulk = Array.isArray(ids);
     const count = isBulk ? ids.length : 1;
@@ -40,15 +39,16 @@ const SubscriberTable = ({ subscribers = [], onEdit }) => {
       showCancelButton: true,
       confirmButtonColor: "#ef4444",
       confirmButtonText: "Delete",
-      background: document.documentElement.classList.contains("dark")
-        ? "#292d4a"
-        : "#fff",
-      color: document.documentElement.classList.contains("dark")
-        ? "#fff"
-        : "#000",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        if (isBulk) setSelectedIds([]);
+        if (isBulk) {
+          for (const id of ids) {
+            await onDelete(id);
+          }
+          setSelectedIds([]);
+        } else {
+          await onDelete(ids);
+        }
       }
     });
   };
@@ -118,11 +118,11 @@ const SubscriberTable = ({ subscribers = [], onEdit }) => {
                 <td className="py-4 px-2 text-[13px]  text-content-text">
                   {sub.email}
                 </td>
-                <td className="py-4 px-2 text-[13px] text-gray-500">
+                <td className="py-4 px-2 text-[13px] text-content-text">
                   {sub.phone}
                 </td>
                 <td className="py-4 px-2 text-center">
-                  <span className="px-3 py-1 rounded-full text-[10px] text-content-text uppercase tracking-wider">
+                  <span className="px-3 py-1 rounded-full text-[13px] text-content-text">
                     {sub.status || "Inactive"}
                   </span>
                 </td>

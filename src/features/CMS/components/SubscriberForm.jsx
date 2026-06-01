@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
+import axios from "axios";
 
 const SubscriberForm = ({ onSave, editData, onCancel }) => {
   const { register, handleSubmit, reset } = useForm();
@@ -24,6 +25,22 @@ const SubscriberForm = ({ onSave, editData, onCancel }) => {
       });
     }
   }, [editData, reset]);
+  const baseUrl =
+    import.meta.env?.VITE_BACKEND_URL || "https://cms-backend-ashen.vercel.app";
+
+  const handleUnsubscribeToggle = async (e) => {
+    if (!editData) return;  
+
+    const isUnsubscribed = e.target.checked;
+    try {
+      await axios.post(`${baseUrl}/api/subscribers/unsubscribe`, {
+        id: editData._id,
+        isUnsubscribed: isUnsubscribed,
+      });
+    } catch (error) {
+      console.error("Failed to update subscription status:", error);
+    }
+  };
 
   return (
     <motion.div
@@ -76,7 +93,11 @@ const SubscriberForm = ({ onSave, editData, onCancel }) => {
             </label>
 
             <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" {...register("isUnsubscribed")} />
+              <input
+                type="checkbox"
+                {...register("isUnsubscribed")}
+                onChange={handleUnsubscribeToggle}
+              />
               <span>Unsubscribed</span>
             </label>
           </div>
