@@ -145,7 +145,8 @@ export default function RightPanel() {
   return (
     <>
       <div
-        className="fixed right-0 top-5 rounded-l-[30px] bottom-4 z-[180] flex flex-col bg-white dark:bg-[#292d4a] items-center justify-between w-[6.5vw] h-[92vh] py-6"
+        className="fixed right-0 top-5 rounded-l-[30px] bottom-4 z-[180] flex flex-col
+         bg-white dark:bg-[#292d4a] items-center justify-between w-[6.5vw] h-[92vh] py-6"
         style={{
           borderLeft: "1px solid var(--border-color, rgba(0,0,0,0.06))",
         }}
