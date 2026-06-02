@@ -6,110 +6,8 @@ import CategoryForm from "../Components/CategoryForm";
 import axios from "axios";
 
 const CoursesPage = () => {
-  // Mock Data (Image ke mutabiq)
-  const allCourses = [
-    {
-      id: 1,
-      title: "Developer",
-      instructor: "Samantha",
-      rating: 5.0,
-      price: 50.99,
-      contentCount: 110,
-      image:
-        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400",
-    },
-    {
-      id: 2,
-      title: "UI Design Beginner",
-      instructor: "Karen Hope",
-      rating: 5.0,
-      price: 50.99,
-      contentCount: 110,
-      image:
-        "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=400",
-    },
-    {
-      id: 3,
-      title: "Freelancer",
-      instructor: "Jack and Sally",
-      rating: 5.0,
-      price: 50.99,
-      contentCount: 110,
-      image:
-        "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=400",
-    },
-    {
-      id: 4,
-      title: "UX Research",
-      instructor: "Cahaya Hikari",
-      rating: 5.0,
-      price: 50.99,
-      contentCount: 110,
-      image:
-        "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=400",
-    },
-    {
-      id: 5,
-      title: "Basic Web Design",
-      instructor: "Ahmad",
-      rating: 5.0,
-      price: 50.99,
-      contentCount: 110,
-      image:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400",
-    },
-    {
-      id: 6,
-      title: "3D Designer",
-      instructor: "Jordan Nico",
-      rating: 5.0,
-      price: 50.99,
-      contentCount: 110,
-      image:
-        "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=400",
-    },
-    {
-      id: 7,
-      title: "React Mastery",
-      instructor: "Sarah Johnson",
-      rating: 5.0,
-      price: 65.99,
-      contentCount: 150,
-      image:
-        "https://images.unsplash.com/photo-1633356122102-3fe601e05bd2?q=80&w=400",
-    },
-    {
-      id: 8,
-      title: "Python Bootcamp",
-      instructor: "Mike Ross",
-      rating: 5.0,
-      price: 55.99,
-      contentCount: 130,
-      image:
-        "https://images.unsplash.com/photo-1526379879527-8559ecfcaec0?q=80&w=400",
-    },
-    {
-      id: 9,
-      title: "Data Science",
-      instructor: "Emily Chen",
-      rating: 5.0,
-      price: 75.99,
-      contentCount: 180,
-      image:
-        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=400",
-    },
-    {
-      id: 10,
-      title: "Cloud Computing",
-      instructor: "David Kim",
-      rating: 5.0,
-      price: 70.99,
-      contentCount: 140,
-      image:
-        "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=400",
-    },
-  ];
-
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [categories, setCategories] = useState([]);
   const [showAllCategories, setShowAllCategories] = useState(false);
@@ -128,21 +26,34 @@ const CoursesPage = () => {
     }
   };
 
-  useEffect(() => {
-    fetchCategories();
-  }, [baseUrl]);
+ const fetchCourses = async () => {
+   try {
+     setLoading(true);
+     const res = await axios.get(`${baseUrl}/api/courses`);
+     setCourses(res.data.courses || res.data || []);
+   } catch (err) {
+     console.error("Error fetching courses:", err);
+   } finally {
+     setLoading(false);
+   }
+ };
+
+ useEffect(() => {
+   fetchCategories();
+   fetchCourses();
+ }, [baseUrl]);
 
   const displayedCategories = showAllCategories
     ? categories
     : categories.slice(0, 3);
 
   // Calculate pagination
-  const totalPages = Math.ceil(allCourses.length / itemsPerPage);
+  const totalPages = Math.ceil(courses.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentCourses = allCourses.slice(startIndex, endIndex);
+  const currentCourses = courses.slice(startIndex, endIndex);
 
-  // Generate page numbers to display (showing 5 pages at a time)
+  // showing 5 pages at a time
   const getPageNumbers = () => {
     const pageNumbers = [];
     const maxVisible = 5;
@@ -236,11 +147,15 @@ const CoursesPage = () => {
       </div>
 
       {/* Grid Layout */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {currentCourses.map((course) => (
-          <CourseCard key={course.id} course={course} />
-        ))}
-      </div>
+      {loading ? (
+        <div className="text-center py-10">Loading courses...</div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {currentCourses.map((course) => (
+            <CourseCard key={course._id || course.id} course={course} />
+          ))}
+        </div>
+      )}
 
       {/* Pagination Section */}
       {totalPages > 1 && (
@@ -250,11 +165,11 @@ const CoursesPage = () => {
             <span className="font-bold text-header-text">{startIndex + 1}</span>{" "}
             -{" "}
             <span className="font-bold text-header-text">
-              {Math.min(endIndex, allCourses.length)}
+              {Math.min(endIndex, courses.length)}
             </span>{" "}
             from{" "}
             <span className="font-bold text-header-text">
-              {allCourses.length}
+              {courses.length}
             </span>{" "}
             data
           </p>
