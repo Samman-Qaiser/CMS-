@@ -65,6 +65,7 @@ import DropProfile from "../../../components/SidePannel/Profile";
 import InstructorApplications from "../../../components/SidePannel/InstructorApplications";
 import ContactAdminForm from "../../CMS/pages/ContactAdminForm";
 import CourseCategoriesPage from "../../Courses/Pages/CourseCategoriesPage";
+import AdminReviews from "../../../components/SidePannel/AdminReviews";
 import CourseForm from "../../Courses/Components/CourseForm";
 function DashboardRoutes() {
 
@@ -103,6 +104,22 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <InstructorApplications />
+            </ProtectedRoute>
+          }
+        />
+            <Route
+          path="/reviews"
+          element={
+            <ProtectedRoute>
+             <AdminReviews/>
+            </ProtectedRoute>
+          }
+        />
+            <Route
+          path="/reviews"
+          element={
+            <ProtectedRoute>
+             <AdminReviews/>
             </ProtectedRoute>
           }
         />
