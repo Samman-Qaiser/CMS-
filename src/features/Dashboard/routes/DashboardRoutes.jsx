@@ -24,7 +24,7 @@ import BlogCategories from "../../CMS/components/BlogCategories";
 import CourseDetail2 from "../../Courses/Pages/Coursedetail2";
 import ProfilePage from "../../Apps/Pages/ProfilePage";
 import BlogTags from "../../CMS/components/BlogTags";
-
+import LessonPlayer from "../../Courses/Pages/LessonPlayer";
 import Comments from "../../CMS/pages/Comments";
 
 import Contact from "../../CMS/pages/Contact";
@@ -52,6 +52,7 @@ import ConfigLayout from "../../Config/layout/ConfigLayout";
 import CustomersPage from "../../Apps/Pages/CustomersPage";
 import InvoicePage from "../Pages/InvoicePage";
 import CheckoutPage from "../../Apps/Pages/CheckoutPage";
+import CheckoutPageBuy from "../../../checkout/CheckoutPage";
 import ProductDetailPage from "../../Apps/Pages/ProductDetailPage";
 import OrdersPage from "../../Apps/Pages/OrderPage";
 import EmailRead from "../../Apps/Pages/EmailRead";
@@ -116,10 +117,10 @@ function DashboardRoutes() {
           }
         />
             <Route
-          path="/reviews"
+          path="/lesson/:lessonId"
           element={
             <ProtectedRoute>
-             <AdminReviews/>
+             <LessonPlayer/>
             </ProtectedRoute>
           }
         />
@@ -563,6 +564,14 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <ContactAdminForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/checkout/:id"
+          element={
+            <ProtectedRoute>
+              <CheckoutPageBuy />
             </ProtectedRoute>
           }
         />
