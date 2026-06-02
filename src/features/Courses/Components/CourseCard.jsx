@@ -98,7 +98,7 @@ const CourseCard = ({ course }) => {
           </div>
           <Link
             to={`/dashboard/course-details-1/${course._id}`}
-            className="bg-primary hover:bg-primary/90 text-white px-4 py-1 rounded-md text-sm font-bold transition-all"
+            className="bg-primary hover:bg-primary/90 text-white px-2 py-1 rounded-md text-xs font-bold transition-all"
           >
             View Course
           </Link>

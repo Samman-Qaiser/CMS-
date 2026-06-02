@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
-import { FaStar, FaHeart, FaRegHeart, FaPlay, FaCheckCircle, FaArrowLeft, FaUser } from 'react-icons/fa';
+import { FaStar, FaHeart, FaRegHeart, FaPlay, FaCheckCircle, FaArrowLeft, FaUser, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import { useDispatch, useSelector } from "react-redux";
+import Swal from 'sweetalert2';
 
 const baseUrl = import.meta.env?.VITE_BACKEND_URL || "https://cms-backend-ashen.vercel.app";
 
@@ -18,6 +20,32 @@ function StarRow({ count = 5 }) {
   );
 }
 
+// Rating input component
+function RatingInput({ rating, onRatingChange }) {
+  const [hoverRating, setHoverRating] = useState(0);
+  
+  return (
+    <div className="flex items-center gap-1">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <button
+          key={star}
+          type="button"
+          onClick={() => onRatingChange(star)}
+          onMouseEnter={() => setHoverRating(star)}
+          onMouseLeave={() => setHoverRating(0)}
+          className="focus:outline-none"
+        >
+          {star <= (hoverRating || rating) ? (
+            <FaStar className="w-6 h-6 text-yellow-400" />
+          ) : (
+            <FaRegStar className="w-6 h-6 text-gray-400" />
+          )}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export default function CourseDetail1() {
   const [activeTab, setActiveTab] = useState('about');
   const [wishlisted, setWishlisted] = useState(false);
@@ -26,10 +54,19 @@ export default function CourseDetail1() {
   const [error, setError] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [instructor, setInstructor] = useState(null);
+  const [isEnrolled, setIsEnrolled] = useState(false);
   const [loadingInstructor, setLoadingInstructor] = useState(false);
+  const [checkingEnrollment, setCheckingEnrollment] = useState(false);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState('');
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [userHasReviewed, setUserHasReviewed] = useState(false);
+  const [userReview, setUserReview] = useState(null);
   
   const navigate = useNavigate();
   const { id } = useParams();
+  const user = useSelector((state) => state.auth.user);
 
   // Fetch course details
   useEffect(() => {
@@ -88,11 +125,24 @@ export default function CourseDetail1() {
       const response = await axios.get(`${baseUrl}/api/reviews`);
       
       if (response.data.success && response.data.reviews) {
-        // Filter reviews for this specific course
         const courseReviews = response.data.reviews.filter(
           review => review.course?._id === courseId && review.status === 'approved'
         );
         setReviews(courseReviews);
+        
+        // Check if current user has already reviewed
+        if (user?.id) {
+          const userReviewExists = courseReviews.some(
+            review => review.user?._id === user.id
+          );
+          setUserHasReviewed(userReviewExists);
+          
+          // Get user's review if exists
+          const userReviewData = courseReviews.find(
+            review => review.user?._id === user.id
+          );
+          setUserReview(userReviewData);
+        }
       }
     } catch (err) {
       console.error('Error fetching reviews:', err);
@@ -100,16 +150,131 @@ export default function CourseDetail1() {
     }
   };
 
+  // Check enrollment status - Check by user AND course
+  const checkEnrollmentStatus = async () => {
+    if (!user?.id || !course?._id) return;
+    
+    try {
+      setCheckingEnrollment(true);
+      const response = await axios.get(`${baseUrl}/api/enrollments`, {
+        params: {
+          user: user.id,
+          course: course._id
+        }
+      });
+      
+      if (response.data.success) {
+        const isUserEnrolled = response.data.enrollments && response.data.enrollments.length > 0;
+        setIsEnrolled(isUserEnrolled);
+      } else {
+        setIsEnrolled(false);
+      }
+    } catch (error) {
+      console.error('Error checking enrollment:', error);
+      setIsEnrolled(false);
+    } finally {
+      setCheckingEnrollment(false);
+    }
+  };
+
+  // Submit review
+  const handleSubmitReview = async () => {
+    if (!user?.id) {
+      Swal.fire({
+        title: 'Login Required',
+        text: 'Please login to submit a review',
+        icon: 'warning',
+        confirmButtonColor: '#FF6F61'
+      });
+      navigate('/login');
+      return;
+    }
+
+    if (!isEnrolled) {
+      Swal.fire({
+        title: 'Not Enrolled',
+        text: 'You need to enroll in this course to write a review',
+        icon: 'info',
+        confirmButtonColor: '#FF6F61'
+      });
+      return;
+    }
+
+    if (userHasReviewed) {
+      Swal.fire({
+        title: 'Already Reviewed',
+        text: 'You have already reviewed this course',
+        icon: 'info',
+        confirmButtonColor: '#FF6F61'
+      });
+      return;
+    }
+
+    if (!reviewComment.trim()) {
+      Swal.fire({
+        title: 'Error',
+        text: 'Please write your review',
+        icon: 'error',
+        confirmButtonColor: '#FF6F61'
+      });
+      return;
+    }
+
+    try {
+      setSubmittingReview(true);
+      
+      const reviewData = {
+        user: user.id,
+        course: course._id,
+        instructor: course.instructor?._id,
+        rating: reviewRating,
+        comment: reviewComment.trim()
+      };
+      
+      const response = await axios.post(`${baseUrl}/api/reviews`, reviewData);
+      
+      if (response.data.success) {
+        Swal.fire({
+          title: 'Success!',
+          text: 'Your review has been submitted successfully',
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false,
+          position: 'top-end'
+        });
+        
+        // Reset form
+        setReviewRating(5);
+        setReviewComment('');
+        setShowReviewForm(false);
+        setUserHasReviewed(true);
+        
+        // Refresh reviews
+        await fetchCourseReviews(course._id);
+      }
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      Swal.fire({
+        title: 'Error!',
+        text: error.response?.data?.message || 'Failed to submit review',
+        icon: 'error',
+        confirmButtonColor: '#FF6F61'
+      });
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
+
+  // Call enrollment check when course and user are available
+  useEffect(() => {
+    if (course && user?.id) {
+      checkEnrollmentStatus();
+    }
+  }, [course, user?.id]);
+
   // Add to wishlist functionality
   const handleWishlist = async () => {
     try {
-      const token = localStorage.getItem('token');
-      
-      if (!token) {
-        alert('Please login to add to wishlist');
-        return;
-      }
-      
       setWishlisted(!wishlisted);
     } catch (err) {
       console.error('Error updating wishlist:', err);
@@ -138,7 +303,17 @@ export default function CourseDetail1() {
 
   // Buy now
   const handleBuyNow = () => {
-    navigate(`/checkout/${course._id}`);
+    if (!user?.id) {
+      alert('Please login to purchase this course');
+      navigate('/login');
+      return;
+    }
+    navigate(`/dashboard/checkout/${course._id}`);
+  };
+
+  // Continue learning
+  const handleContinueLearning = () => {
+    navigate(`/dashboard/course-details-2/${course._id}`);
   };
 
   // Format date for reviews
@@ -334,6 +509,77 @@ export default function CourseDetail1() {
 
                 {activeTab === 'reviews' && (
                   <div className="flex flex-col gap-5">
+                    {/* Write Review Button - Only show for enrolled users who haven't reviewed */}
+                    {isEnrolled && !userHasReviewed && (
+                      <div className="mb-4">
+                        {!showReviewForm ? (
+                          <button
+                            onClick={() => setShowReviewForm(true)}
+                            className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors"
+                          >
+                            Write a Review
+                          </button>
+                        ) : (
+                          <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                            <h4 className="text-md font-semibold text-header-text mb-3">Write Your Review</h4>
+                            
+                            {/* Rating Selector */}
+                            <div className="mb-4">
+                              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Your Rating
+                              </label>
+                              <RatingInput rating={reviewRating} onRatingChange={setReviewRating} />
+                            </div>
+                            
+                            {/* Review Comment */}
+                            <div className="mb-4">
+                              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Your Review
+                              </label>
+                              <textarea
+                                value={reviewComment}
+                                onChange={(e) => setReviewComment(e.target.value)}
+                                rows="4"
+                                placeholder="Share your experience with this course..."
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white"
+                              />
+                            </div>
+                            
+                            {/* Action Buttons */}
+                            <div className="flex gap-3">
+                              <button
+                                onClick={handleSubmitReview}
+                                disabled={submittingReview}
+                                className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50"
+                              >
+                                {submittingReview ? 'Submitting...' : 'Submit Review'}
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setShowReviewForm(false);
+                                  setReviewRating(5);
+                                  setReviewComment('');
+                                }}
+                                className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    
+                    {/* User's own review message */}
+                    {userHasReviewed && (
+                      <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 mb-2">
+                        <p className="text-sm text-green-700 dark:text-green-400">
+                          ✅ You have already reviewed this course. Thank you for your feedback!
+                        </p>
+                      </div>
+                    )}
+                    
+                    {/* All Reviews */}
                     {reviews.length > 0 ? (
                       reviews.map((review) => (
                         <div key={review._id} className="flex flex-col gap-2 pb-5 border-b border-gray-100 dark:border-white/10 last:border-none last:pb-0">
@@ -346,6 +592,11 @@ export default function CourseDetail1() {
                             <div className="flex flex-col gap-0.5">
                               <span className="text-sm font-bold text-header-text">
                                 {review.user?.firstName} {review.user?.lastName}
+                                {review.user?._id === user?.id && (
+                                  <span className="ml-2 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                                    You
+                                  </span>
+                                )}
                               </span>
                               <div className="flex items-center gap-3">
                                 <StarRow count={review.rating} />
@@ -361,11 +612,9 @@ export default function CourseDetail1() {
                     ) : (
                       <div className="text-center py-8">
                         <p className="text-sm text-content-text mb-3">
-                          No reviews yet. Be the first to review this course!
+                          No reviews yet.
+                          {isEnrolled && !userHasReviewed && ' Be the first to review this course!'}
                         </p>
-                        <button className="px-4 py-2 bg-primary text-white rounded-md text-sm hover:bg-primary/90 transition-colors">
-                          Write a Review
-                        </button>
                       </div>
                     )}
                   </div>
@@ -449,20 +698,47 @@ export default function CourseDetail1() {
               )}
 
               {/* CTA Buttons */}
-              <div className="flex gap-3 pt-1">
-                <button
-                  onClick={handleAddToCart}
-                  className="flex-1 py-2.5 rounded-md border border-gray-300 dark:border-white/20 text-sm font-semibold text-header-text hover:bg-gray-50 dark:hover:bg-white/5 transition-colors duration-200"
-                >
-                  Add to Cart
-                </button>
-                <button
-                  onClick={handleBuyNow}
-                  className="flex-1 py-2.5 rounded-md bg-primary hover:bg-primary/70 text-sm font-semibold text-white transition-colors duration-200"
-                >
-                  Buy Now
-                </button>
-              </div>
+              {checkingEnrollment ? (
+                <div className="flex justify-center py-4">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                </div>
+              ) : (
+                <>
+                  {isEnrolled ? (
+                    <div className="mt-2">
+                      <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-2">
+                        <div className="flex items-center gap-2">
+                          <FaCheckCircle className="w-5 h-5 text-green-500" />
+                          <p className="text-sm font-semibold text-green-700 dark:text-green-400">
+                            You are already enrolled in this course!
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={handleContinueLearning}
+                        className="w-full py-2.5 rounded-md bg-green-600 hover:bg-green-700 text-sm font-semibold text-white transition-colors duration-200"
+                      >
+                        Continue Learning
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-3 pt-1">
+                      {/* <button
+                        onClick={handleAddToCart}
+                        className="flex-1 py-2.5 rounded-md border border-gray-300 dark:border-white/20 text-sm font-semibold text-header-text hover:bg-gray-50 dark:hover:bg-white/5 transition-colors duration-200"
+                      >
+                        Add to Cart
+                      </button> */}
+                      <button
+                        onClick={handleBuyNow}
+                        className="flex-1 py-2.5 rounded-md bg-primary hover:bg-primary/70 text-sm font-semibold text-white transition-colors duration-200"
+                      >
+                        Buy Now
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           </div>
         </div>
