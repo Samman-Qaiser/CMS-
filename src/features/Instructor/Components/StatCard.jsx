@@ -30,7 +30,7 @@ function MiniRing({ color = '#ffffff' }) {
 
 export default function StatCard({ icon: Icon, value, label, bgClass, ringColor = '#ffffff' }) {
   return (
-    <div className={`${bgClass} rounded-md px-4 py-6 flex items-center justify-between gap-4`}>
+    <div className={`${bgClass} w-[100%] rounded-md px-4 py-6 flex items-center justify-between gap-4`}>
       <div className="flex items-center gap-4">
         {/* Icon box */}
         <div className="w-11 h-11 rounded-md bg-white/20 flex items-center justify-center shrink-0">

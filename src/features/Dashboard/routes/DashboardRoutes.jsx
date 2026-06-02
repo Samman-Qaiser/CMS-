@@ -65,6 +65,7 @@ import DropProfile from "../../../components/SidePannel/Profile";
 import InstructorApplications from "../../../components/SidePannel/InstructorApplications";
 import ContactAdminForm from "../../CMS/pages/ContactAdminForm";
 import CourseCategoriesPage from "../../Courses/Pages/CourseCategoriesPage";
+import AdminReviews from "../../../components/SidePannel/AdminReviews";
 function DashboardRoutes() {
 
    const user = useSelector((state) => state.auth.user);
@@ -102,6 +103,14 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
              <InstructorApplications/>
+            </ProtectedRoute>
+          }
+        />
+            <Route
+          path="/reviews"
+          element={
+            <ProtectedRoute>
+             <AdminReviews/>
             </ProtectedRoute>
           }
         />
