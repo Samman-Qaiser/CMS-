@@ -292,27 +292,33 @@ export default function CourseDetail2() {
   }, [user?.id, id]);
 
   // Handle lesson click
-  const handleLessonClick = (lesson) => {
-    if (!isEnrolled) {
-      Swal.fire({
-        title: 'Not Enrolled',
-        text: 'Please enroll in this course to access lessons',
-        icon: 'warning',
-        confirmButtonColor: '#FF6F61',
-        confirmButtonText: 'Enroll Now'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          navigate(`/dashboard/checkout/${course._id}`);
-        }
-      });
-      return;
-    }
-    
-    // Navigate to lesson player
-    navigate(`/dashboard/lesson/${lesson._id}`, {
-      state: { lesson, courseId: id, enrollmentId: enrollment?._id }
+ // In CourseDetail2, update the handleLessonClick function:
+const handleLessonClick = (lesson) => {
+  if (!isEnrolled) {
+    Swal.fire({
+      title: 'Not Enrolled',
+      text: 'Please enroll in this course to access lessons',
+      icon: 'warning',
+      confirmButtonColor: '#FF6F61',
+      confirmButtonText: 'Enroll Now'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        navigate(`/dashboard/checkout/${course._id}`);
+      }
     });
-  };
+    return;
+  }
+  
+  // Pass lesson data through state to avoid API call
+  navigate(`/dashboard/lesson/${lesson._id}`, {
+    state: { 
+      lesson: lesson, 
+      courseId: course._id,
+      enrollmentId: enrollment?._id,
+      courseTitle: course.title
+    }
+  });
+};
 
   // Check if lesson is completed
   const isLessonCompleted = (lessonId) => {

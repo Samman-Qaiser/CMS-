@@ -34,7 +34,7 @@ const ChapterForm = ({ courseId, initialData, onClose, onChapterAdded }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white p-6 rounded-xl border border-slate-200 mb-6 shadow-sm"
+      className="bg-white dark:bg-[#20203C] p-6 rounded-xl border border-slate-200 mb-6 shadow-sm"
     >
       <h3 className="font-bold mb-4">
         {initialData ? "Edit Chapter" : "Add New Chapter"}
@@ -66,7 +66,7 @@ const ChapterForm = ({ courseId, initialData, onClose, onChapterAdded }) => {
         <button
           type="button"
           onClick={onClose}
-          className="bg-slate-200 px-6 py-2 rounded-lg"
+          className="bg-secondary text-white px-6 py-2 rounded-lg"
         >
           Cancel
         </button>

@@ -71,8 +71,8 @@ const Chapters = () => {
   };
 
   return (
-    <div className="flex h-screen bg-slate-50">
-      <div className="w-1/4 bg-white border-r border-slate-200 p-4 overflow-y-auto">
+    <div className="flex h-screen bg-white dark:bg-[#292D4A]">
+      <div className="w-1/4 bg-white dark:bg-[#292D4A] border-r border-slate-200 p-4 overflow-y-auto">
         <h2 className="text-xl font-bold mb-4">Courses</h2>
         {loading && !courses.length ? (
           <p className="text-slate-400">Loading courses...</p>
@@ -131,7 +131,7 @@ const Chapters = () => {
               {chapters.map((chapter) => (
                 <div
                   key={chapter._id}
-                  className="p-4 bg-white rounded-lg shadow-sm border border-slate-200 flex justify-between items-center"
+                  className="p-4 bg-white dark:bg-[#20203C] rounded-lg shadow-sm border border-secondary flex justify-between items-center"
                 >
                   <div>
                     <h3 className="font-bold">{chapter.title}</h3>
