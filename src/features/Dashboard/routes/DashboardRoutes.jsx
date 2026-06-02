@@ -65,6 +65,7 @@ import DropProfile from "../../../components/SidePannel/Profile";
 import InstructorApplications from "../../../components/SidePannel/InstructorApplications";
 import ContactAdminForm from "../../CMS/pages/ContactAdminForm";
 import CourseCategoriesPage from "../../Courses/Pages/CourseCategoriesPage";
+import CourseForm from "../../Courses/Components/CourseForm";
 function DashboardRoutes() {
 
    const user = useSelector((state) => state.auth.user);
@@ -80,28 +81,28 @@ function DashboardRoutes() {
             </ProtectedRoute>
           }
         />
- <Route
+        <Route
           path="/profile-page"
           element={
             <ProtectedRoute>
-             <DropProfile />
+              <DropProfile />
             </ProtectedRoute>
           }
         />
-        
-          <Route
+
+        <Route
           path="/become-instructor"
           element={
             <ProtectedRoute>
-             <BecomeInstructor userId={user?.id} />
+              <BecomeInstructor userId={user?.id} />
             </ProtectedRoute>
           }
         />
-          <Route
+        <Route
           path="/admin/instructor-applications"
           element={
             <ProtectedRoute>
-             <InstructorApplications/>
+              <InstructorApplications />
             </ProtectedRoute>
           }
         />
@@ -137,11 +138,11 @@ function DashboardRoutes() {
             </ProtectedRoute>
           }
         />
-          <Route
+        <Route
           path="/course-categories"
           element={
             <ProtectedRoute>
-              <CourseCategoriesPage/>
+              <CourseCategoriesPage />
             </ProtectedRoute>
           }
         />
@@ -149,8 +150,16 @@ function DashboardRoutes() {
           path="/course-details-1/:id"
           element={
             // <ProtectedRoute>
-              <CourseDetail1 />
+            <CourseDetail1 />
             // </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/create-course"
+          element={
+            <ProtectedRoute>
+              <CourseForm />
+            </ProtectedRoute>
           }
         />
         <Route

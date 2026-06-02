@@ -4,7 +4,7 @@ import CategoryCard from "../Components/CategoryCard";
 import CategoryForm from "../Components/CategoryForm";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const baseUrl =
   import.meta.env?.VITE_BACKEND_URL || "https://cms-backend-ashen.vercel.app";
@@ -18,15 +18,15 @@ const CoursesPage = () => {
   const [showAllCategories, setShowAllCategories] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
+  const location = useLocation(); 
+
   const itemsPerPage = 6;
 
   // ─── FETCH COURSES ──────────────────────────────────
   const fetchCourses = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get(
-        `${baseUrl}/api/courses?status=published`,
-      );
+      const { data } = await axios.get(`${baseUrl}/api/courses`); 
       const coursesList = data.courses || data || [];
       setAllCourses(coursesList);
 
@@ -55,6 +55,7 @@ const CoursesPage = () => {
   };
 
   // ─── INITIAL FETCH ──────────────────────────────────
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -62,7 +63,7 @@ const CoursesPage = () => {
       setLoading(false);
     };
     fetchData();
-  }, []);
+  }, [location.pathname]);
 
   // ─── DISPLAYED CATEGORIES ──────────────────────────────────
   const displayedCategories = showAllCategories
@@ -176,12 +177,20 @@ const CoursesPage = () => {
       {/* All Courses Section */}
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold text-header-text">All Courses</h2>
-        <Link
-          to="/dashboard/course-categories"
-          className="bg-primary text-white px-4 py-1.5 rounded-md text-xs font-bold hover:bg-primary/90 transition-all"
-        >
-          View all
-        </Link>
+        <div className="flex gap-2">
+          <Link
+            to="/dashboard/create-course"
+            className="bg-secondary text-white px-4 py-1.5 rounded-md text-xs font-bold hover:bg-secondary/90 transition-all"
+          >
+            Create Course
+          </Link>
+          <Link
+            to="/dashboard/course-categories"
+            className="bg-primary text-white px-4 py-1.5 rounded-md text-xs font-bold hover:bg-primary/90 transition-all"
+          >
+            View all
+          </Link>
+        </div>
       </div>
 
       {/* Courses Grid */}
@@ -267,6 +276,6 @@ const CoursesPage = () => {
       )}
     </div>
   );
-};
+};;
 
 export default CoursesPage;
