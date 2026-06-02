@@ -1,13 +1,17 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import ChapterForm from "../Components/ChapterForm";
+import Swal from "sweetalert2";
+import { LuPencilLine } from "react-icons/lu";
+import { FaRegTrashAlt } from "react-icons/fa";
 
 const Chapters = () => {
   const [courses, setCourses] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [chapters, setChapters] = useState([]);
   const [showForm, setShowForm] = useState(false);
-  const [loading, setLoading] = useState(false);  
+  const [loading, setLoading] = useState(false);
+  const [editingChapter, setEditingChapter] = useState(null);
 
   const baseUrl =
     import.meta.env?.VITE_BACKEND_URL || "https://cms-backend-ashen.vercel.app";
@@ -43,6 +47,27 @@ const Chapters = () => {
   const handleCourseClick = (course) => {
     setSelectedCourse(course);
     fetchChapters(course._id);
+  };
+
+  const handleDelete = async (chapterId) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`${baseUrl}/api/chapters/${chapterId}`);
+        fetchChapters(selectedCourse._id);
+        Swal.fire("Deleted!", "Chapter removed.", "success");
+      } catch (err) {
+        Swal.fire("Error", "Could not delete chapter", "error");
+      }
+    }
   };
 
   return (
@@ -87,11 +112,18 @@ const Chapters = () => {
               </button>
             </div>
 
-            {showForm && (
+            {(showForm || editingChapter) && (
               <ChapterForm
                 courseId={selectedCourse._id}
-                onClose={() => setShowForm(false)}
-                onChapterAdded={() => fetchChapters(selectedCourse._id)}
+                initialData={editingChapter}
+                onClose={() => {
+                  setShowForm(false);
+                  setEditingChapter(null);
+                }}
+                onChapterAdded={() => {
+                  fetchChapters(selectedCourse._id);
+                  setEditingChapter(null);
+                }}
               />
             )}
 
@@ -99,12 +131,28 @@ const Chapters = () => {
               {chapters.map((chapter) => (
                 <div
                   key={chapter._id}
-                  className="p-4 bg-white rounded-lg shadow-sm border border-slate-200"
+                  className="p-4 bg-white rounded-lg shadow-sm border border-slate-200 flex justify-between items-center"
                 >
-                  <h3 className="font-bold">{chapter.title}</h3>
-                  <p className="text-sm text-slate-500">
-                    Order: {chapter.order}
-                  </p>
+                  <div>
+                    <h3 className="font-bold">{chapter.title}</h3>
+                    <p className="text-sm text-slate-500">
+                      Order: {chapter.order}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setEditingChapter(chapter)}
+                      className="p-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-all"
+                    >
+                      <LuPencilLine size={18} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(chapter._id)}
+                      className="p-2 bg-[#FF5C5C] text-white rounded-lg hover:bg-red-600 transition-all"
+                    >
+                      <FaRegTrashAlt size={18} />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
