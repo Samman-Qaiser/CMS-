@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { Star, BookOpen } from "lucide-react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 
 const CourseCard = ({ course }) => {
   const [instructorName, setInstructorName] = useState("Loading...");
+
   useEffect(() => {
     const fetchInstructor = async () => {
       try {
@@ -11,12 +13,24 @@ const CourseCard = ({ course }) => {
           import.meta.env?.VITE_BACKEND_URL ||
           "https://cms-backend-ashen.vercel.app";
 
+        // Handle both object and string instructor references
         const instructorId =
           typeof course.instructor === "object"
-            ? course.instructor._id
+            ? course.instructor?._id
             : course.instructor;
 
-        if (!instructorId) return; // Stop if there's no ID
+        // Check if instructor data is already populated
+        if (course.instructor?.user?.firstName) {
+          setInstructorName(
+            `${course.instructor.user.firstName} ${course.instructor.user.lastName}`,
+          );
+          return;
+        }
+
+        if (!instructorId) {
+          setInstructorName("Unknown Instructor");
+          return;
+        }
 
         const res = await axios.get(
           `${baseUrl}/api/instructors/${instructorId}`,
@@ -25,6 +39,8 @@ const CourseCard = ({ course }) => {
         const data = res.data.instructor || res.data;
         if (data && data.user) {
           setInstructorName(`${data.user.firstName} ${data.user.lastName}`);
+        } else {
+          setInstructorName("Unknown Instructor");
         }
       } catch (err) {
         console.error("Error fetching instructor:", err);
@@ -32,17 +48,22 @@ const CourseCard = ({ course }) => {
       }
     };
 
-    if (course.instructor) {
-      fetchInstructor();
-    }
+    fetchInstructor();
   }, [course.instructor]);
+
+  // Get thumbnail image with fallback
+  const thumbnailSrc =
+    course.thumbnail || course.image || "https://via.placeholder.com/400x300";
+
+  // Get content count
+  const contentCount = course.totalContent || course.contentCount || 0;
 
   return (
     <div className="bg-white dark:bg-[#292D4A] rounded-md overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
       {/* Course Image */}
       <div className="relative mt-3 h-48 w-[90%] m-auto overflow-hidden">
         <img
-          src={course.image}
+          src={thumbnailSrc}
           alt={course.title}
           className="w-full mx-auto h-[90%] rounded-lg object-center object-cover group-hover:scale-105 transition-transform duration-300"
         />
@@ -56,9 +77,11 @@ const CourseCard = ({ course }) => {
               {course.title}
             </h4>
             <div className="text-content-text text-xs flex items-center gap-2">
-              <p className="text-gray-600 font-medium">{instructorName}</p>
+              <p className="text-gray-600 dark:text-gray-300 font-medium">
+                {instructorName}
+              </p>
               <span className="flex items-center gap-1">
-                {course.rating}{" "}
+                {course.rating || 0}{" "}
                 <Star size={12} className="fill-secondary text-secondary" />
               </span>
             </div>
@@ -71,11 +94,14 @@ const CourseCard = ({ course }) => {
         <div className="flex items-center justify-between mt-2">
           <div className="flex items-center gap-2 text-content-text text-sm">
             <BookOpen size={16} />
-            <span>{course.contentCount || 0}+ Content</span>
+            <span>{contentCount}+ Content</span>
           </div>
-          <button className="bg-primary hover:bg-primary/90 text-white px-4 py-1 rounded-md text-sm font-bold transition-all">
-            View all
-          </button>
+          <Link
+            to={`/dashboard/course-details-1/${course._id}`}
+            className="bg-primary hover:bg-primary/90 text-white px-4 py-1 rounded-md text-sm font-bold transition-all"
+          >
+            View Course
+          </Link>
         </div>
       </div>
     </div>
