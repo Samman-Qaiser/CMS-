@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { FaStar, FaHeart, FaRegHeart, FaPlay, FaCheckCircle, FaArrowLeft } from 'react-icons/fa'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const reviews = [
   {
@@ -219,9 +219,12 @@ export default function CourseDetail1() {
                 <button className="flex-1 py-2.5 rounded-md border border-gray-300 dark:border-white/20 text-sm font-semibold text-header-text hover:bg-gray-50 dark:hover:bg-white/5 transition-colors duration-200">
                   Add to Cart
                 </button>
-                <button className="flex-1 py-2.5 rounded-md bg-primary hover:bg-primary/70 text-sm font-semibold text-white transition-colors duration-200">
-                  Buy Now
+             
+  <button className="flex-1 py-2.5 rounded-md bg-primary hover:bg-primary/70 text-sm font-semibold text-white transition-colors duration-200">
+             <Link  to={`/dashboard/course-details-2/${2}`} >        Buy Now  </Link>
                 </button>
+              
+              
               </div>
             </div>
 

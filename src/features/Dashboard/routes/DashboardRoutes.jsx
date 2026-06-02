@@ -64,6 +64,7 @@ import { useSelector } from "react-redux";
 import DropProfile from "../../../components/SidePannel/Profile";
 import InstructorApplications from "../../../components/SidePannel/InstructorApplications";
 import ContactAdminForm from "../../CMS/pages/ContactAdminForm";
+import CourseCategoriesPage from "../../Courses/Pages/CourseCategoriesPage";
 function DashboardRoutes() {
 
    const user = useSelector((state) => state.auth.user);
@@ -136,16 +137,24 @@ function DashboardRoutes() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/course-details-1"
+          <Route
+          path="/course-categories"
           element={
             <ProtectedRoute>
-              <CourseDetail1 />
+              <CourseCategoriesPage/>
             </ProtectedRoute>
           }
         />
         <Route
-          path="/course-details-2"
+          path="/course-details-1/:id"
+          element={
+            // <ProtectedRoute>
+              <CourseDetail1 />
+            // </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/course-details-2/:id"
           element={
             <ProtectedRoute>
               <CourseDetail2 />
