@@ -30,6 +30,7 @@ export default function DropProfile() {
   const [editedData, setEditedData] = useState({});
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
   
   const authUser = useSelector((state) => state.auth.user);
   const token = localStorage.getItem("token");
@@ -77,6 +78,29 @@ export default function DropProfile() {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Validate file type
+      const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+      if (!validTypes.includes(file.type)) {
+        Swal.fire({
+          title: "Error!",
+          text: "Please select a valid image file (JPEG, PNG, WEBP)",
+          icon: "error",
+          confirmButtonColor: "var(--primary)"
+        });
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        Swal.fire({
+          title: "Error!",
+          text: "Image size should be less than 5MB",
+          icon: "error",
+          confirmButtonColor: "var(--primary)"
+        });
+        return;
+      }
+      
       setSelectedImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -86,93 +110,74 @@ export default function DropProfile() {
     }
   };
 
-  // Upload image to backend
-  const uploadImage = async () => {
-    if (!selectedImage) return null;
-    
-    const formData = new FormData();
-    formData.append("profileImage", selectedImage);
-    
-    try {
-      const { data } = await axios.put(
-        `${baseUrl}/api/users/${authUser?.id}/profile-image`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
-      return data.imageUrl;
-    } catch (error) {
-      console.error("Image upload failed:", error);
-      return null;
-    }
-  };
-
   // Save profile changes
-  const handleSave = async () => {
-    try {
-      let imageUrl = user?.profileImage;
-      
-      if (selectedImage) {
-        const uploadedUrl = await uploadImage();
-        if (uploadedUrl) imageUrl = uploadedUrl;
-      }
-      
-      // Prepare form data with all fields
-      const updateData = new FormData();
-      updateData.append("firstName", editedData.firstName || "");
-      updateData.append("lastName", editedData.lastName || "");
-      updateData.append("email", editedData.email || "");
-      updateData.append("username", editedData.username || "");
-      updateData.append("phoneNumber", editedData.phoneNumber || "");
-      updateData.append("dateOfBirth", editedData.dateOfBirth || "");
-      updateData.append("isActive", editedData.isActive || false);
-      updateData.append("facebookUrl", editedData.facebookUrl || "");
-      updateData.append("twitterUrl", editedData.twitterUrl || "");
-      updateData.append("linkedinUrl", editedData.linkedinUrl || "");
-      updateData.append("about", editedData.about || "");
-      updateData.append("role", editedData.role || "");
-      if (imageUrl) updateData.append("profileImage", imageUrl);
-      
-      const { data } = await axios.put(
-        `${baseUrl}/api/users/${authUser?.id}`,
-        updateData,
-        {
-          headers: { 
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data"
-          }
-        }
-      );
-      
-      setUser(data.user);
-      setIsEditing(false);
-      setSelectedImage(null);
-      setPreviewImage(null);
-      
-      Swal.fire({
-        title: "Success!",
-        text: "Profile updated successfully",
-        icon: "success",
-        timer: 2000,
-        showConfirmButton: false,
-        toast: true,
-        position: "top-end"
-      });
-      
-    } catch (error) {
-      console.error("Save failed:", error);
-      Swal.fire({
-        title: "Error!",
-        text: error.response?.data?.message || "Failed to update profile",
-        icon: "error",
-        confirmButtonColor: "var(--primary)"
-      });
+// Replace the handleSave function with this version
+const handleSave = async () => {
+  try {
+    setUploadingImage(true);
+    
+    // Create FormData for complete profile update
+    const formData = new FormData();
+    
+    // Add all text fields
+    formData.append("firstName", editedData.firstName || "");
+    formData.append("lastName", editedData.lastName || "");
+    formData.append("email", editedData.email || "");
+    formData.append("username", editedData.username || "");
+    formData.append("phoneNumber", editedData.phoneNumber || "");
+    if (editedData.dateOfBirth) {
+      formData.append("dateOfBirth", editedData.dateOfBirth);
     }
-  };
+    formData.append("isActive", editedData.isActive);
+    formData.append("facebookUrl", editedData.facebookUrl || "");
+    formData.append("twitterUrl", editedData.twitterUrl || "");
+    formData.append("linkedinUrl", editedData.linkedinUrl || "");
+    formData.append("about", editedData.about || "");
+    formData.append("role", editedData.role || "");
+    
+    // Add image file if selected
+    if (selectedImage) {
+      formData.append("profileImage", selectedImage);
+    }
+    
+    // Send single request with all data
+    const { data } = await axios.put(
+      `${baseUrl}/api/users/${authUser?.id}`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
+        }
+      }
+    );
+    
+    setUser(data.user);
+    setIsEditing(false);
+    setSelectedImage(null);
+    setPreviewImage(null);
+    
+    Swal.fire({
+      title: "Success!",
+      text: "Profile updated successfully",
+      icon: "success",
+      timer: 2000,
+      showConfirmButton: false,
+      position: "top-end"
+    });
+    
+  } catch (error) {
+    console.error("Save failed:", error);
+    Swal.fire({
+      title: "Error!",
+      text: error.response?.data?.message || "Failed to update profile",
+      icon: "error",
+      confirmButtonColor: "var(--primary)"
+    });
+  } finally {
+    setUploadingImage(false);
+  }
+};
 
   const handleCancel = () => {
     setEditedData(user);
@@ -231,6 +236,11 @@ export default function DropProfile() {
                     />
                   </label>
                 )}
+                {uploadingImage && (
+                  <div className="absolute inset-0 bg-black/50 rounded-2xl flex items-center justify-center">
+                    <div className="animate-spin rounded-full w-6 h-6 border-2 border-white border-t-transparent"></div>
+                  </div>
+                )}
               </div>
               
               {/* User Info */}
@@ -266,17 +276,28 @@ export default function DropProfile() {
                   <>
                     <button
                       onClick={handleCancel}
-                      className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors flex items-center gap-2"
+                      disabled={uploadingImage}
+                      className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors flex items-center gap-2 disabled:opacity-50"
                     >
                       <FaTimes className="w-4 h-4" />
                       Cancel
                     </button>
                     <button
                       onClick={handleSave}
-                      className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2"
+                      disabled={uploadingImage}
+                      className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
                     >
-                      <FaSave className="w-4 h-4" />
-                      Save Changes
+                      {uploadingImage ? (
+                        <>
+                          <div className="animate-spin rounded-full w-4 h-4 border-2 border-white border-t-transparent"></div>
+                          Uploading...
+                        </>
+                      ) : (
+                        <>
+                          <FaSave className="w-4 h-4" />
+                          Save Changes
+                        </>
+                      )}
                     </button>
                   </>
                 )}
@@ -432,6 +453,7 @@ export default function DropProfile() {
                 {isEditing ? (
                   <button
                     onClick={handleToggleActive}
+                    type="button"
                     className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                   >
                     {editedData.isActive ? (
@@ -509,7 +531,7 @@ export default function DropProfile() {
                 ) : (
                   user?.facebookUrl ? (
                     <a href={user.facebookUrl} target="_blank" rel="noopener noreferrer" 
-                       className="text-blue-600 hover:underline py-2 inline-block">
+                       className="text-blue-600 hover:underline py-2 inline-block break-all">
                       {user.facebookUrl}
                     </a>
                   ) : (
@@ -536,7 +558,7 @@ export default function DropProfile() {
                 ) : (
                   user?.twitterUrl ? (
                     <a href={user.twitterUrl} target="_blank" rel="noopener noreferrer" 
-                       className="text-blue-400 hover:underline py-2 inline-block">
+                       className="text-blue-400 hover:underline py-2 inline-block break-all">
                       {user.twitterUrl}
                     </a>
                   ) : (
@@ -563,7 +585,7 @@ export default function DropProfile() {
                 ) : (
                   user?.linkedinUrl ? (
                     <a href={user.linkedinUrl} target="_blank" rel="noopener noreferrer" 
-                       className="text-blue-700 hover:underline py-2 inline-block">
+                       className="text-blue-700 hover:underline py-2 inline-block break-all">
                       {user.linkedinUrl}
                     </a>
                   ) : (
