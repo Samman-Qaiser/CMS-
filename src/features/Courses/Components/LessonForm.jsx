@@ -9,34 +9,53 @@ const LessonForm = ({
   onClose,
   onSuccess,
 }) => {
-  const [formData, setFormData] = useState(
-    initialData || {
-      title: "",
-      type: "video",
-      order: 0,
-      isFree: false,
-      contentUrl: "",
-      duration: "",
-      content: "",
-      questions: [],
-    },
-  );
+  const [formData, setFormData] = useState(() => ({
+    title: initialData?.title || "",
+    type: initialData?.type || "video",
+    order: initialData?.order || 0,
+    isFree: initialData?.isFree || false,
+    contentUrl: initialData?.contentUrl || "",
+    duration: initialData?.duration || "",
+    content: initialData?.content || "",
+    questions: initialData?.questions || [],
+  }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const baseUrl =
       import.meta.env?.VITE_BACKEND_URL ||
       "https://cms-backend-ashen.vercel.app";
+
+    const data = new FormData();
+    data.append("title", formData.title);
+    data.append("type", formData.type);
+    data.append("order", formData.order);
+    data.append("isFree", formData.isFree);
+    data.append("course", courseId);
+    data.append("chapter", chapterId);
+
+    if (formData.type === "video" || formData.type === "audio") {
+      data.append("contentUrl", formData.contentUrl || "");
+      data.append("duration", formData.duration || "");
+    } else if (formData.type === "module") {
+      data.append("content", formData.content || "");
+    } else if (formData.type === "quiz") {
+      data.append("questions", JSON.stringify(formData.questions));
+    }
+
     try {
-      const payload = { ...formData, course: courseId, chapter: chapterId };
-      if (initialData)
-        await axios.put(`${baseUrl}/api/lessons/${initialData._id}`, payload);
-      else await axios.post(`${baseUrl}/api/lessons`, payload);
+      if (initialData) {
+        await axios.put(`${baseUrl}/api/lessons/${initialData._id}`, data);
+      } else {
+        await axios.post(`${baseUrl}/api/lessons`, data);
+      }
       onSuccess();
     } catch (err) {
-      Swal.fire("Error", err.response?.data?.message || "Save failed", "error");
+      console.error("Save Error:", err.response?.data);
+      Swal.fire("Error", "Save failed. Check console for details.", "error");
     }
   };
+
 
   return (
     <form
@@ -47,7 +66,6 @@ const LessonForm = ({
         {initialData ? "Edit" : "Add"} Lesson
       </h3>
 
-      {/* Universal Fields */}
       <input
         className="w-full border p-2 rounded"
         placeholder="Title"
@@ -87,7 +105,7 @@ const LessonForm = ({
         Free Preview
       </label>
 
-      {/* Type Specific Fields */}
+      {/* Conditional Rendering of Inputs */}
       {(formData.type === "video" || formData.type === "audio") && (
         <div className="space-y-2">
           <input
@@ -100,7 +118,7 @@ const LessonForm = ({
           />
           <input
             className="w-full border p-2 rounded"
-            placeholder="Duration (e.g. 10:00)"
+            placeholder="Duration (e.g. 1:00)"
             value={formData.duration}
             onChange={(e) =>
               setFormData({ ...formData, duration: e.target.value })
