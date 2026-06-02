@@ -4,7 +4,7 @@ import { BsTrash, BsPencilSquare } from "react-icons/bs";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 import Swal from "sweetalert2";
 
-const SubscriberTable = ({ subscribers = [], onEdit }) => {
+const SubscriberTable = ({ subscribers = [], onEdit, onDelete }) => {
   const [selectedIds, setSelectedIds] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -28,7 +28,6 @@ const SubscriberTable = ({ subscribers = [], onEdit }) => {
     setSelectedIds(e.target.checked ? currentSubs.map((s) => s.id) : []);
   };
 
-  // --- Delete Logic ---
   const confirmDelete = (ids) => {
     const isBulk = Array.isArray(ids);
     const count = isBulk ? ids.length : 1;
@@ -40,15 +39,16 @@ const SubscriberTable = ({ subscribers = [], onEdit }) => {
       showCancelButton: true,
       confirmButtonColor: "#ef4444",
       confirmButtonText: "Delete",
-      background: document.documentElement.classList.contains("dark")
-        ? "#292d4a"
-        : "#fff",
-      color: document.documentElement.classList.contains("dark")
-        ? "#fff"
-        : "#000",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        if (isBulk) setSelectedIds([]);
+        if (isBulk) {
+          for (const id of ids) {
+            await onDelete(id);
+          }
+          setSelectedIds([]);
+        } else {
+          await onDelete(ids);
+        }
       }
     });
   };
@@ -101,15 +101,15 @@ const SubscriberTable = ({ subscribers = [], onEdit }) => {
           <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
             {currentSubs.map((sub) => (
               <tr
-                key={sub.id}
+                key={sub._id}
                 className="hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors"
               >
                 <td className="py-4 px-2 pl-8">
                   <input
                     type="checkbox"
                     className="rounded border-gray-300 text-primary focus:ring-primary"
-                    checked={selectedIds.includes(sub.id)}
-                    onChange={() => handleCheckboxChange(sub.id)}
+                    checked={selectedIds.includes(sub._id)}
+                    onChange={() => handleCheckboxChange(sub._id)}
                   />
                 </td>
                 <td className="py-4 px-2 text-[13px] text-content-text">
@@ -118,17 +118,17 @@ const SubscriberTable = ({ subscribers = [], onEdit }) => {
                 <td className="py-4 px-2 text-[13px]  text-content-text">
                   {sub.email}
                 </td>
-                <td className="py-4 px-2 text-[13px] text-gray-500">
+                <td className="py-4 px-2 text-[13px] text-content-text">
                   {sub.phone}
                 </td>
                 <td className="py-4 px-2 text-center">
-                  <span className="px-3 py-1 rounded-full text-[10px] text-content-text uppercase tracking-wider">
-                    {sub.status ? "Active" : "Inactive"}
+                  <span className="px-3 py-1 rounded-full text-[13px] text-content-text">
+                    {sub.status || "Inactive"}
                   </span>
                 </td>
                 <td className="py-4 px-2 text-center">
                   <div className="w-2.5 h-2.5 rounded-full mx-auto">
-                    {sub.unsubscribe ? "False" : "True"}
+                    {sub.isUnsubscribed ? "Yes" : "No"}
                   </div>
                 </td>
                 <td className="py-4 px-2">
@@ -141,7 +141,7 @@ const SubscriberTable = ({ subscribers = [], onEdit }) => {
                       <BsPencilSquare size={16} />
                     </button>
                     <button
-                      onClick={() => confirmDelete(sub.id)}
+                      onClick={() => confirmDelete(sub._id)}
                       className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all active:scale-90"
                       title="Delete Subscriber"
                     >

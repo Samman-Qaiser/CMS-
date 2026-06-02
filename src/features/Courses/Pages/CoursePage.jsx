@@ -3,7 +3,8 @@ import CourseCard from '../Components/CourseCard';
 import CategoryCard from '../Components/CategoryCard';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import axios from 'axios';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
+
 const baseUrl =
   import.meta.env?.VITE_BACKEND_URL ||
   "https://cms-backend-ashen.vercel.app";
@@ -110,13 +111,15 @@ const CoursesPage = () => {
       {/* Popular This Week */}
       <section className="flex flex-col gap-6">
         <div className="flex justify-between items-center">
+     
           <h2 className="text-2xl font-bold text-header-text">Popular This Week</h2>
-         <Link
+        <Link
   to="/dashboard/course-categories"
   className="bg-primary text-white px-5 py-2 rounded-lg text-xs font-bold shadow-md hover:bg-primary/90 transition-all"
 >
   View all
 </Link>
+
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

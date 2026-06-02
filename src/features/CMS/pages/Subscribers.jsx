@@ -1,50 +1,77 @@
-import { useState, useMemo } from "react";
-import { subscribersData } from "../components/blogsData";
+import { useState, useMemo, useEffect } from "react";
 import SubscriberFilter from "../components/SubscriberFilter";
 import SubscriberForm from "../components/SubscriberForm";
 import SubscriberTable from "../components/SubscriberTable";
+import axios from "axios";
 
 const SubscribersPage = () => {
-  const [subscribers, setSubscribers] = useState(subscribersData);
   const [editData, setEditData] = useState(null);
+  const [subscribers, setSubscribers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const baseUrl = import.meta.env?.VITE_BACKEND_URL || "https://cms-backend-ashen.vercel.app";
 
-  // Filter state
+  useEffect(() => {
+    const fetchSubscribers = async () => {
+      try {
+        const res = await axios.get(`${baseUrl}/api/subscribers`);
+        setSubscribers(res.data.subscribers || []);
+      } catch (err) {
+        console.error("Error fetching subscribers:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSubscribers();
+  }, [baseUrl]);
+
   const [appliedFilters, setAppliedFilters] = useState({
     name: "",
     email: "",
     status: "Select Status",
   });
 
-  // --- Handlers ---
-  const handleSave = (formData) => {
-    if (editData) {
-      setSubscribers((prev) =>
-        prev.map((s) => (s.id === editData.id ? { ...formData, id: s.id } : s)),
-      );
-      setEditData(null);
-    } else {
-      setSubscribers([{ ...formData, id: Date.now() }, ...subscribers]);
+  const handleSave = async (formData) => {
+    try {
+      const payload = {
+        ...formData,
+        status: formData.status === "Active" ? "active" : "inactive"
+      };
+
+      if (editData) {
+        await axios.put(`${baseUrl}/api/subscribers/${editData._id}`, payload);
+        setSubscribers((prev) =>
+          prev.map((s) => (s._id === editData._id ? { ...payload, _id: s._id } : s))
+        );
+        setEditData(null);
+      } else {
+        const response = await axios.post(`${baseUrl}/api/subscribers`, payload);
+        const newSubscriber = response.data.subscriber || response.data;
+        setSubscribers([newSubscriber, ...subscribers]);
+      }
+    } catch (error) {
+      console.error("Failed to save:", error);
     }
   };
 
-  const handleFilter = (filters) => {
-    setAppliedFilters(filters);
+  const handleFilter = (filters) => setAppliedFilters(filters);
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${baseUrl}/api/subscribers/${id}`);
+      setSubscribers((prev) => prev.filter((s) => s._id !== id));
+    } catch (error) {
+      console.error("Failed to delete:", error);
+    }
   };
- 
+
   const filteredSubscribers = useMemo(() => {
     return subscribers.filter((sub) => {
-      const nameMatch = (sub.name || "")
-        .toLowerCase()
-        .includes(appliedFilters.name.toLowerCase());
-      const emailMatch = (sub.email || "")
-        .toLowerCase()
-        .includes(appliedFilters.email.toLowerCase());
-
+      const nameMatch = (sub.name || "").toLowerCase().includes(appliedFilters.name.toLowerCase());
+      const emailMatch = (sub.email || "").toLowerCase().includes(appliedFilters.email.toLowerCase());
+      
       const statusMatch =
         appliedFilters.status === "Select Status" ||
-        (appliedFilters.status === "Active"
-          ? sub.status === true
-          : sub.status === false);
+        (sub.status && sub.status.toLowerCase() === appliedFilters.status.toLowerCase());
 
       return nameMatch && emailMatch && statusMatch;
     });
@@ -52,24 +79,24 @@ const SubscribersPage = () => {
 
   return (
     <div className="p-6 space-y-6">
-      {/* 1. Filter Component */}
       <SubscriberFilter onFilter={handleFilter} />
-
-      {/* 2. Add/Edit Form Component */}
       <SubscriberForm
         onSave={handleSave}
         editData={editData}
         onCancel={() => setEditData(null)}
       />
-
-      {/* 3. Table Component   */}
-      <SubscriberTable
-        subscribers={filteredSubscribers}
-        onEdit={(sub) => {
-          setEditData(sub);
-          window.scrollTo({ top: 0, behavior: "smooth" });  
-        }} 
-      />
+      {loading ? (
+        <p>Loading subscribers...</p>
+      ) : (
+        <SubscriberTable
+          subscribers={filteredSubscribers}
+          onEdit={(sub) => {
+            setEditData(sub);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+          onDelete={handleDelete}
+        />
+      )}
     </div>
   );
 };

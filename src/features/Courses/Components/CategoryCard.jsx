@@ -1,4 +1,6 @@
 const CategoryCard = ({ category }) => {
+  const isUrl = category.icon?.startsWith("http");
+
   return (
     <div className="bg-white dark:bg-[#292D4A] rounded-xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-all cursor-pointer">
       <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-xl">
