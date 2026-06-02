@@ -114,7 +114,7 @@ const LessonRow = ({ lesson, isCompleted, isUnlocked, onClick }) => {
         <div className={`${isCompleted ? 'text-green-500' : 'text-content-text'}`}>
           {getIcon()}
         </div>
-        <span className={`text-sm ${isCompleted ? 'text-green-700 dark:text-green-400 font-medium' : 'text-content-text'}`}>
+        <span className={`text-sm text-left ${isCompleted ? 'text-green-700 dark:text-green-400 font-medium' : 'text-content-text'}`}>
           {lesson?.title}
         </span>
       </div>

@@ -80,10 +80,10 @@ const Lessons = () => {
 
 
   return (
-    <div className="flex h-screen bg-slate-50">
+    <div className="flex h-screen bg-white dark:bg-[#292D4A]">
       {/* 1. Courses Column */}
-      <div className="w-1/3 border-r p-6 overflow-y-auto">
-        <h2 className="text-lg font-bold text-slate-700 mb-4">Courses</h2>
+      <div className="w-[30%] border-r p-6 overflow-y-auto">
+        <h2 className="text-lg font-bold text-header-text mb-4">Courses</h2>
         {loading.courses ? (
           <Spinner />
         ) : (
@@ -100,8 +100,8 @@ const Lessons = () => {
       </div>
 
       {/* 2. Chapters Column */}
-      <div className="w-1/3 border-r p-6 overflow-y-auto bg-slate-100/50">
-        <h2 className="text-lg font-bold text-slate-700 mb-4">Chapters</h2>
+      <div className="w-[30%] border-r p-6 overflow-y-auto bg-white dark:bg-[#292D4A]">
+        <h2 className="text-lg font-bold text-header-text mb-4">Chapters</h2>
         {loading.chapters ? (
           <Spinner />
         ) : (
@@ -121,9 +121,9 @@ const Lessons = () => {
       </div>
 
       {/* 3. Lessons Column */}
-      <div className="w-1/3 p-6 overflow-y-auto">
+      <div className="w-[40%] p-6 overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-lg font-bold text-slate-700">Lessons</h2>
+          <h2 className="text-lg font-bold text-header-text">Lessons</h2>
           {selectedChapter && (
             <button
               onClick={() => setShowForm(true)}
@@ -159,9 +159,9 @@ const Lessons = () => {
           lessons.map((l) => (
             <div
               key={l._id}
-              className="bg-white p-4 mb-3 rounded-2xl border flex justify-between items-center shadow-sm hover:shadow-md transition"
+              className="bg-white dark:bg-[#292D4A] p-4 mb-3 rounded-2xl border flex justify-between items-center shadow-sm hover:shadow-md transition"
             >
-              <span className="font-medium text-slate-700">
+              <span className="font-medium text-header-text">
                 {l.title}{" "}
                 <span className="text-[10px] uppercase font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded">
                   {l.type}
