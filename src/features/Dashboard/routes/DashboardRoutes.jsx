@@ -67,6 +67,8 @@ import ContactAdminForm from "../../CMS/pages/ContactAdminForm";
 import CourseCategoriesPage from "../../Courses/Pages/CourseCategoriesPage";
 import AdminReviews from "../../../components/SidePannel/AdminReviews";
 import CourseForm from "../../Courses/Components/CourseForm";
+import Chapters from "../../Courses/Pages/Chapters";
+import Lessons from "../../Courses/Pages/Lessons";
 function DashboardRoutes() {
 
    const user = useSelector((state) => state.auth.user);
@@ -107,19 +109,19 @@ function DashboardRoutes() {
             </ProtectedRoute>
           }
         />
-            <Route
+        <Route
           path="/reviews"
           element={
             <ProtectedRoute>
-             <AdminReviews/>
+              <AdminReviews />
             </ProtectedRoute>
           }
         />
-            <Route
+        <Route
           path="/reviews"
           element={
             <ProtectedRoute>
-             <AdminReviews/>
+              <AdminReviews />
             </ProtectedRoute>
           }
         />
@@ -152,6 +154,22 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <CoursesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/chapters"
+          element={
+            <ProtectedRoute>
+              <Chapters />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/lessons"
+          element={
+            <ProtectedRoute>
+              <Lessons />
             </ProtectedRoute>
           }
         />
