@@ -1,12 +1,10 @@
-// Components/TransactionReceipt.jsx (Alternative version without react-to-print)
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 
 const TransactionReceipt = ({ transaction, onClose }) => {
   const receiptRef = useRef();
 
   const handlePrint = () => {
     const printContent = receiptRef.current;
-    const originalContent = document.body.innerHTML;
 
     // Create a new window for printing
     const printWindow = window.open("", "_blank");
@@ -52,7 +50,7 @@ const TransactionReceipt = ({ transaction, onClose }) => {
               window.print();
               setTimeout(() => window.close(), 500);
             };
-          <\/script>
+          </script>
         </body>
       </html>
     `);
