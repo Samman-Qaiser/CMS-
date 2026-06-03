@@ -1,56 +1,71 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useMemo } from "react";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
+import { useTransactions } from "../context/TransactionContext";
 
 export default function TotalOrderCard() {
-  const [total, setTotal] = useState(0);
-  const [percentage, setPercentage] = useState(0);
-  const [isPositive, setIsPositive] = useState(true);
-  const [loading, setLoading] = useState(true);  
+  const { transactions, loading } = useTransactions();
 
-  const baseUrl =
-    import.meta.env?.VITE_BACKEND_URL || "https://cms-backend-ashen.vercel.app";
+  const { total, percentage, isPositive, thisMonth, lastMonth } =
+    useMemo(() => {
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const res = await axios.get(`${baseUrl}/api/transactions`);
-        const transactions = res.data.transactions;
-        const now = new Date();
+      // Filter only completed transactions
+      const completed = transactions.filter((t) => t.status === "completed");
+      const totalCompleted = completed.length;
 
-        const completed = transactions.filter((t) => t.status === "completed");
-        setTotal(completed.length);
+      // Calculate this month's completed orders
+      const currentMonthOrders = completed.filter((t) => {
+        const d = new Date(t.createdAt);
+        return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+      }).length;
 
-        const thisMonth = completed.filter(
-          (t) =>
-            new Date(t.createdAt).getMonth() === now.getMonth() &&
-            new Date(t.createdAt).getFullYear() === now.getFullYear(),
-        ).length;
-
-        const lastMonth = completed.filter((t) => {
+      // Calculate last month's completed orders
+      let previousMonthOrders;
+      if (currentMonth === 0) {
+        previousMonthOrders = completed.filter((t) => {
+          const d = new Date(t.createdAt);
+          return d.getMonth() === 11 && d.getFullYear() === currentYear - 1;
+        }).length;
+      } else {
+        previousMonthOrders = completed.filter((t) => {
           const d = new Date(t.createdAt);
           return (
-            d.getMonth() === now.getMonth() - 1 &&
-            d.getFullYear() === now.getFullYear()
+            d.getMonth() === currentMonth - 1 && d.getFullYear() === currentYear
           );
         }).length;
-
-        if (lastMonth === 0) {
-          setPercentage(thisMonth > 0 ? 100 : 0);
-        } else {
-          const growth = ((thisMonth - lastMonth) / lastMonth) * 100;
-          setIsPositive(growth >= 0);
-          setPercentage(Math.abs(Math.round(growth)));
-        }
-      } catch (err) {
-        console.error("Error calculating order growth:", err);
-      } finally {
-        setLoading(false);  
       }
-    };
-    fetchData();
-  }, [baseUrl]);
+
+      // Calculate growth percentage without unnecessary assignments
+      let growthPercentage;
+      let isGrowthPositive;
+
+      if (previousMonthOrders === 0 && currentMonthOrders === 0) {
+        growthPercentage = 0;
+        isGrowthPositive = true;
+      } else if (previousMonthOrders === 0 && currentMonthOrders > 0) {
+        growthPercentage = 100;
+        isGrowthPositive = true;
+      } else if (previousMonthOrders > 0 && currentMonthOrders === 0) {
+        growthPercentage = 100;
+        isGrowthPositive = false;
+      } else {
+        const growth =
+          ((currentMonthOrders - previousMonthOrders) / previousMonthOrders) *
+          100;
+        isGrowthPositive = growth >= 0;
+        growthPercentage = Math.abs(Math.round(growth));
+      }
+
+      return {
+        total: totalCompleted,
+        percentage: growthPercentage,
+        isPositive: isGrowthPositive,
+        thisMonth: currentMonthOrders,
+        lastMonth: previousMonthOrders,
+      };
+    }, [transactions]);
 
   return (
     <div className="bg-[#ffffff] dark:bg-[#292D4A] rounded-md p-5 flex flex-col gap-3">
@@ -60,8 +75,8 @@ export default function TotalOrderCard() {
           {loading ? "..." : total.toLocaleString()}
         </span>
 
-        {/* Dynamic Badge - Hidden while loading */}
-        {!loading && (
+        {/* Always show badge if there's growth or new orders */}
+        {!loading && (percentage > 0 || (thisMonth > 0 && lastMonth === 0)) && (
           <div
             className={`flex items-center gap-1 rounded-full px-2.5 py-1 ${
               isPositive ? "bg-teal-500/15" : "bg-red-500/15"

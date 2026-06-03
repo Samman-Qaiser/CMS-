@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+// EarningCoursesDonut.jsx
+import { useMemo } from "react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import { useTransactions } from "../context/TransactionContext";
 
 const COLORS = ["#FBBF24", "#F87171", "#14B8A6", "#60A5FA", "#A78BFA"];
 
@@ -16,44 +17,30 @@ const CustomTooltip = ({ active, payload }) => {
 };
 
 export default function EarningCoursesDonut() {
-  const [chartData, setChartData] = useState([]);
-  const [totalEarnings, setTotalEarnings] = useState(0);
-  const [loading, setLoading] = useState(true); // Added loading state
+  const { transactions, loading } = useTransactions();
 
-  const baseUrl =
-    import.meta.env?.VITE_BACKEND_URL || "https://cms-backend-ashen.vercel.app";
+  const { chartData, totalEarnings } = useMemo(() => {
+    // Filter only completed transactions for earnings calculation
+    const completedTransactions = transactions.filter(t => t.status === 'completed');
+    
+    const grouped = completedTransactions.reduce((acc, t) => {
+      const title = t.course?.title || "Unknown";
+      acc[title] = (acc[title] || 0) + t.amount;
+      return acc;
+    }, {});
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true); // Ensure loading is true on start
-        const res = await axios.get(`${baseUrl}/api/transactions`);
-        const transactions = res.data.transactions;
+    const formattedData = Object.entries(grouped).map(
+      ([name, value], i) => ({
+        name,
+        value,
+        color: COLORS[i % COLORS.length],
+      }),
+    );
 
-        const grouped = transactions.reduce((acc, t) => {
-          const title = t.course?.title || "Unknown";
-          acc[title] = (acc[title] || 0) + t.amount;
-          return acc;
-        }, {});
+    const total = completedTransactions.reduce((sum, t) => sum + t.amount, 0);
 
-        const formattedData = Object.entries(grouped).map(
-          ([name, value], i) => ({
-            name,
-            value,
-            color: COLORS[i % COLORS.length],
-          }),
-        );
-
-        setChartData(formattedData);
-        setTotalEarnings(transactions.reduce((sum, t) => sum + t.amount, 0));
-      } catch (err) {
-        console.error("Error fetching donut data:", err);
-      } finally {
-        setLoading(false); // Disable loading once data is ready
-      }
-    };
-    fetchData();
-  }, [baseUrl]);
+    return { chartData: formattedData, totalEarnings: total };
+  }, [transactions]);
 
   return (
     <div className="bg-[#ffffff] dark:bg-[#292D4A] rounded-md p-5 flex flex-col gap-4">
@@ -61,7 +48,7 @@ export default function EarningCoursesDonut() {
         <span className="text-sm font-bold text-header-text">
           Earning Courses
         </span>
-        <span className="text-xs text-content-text">This Month</span>
+        <span className="text-xs text-content-text">All Time</span>
         <span className="text-2xl font-bold text-header-text mt-1">
           {loading ? "..." : `$${totalEarnings.toLocaleString()}`}
         </span>

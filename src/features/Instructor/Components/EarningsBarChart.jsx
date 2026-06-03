@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useMemo } from "react";
 import {
   BarChart,
   Bar,
@@ -10,73 +9,64 @@ import {
   CartesianGrid,
 } from "recharts";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
+import { useTransactions } from "../context/TransactionContext";
 
 export default function EarningsBarChart() {
-  const [data, setData] = useState([]);
-  const [thisMonthTotal, setThisMonthTotal] = useState(0);
-  const [growth, setGrowth] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const { transactions, loading } = useTransactions();
 
-  const baseUrl =
-    import.meta.env?.VITE_BACKEND_URL || "https://cms-backend-ashen.vercel.app";
+  const { data, thisMonthTotal, growth } = useMemo(() => {
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const res = await axios.get(`${baseUrl}/api/transactions`);
-        const transactions = res.data.transactions;
-        const now = new Date();
-        const currentMonth = now.getMonth();
+    // Filter only completed transactions
+    const completedTransactions = transactions.filter(
+      (t) => t.status === "completed",
+    );
 
-        // 1. Aggregate monthly data
-        const monthly = Array(12)
-          .fill(0)
-          .map((_, i) => ({
-            month: [
-              "Jan",
-              "Feb",
-              "Mar",
-              "Apr",
-              "May",
-              "Jun",
-              "Jul",
-              "Aug",
-              "Sep",
-              "Oct",
-              "Nov",
-              "Dec",
-            ][i],
-            thisMonth: transactions
-              .filter(
-                (t) =>
-                  new Date(t.createdAt).getMonth() === i &&
-                  new Date(t.createdAt).getFullYear() === now.getFullYear(),
-              )
-              .reduce((sum, t) => sum + t.amount, 0),
-          }));
+    // Aggregate monthly data
+    const monthly = Array(12)
+      .fill(0)
+      .map((_, i) => ({
+        month: [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec",
+        ][i],
+        thisMonth: completedTransactions
+          .filter((t) => {
+            const date = new Date(t.createdAt);
+            return date.getMonth() === i && date.getFullYear() === currentYear;
+          })
+          .reduce((sum, t) => sum + t.amount, 0),
+      }));
 
-        // 2. Calculate Growth
-        const currentTotal = monthly[currentMonth].thisMonth;
-        const lastTotal =
-          currentMonth > 0 ? monthly[currentMonth - 1].thisMonth : 0;
+    const currentTotal = monthly[currentMonth].thisMonth;
+    const lastTotal =
+      currentMonth > 0 ? monthly[currentMonth - 1].thisMonth : 0;
 
-        const growthVal =
-          lastTotal === 0
-            ? 100
-            : ((currentTotal - lastTotal) / lastTotal) * 100;
+    const growthVal =
+      lastTotal === 0
+        ? currentTotal > 0
+          ? 100
+          : 0
+        : ((currentTotal - lastTotal) / lastTotal) * 100;
 
-        setData(monthly);
-        setThisMonthTotal(currentTotal);
-        setGrowth(Math.round(growthVal));
-      } catch (err) {
-        console.error("Error:", err);
-      } finally {
-        setLoading(false);
-      }
+    return {
+      data: monthly,
+      thisMonthTotal: currentTotal,
+      growth: Math.round(growthVal),
     };
-    fetchData();
-  }, [baseUrl]);
+  }, [transactions]);
 
   return (
     <div className="bg-[#ffffff] dark:bg-[#292D4A] rounded-md p-5 flex flex-col gap-4">
@@ -87,11 +77,14 @@ export default function EarningsBarChart() {
         </span>
       </div>
 
-      <div className="h-[300px] flex items-center justify-center">
+      {/* Fixed: Added min-h-[300px] and w-full to ensure container has dimensions */}
+      <div className="w-full min-h-[300px]">
         {loading ? (
-          <span className="text-xs text-content-text">Loading chart...</span>
+          <div className="h-[300px] flex items-center justify-center">
+            <span className="text-xs text-content-text">Loading chart...</span>
+          </div>
         ) : (
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height={300}>
             <BarChart data={data} barSize={40}>
               <CartesianGrid
                 strokeDasharray="3 3"
@@ -109,7 +102,10 @@ export default function EarningsBarChart() {
                 axisLine={false}
                 tickLine={false}
               />
-              <Tooltip cursor={{ fill: "rgba(255,255,255,0.03)" }} />
+              <Tooltip
+                cursor={{ fill: "rgba(255,255,255,0.03)" }}
+                formatter={(value) => [`$${value}`, "Earnings"]}
+              />
               <Bar dataKey="thisMonth" fill="#14B8A6" radius={[3, 3, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
@@ -127,7 +123,9 @@ export default function EarningsBarChart() {
             className={`flex items-center gap-1.5 ${growth >= 0 ? "text-teal-500" : "text-red-500"}`}
           >
             <div
-              className={`w-5 h-5 rounded-full flex items-center justify-center ${growth >= 0 ? "bg-teal-500/20" : "bg-red-500/20"}`}
+              className={`w-5 h-5 rounded-full flex items-center justify-center ${
+                growth >= 0 ? "bg-teal-500/20" : "bg-red-500/20"
+              }`}
             >
               {growth >= 0 ? (
                 <FaArrowUp className="w-2.5 h-2.5" />

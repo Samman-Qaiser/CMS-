@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useState } from "react";
 import { BsDownload } from "react-icons/bs";
+import { useTransactions } from "../context/TransactionContext";
 
 const STATUS_STYLES = {
   completed: "bg-teal-500/15 text-teal-500 border border-teal-500/30",
@@ -10,35 +10,28 @@ const STATUS_STYLES = {
 };
 
 export default function LatestTransactionTable() {
-  const [transactions, setTransactions] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const baseUrl =
-    import.meta.env?.VITE_BACKEND_URL || "https://cms-backend-ashen.vercel.app";
-
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      try {
-        const res = await axios.get(`${baseUrl}/api/transactions`);
-        setTransactions(res.data.transactions);
-      } catch (err) {
-        console.error("Error fetching transactions:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchTransactions();
-  }, [baseUrl]);
+  const { transactions, loading, updateTransactionStatus } = useTransactions();
+  const [updatingId, setUpdatingId] = useState(null);
 
   const handleStatusUpdate = async (id, newStatus) => {
+    setUpdatingId(id);
     try {
-      await axios.put(`${baseUrl}/api/transactions/${id}`, {
-        status: newStatus,
-      });
-      setTransactions((prev) =>
-        prev.map((t) => (t._id === id ? { ...t, status: newStatus } : t)),
-      );
+      await updateTransactionStatus(id, newStatus);
     } catch (err) {
-      alert("Failed to update status", err);
+      alert(
+        "Failed to update status: " +
+          (err.response?.data?.message || err.message),
+      );
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const handleDownloadInvoice = async (transactionId, invoiceUrl) => {
+    if (invoiceUrl) {
+      window.open(invoiceUrl, "_blank");
+    } else {
+      alert("No invoice available for this transaction");
     }
   };
 
@@ -93,7 +86,10 @@ export default function LatestTransactionTable() {
                   <select
                     value={t.status}
                     onChange={(e) => handleStatusUpdate(t._id, e.target.value)}
-                    className={`text-xs font-semibold px-3 py-1 rounded-full cursor-pointer ${STATUS_STYLES[t.status]}`}
+                    disabled={updatingId === t._id}
+                    className={`text-xs font-semibold px-3 py-1 rounded-full cursor-pointer ${STATUS_STYLES[t.status]} ${
+                      updatingId === t._id ? "opacity-50 cursor-wait" : ""
+                    }`}
                   >
                     <option value="completed">Completed</option>
                     <option value="pending">Pending</option>
@@ -102,7 +98,10 @@ export default function LatestTransactionTable() {
                   </select>
                 </td>
                 <td className="py-3.5 px-2">
-                  <button className="flex items-center gap-2 text-xs font-semibold text-content-text hover:text-header-text">
+                  <button
+                    onClick={() => handleDownloadInvoice(t._id, t.invoiceUrl)}
+                    className="flex items-center gap-2 text-xs font-semibold text-content-text hover:text-header-text transition-colors"
+                  >
                     Download <BsDownload />
                   </button>
                 </td>
