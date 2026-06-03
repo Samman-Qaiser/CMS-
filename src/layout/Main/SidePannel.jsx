@@ -126,6 +126,28 @@ export default function RightPanel() {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+const [totalUnread, setTotalUnread] = useState(0)
+
+useEffect(() => {
+  const fetchUnread = async () => {
+    try {
+      const token = localStorage.getItem('token')
+      const res = await axios.get(
+        `${baseUrl}/api/chat/conversations`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      const total = res.data.conversations?.reduce(
+        (acc, c) => acc + (c.unreadCount || 0), 0
+      )
+      setTotalUnread(total || 0)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+  fetchUnread()
+  const interval = setInterval(fetchUnread, 10000)
+  return () => clearInterval(interval)
+}, [])
 
   const handlePanelClick = (key) => {
     setActivePanel((prev) => (prev === key ? null : key));
@@ -176,13 +198,13 @@ export default function RightPanel() {
             badge={pendingCount} // ✅ Real-time badge count
             onClick={handlePanelClick}
           />
-          <PanelIconBtn
-            icon={IoMdMail}
-            myKey="message"
-            activeKey={activePanel}
-            badge={3}
-            onClick={handlePanelClick}
-          />
+         <PanelIconBtn
+  icon={IoMdMail}
+  myKey="message"
+  activeKey={activePanel}
+  badge={totalUnread}  // 3 ki jagah real count
+  onClick={handlePanelClick}
+/>
           <PanelIconBtn
             icon={FaGear}
             myKey="settings"

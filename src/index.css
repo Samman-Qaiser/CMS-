@@ -218,3 +218,42 @@
 .rbc-time-content::-webkit-scrollbar-track { background: transparent; }
 .rbc-time-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 2px; }
 .scheduler-light .rbc-time-content::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); }
+
+
+
+
+/* --- Custom Scrollbar Styles --- */
+
+/* 1. Scrollbar ki overall width aur track ka background */
+::-webkit-scrollbar {
+  width: 10px;               /* Vertical scrollbar ki width */
+  height: 10px;              /* Horizontal scrollbar ki height */
+  background: #0f172a;       /* Track ka background color (Dark theme background) */
+}
+
+/* 2. Scrollbar ka Track (jo rasta hota hai) */
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03); /* Subtle glassmorphism effect */
+  border-radius: 8px;
+}
+ 
+/* 3. Scrollbar ka Handle (Thumb - jisko aap drag karte hain) */
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2); /* Semi-transparent white handle */
+  border-radius: 8px;
+  border: 2px solid #0f172a;  /* Thumb ke aas-paas padding effect ke liye */
+  transition: background 0.3s ease;
+}
+
+/* 4. Handle on Hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4); /* Hover par thoda zyada visible ho jayega */
+}
+
+/* Firefox ke liye fallback support */
+@supports (scrollbar-width: thin) {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: var( --primary);
+  }
+}

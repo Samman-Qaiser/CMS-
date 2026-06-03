@@ -62,7 +62,7 @@ const Login = () => {
           token: response.data.token || null,  
         }),
       );
-
+localStorage.setItem('token', response.data.token)
       navigate("/dashboard");
     } catch (error) {
       // 6. Handle errors 
