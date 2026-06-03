@@ -1,13 +1,11 @@
 import { useState, useRef, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import axios from 'axios'
 import {
-  FaMicrophone, FaVideo, FaStop, FaPaperclip,
-  FaUserFriends, FaChevronUp, FaChevronDown, FaPlay
+  FaChevronUp, FaChevronDown, FaPlay, FaUserFriends
 } from 'react-icons/fa'
-import { BsThreeDots, BsSend } from 'react-icons/bs'
-import Swal from 'sweetalert2'
+import { BsSend, BsPaperclip } from 'react-icons/bs'
 
 const baseUrl =
   import.meta.env?.VITE_BACKEND_URL ||
@@ -20,7 +18,7 @@ function ChapterAccordion({ title, lessons, defaultOpen }) {
     <div className="flex flex-col">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center justify-between py-2.5 transition-colors duration-200"
+        className="flex items-center justify-between py-2.5"
       >
         <span className="text-sm font-bold text-primary">{title}</span>
         <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center shrink-0">
@@ -30,7 +28,6 @@ function ChapterAccordion({ title, lessons, defaultOpen }) {
           }
         </div>
       </button>
-
       {open && (
         <div className="flex flex-col gap-1 pl-1">
           {lessons.map((l) => (
@@ -52,7 +49,7 @@ function ChapterAccordion({ title, lessons, defaultOpen }) {
 }
 
 // ── Live Chat ─────────────────────────────────────────────────────────────────
-function LiveChat({ liveClassId, currentUser, messages, onSend }) {
+function LiveChat({ messages, currentUser, onSend }) {
   const [input, setInput] = useState('')
   const bottomRef = useRef(null)
 
@@ -73,45 +70,50 @@ function LiveChat({ liveClassId, currentUser, messages, onSend }) {
 
       <div className="flex flex-col gap-3 max-h-56 overflow-y-auto pr-1
         [&::-webkit-scrollbar]:w-1
-        [&::-webkit-scrollbar-track]:transparent
         [&::-webkit-scrollbar-thumb]:rounded-full
         [&::-webkit-scrollbar-thumb]:bg-gray-200
         dark:[&::-webkit-scrollbar-thumb]:bg-white/10"
       >
-        {messages.map((m, index) => {
-          const isMe = m.user?._id === currentUser?.id ||
-                       m.user === currentUser?.id
-          const senderName = isMe ? 'You' :
-            `${m.user?.firstName || ''} ${m.user?.lastName || ''}`.trim() || 'Student'
+        {messages.length === 0 ? (
+          <p className="text-xs text-center text-content-text opacity-50 py-4">
+            No messages yet — say hello! 👋
+          </p>
+        ) : (
+          messages.map((m, index) => {
+            const isMe = m.user?._id === currentUser?.id ||
+                         m.user === currentUser?.id
+            const senderName = isMe ? 'You' :
+              `${m.user?.firstName || ''} ${m.user?.lastName || ''}`.trim() || 'Student'
 
-          return (
-            <div
-              key={m._id || index}
-              className={`flex flex-col gap-1 ${isMe ? 'items-end' : 'items-start'}`}
-            >
-              <span className="text-xs font-semibold text-header-text">
-                {senderName}
-              </span>
-              <div className={`
-                px-4 py-2.5 rounded-xl text-xs leading-relaxed max-w-[85%]
-                ${isMe
-                  ? 'bg-primary text-white rounded-tr-none'
-                  : 'bg-gray-100 dark:bg-white/10 text-header-text rounded-tl-none'
-                }
-              `}>
-                {m.message}
+            return (
+              <div
+                key={m._id || index}
+                className={`flex flex-col gap-1 ${isMe ? 'items-end' : 'items-start'}`}
+              >
+                <span className="text-xs font-semibold text-header-text">
+                  {senderName}
+                </span>
+                <div className={`
+                  px-4 py-2.5 rounded-xl text-xs leading-relaxed max-w-[85%]
+                  ${isMe
+                    ? 'bg-primary text-white rounded-tr-none'
+                    : 'bg-gray-100 dark:bg-white/10 text-header-text rounded-tl-none'
+                  }
+                `}>
+                  {m.message}
+                </div>
+                <span className="text-[10px] text-content-text">
+                  {m.sentAt
+                    ? new Date(m.sentAt).toLocaleTimeString([], {
+                        hour: '2-digit', minute: '2-digit'
+                      })
+                    : ''
+                  }
+                </span>
               </div>
-              <span className="text-[10px] text-content-text">
-                {m.sentAt
-                  ? new Date(m.sentAt).toLocaleTimeString([], {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })
-                  : ''}
-              </span>
-            </div>
-          )
-        })}
+            )
+          })
+        )}
         <div ref={bottomRef} />
       </div>
 
@@ -125,7 +127,7 @@ function LiveChat({ liveClassId, currentUser, messages, onSend }) {
           className="flex-1 bg-transparent outline-none text-sm text-header-text placeholder:text-content-text"
         />
         <button className="text-content-text hover:text-primary transition-colors">
-          <FaPaperclip className="w-3.5 h-3.5" />
+          <BsPaperclip className="w-3.5 h-3.5" />
         </button>
         <button
           onClick={send}
@@ -139,17 +141,15 @@ function LiveChat({ liveClassId, currentUser, messages, onSend }) {
 }
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
-export default function InstructorLiveClass() {
-  const { id } = useParams() // live class ID
-  const navigate = useNavigate()
+export default function StudentLiveClass() {
+  const { id } = useParams()
   const currentUser = useSelector((state) => state.auth.user)
 
   const [liveClass, setLiveClass] = useState(null)
   const [chapters, setChapters] = useState([])
   const [messages, setMessages] = useState([])
   const [loading, setLoading] = useState(true)
-  const [muted, setMuted] = useState(false)
-  const [camOff, setCamOff] = useState(false)
+  const [joined, setJoined] = useState(false)
 
   const pollingRef = useRef(null)
 
@@ -160,7 +160,7 @@ export default function InstructorLiveClass() {
       setLiveClass(data.liveClass)
       setMessages(data.liveClass.chatMessages || [])
     } catch (error) {
-      console.error('Error fetching live class:', error)
+      console.error('Error:', error)
     }
   }
 
@@ -170,7 +170,13 @@ export default function InstructorLiveClass() {
         setLoading(true)
         await fetchLiveClass()
 
-        // Course chapters + lessons lao
+        // Join live class
+        await axios.put(`${baseUrl}/api/live-classes/${id}/join`, {
+          userId: currentUser?.id,
+        })
+        setJoined(true)
+
+        // Chapters + Lessons
         const liveRes = await axios.get(`${baseUrl}/api/live-classes/${id}`)
         const courseId = liveRes.data.liveClass?.course?._id ||
                          liveRes.data.liveClass?.course
@@ -196,10 +202,10 @@ export default function InstructorLiveClass() {
       }
     }
 
-    if (id) init()
-  }, [id])
+    if (id && currentUser?.id) init()
+  }, [id, currentUser?.id])
 
-  // ─── Polling — har 3 sec mein chat refresh ────────
+  // ─── Polling ──────────────────────────────────────
   useEffect(() => {
     if (!id) return
 
@@ -207,6 +213,7 @@ export default function InstructorLiveClass() {
       try {
         const { data } = await axios.get(`${baseUrl}/api/live-classes/${id}`)
         setMessages(data.liveClass.chatMessages || [])
+        setLiveClass(data.liveClass)
       } catch (err) {
         console.error(err)
       }
@@ -215,7 +222,7 @@ export default function InstructorLiveClass() {
     return () => clearInterval(pollingRef.current)
   }, [id])
 
-  // ─── Send Chat Message ────────────────────────────
+  // ─── Send Chat ────────────────────────────────────
   const handleSendMessage = async (text) => {
     try {
       await axios.post(`${baseUrl}/api/live-classes/${id}/chat`, {
@@ -228,56 +235,6 @@ export default function InstructorLiveClass() {
     }
   }
 
-  // ─── Start Live ───────────────────────────────────
-  const handleStartLive = async () => {
-    try {
-      await axios.put(`${baseUrl}/api/live-classes/${id}`, {
-        status: 'live',
-      })
-      await fetchLiveClass()
-      Swal.fire({
-        title: 'Live Started!',
-        icon: 'success',
-        timer: 2000,
-        showConfirmButton: false,
-        toast: true,
-        position: 'top-end',
-      })
-    } catch (error) {
-      console.error('Error starting live:', error)
-    }
-  }
-
-  // ─── End Live ─────────────────────────────────────
-  const handleEndLive = async () => {
-    Swal.fire({
-      title: 'End Live Class?',
-      text: 'Are you sure you want to end this live session?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#ef4444',
-      cancelButtonColor: '#6b7280',
-      confirmButtonText: 'Yes, End it!',
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          await axios.put(`${baseUrl}/api/live-classes/${id}`, {
-            status: 'ended',
-          })
-          Swal.fire({
-            title: 'Live Ended!',
-            icon: 'success',
-            timer: 2000,
-            showConfirmButton: false,
-          })
-          navigate('/dashboard/instructor-live-classes')
-        } catch (error) {
-          console.error('Error ending live:', error)
-        }
-      }
-    })
-  }
-
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -287,8 +244,9 @@ export default function InstructorLiveClass() {
   }
 
   const isLive = liveClass?.status === 'live'
+  const isEnded = liveClass?.status === 'ended'
   const instructor = liveClass?.instructor
-  const instructorName = instructor?.user
+  const instrName = instructor?.user
     ? `${instructor.user.firstName} ${instructor.user.lastName}`
     : 'Instructor'
 
@@ -296,17 +254,17 @@ export default function InstructorLiveClass() {
     <div className="min-h-screen bg-gray-100 dark:bg-[#1E2139]">
       <div className="flex gap-5 items-start">
 
-        {/* LEFT — Video + Controls */}
-        <div className="flex-1 w-[50%] bg-[#ffffff] dark:bg-[#292D4A] px-5 rounded-md flex flex-col gap-4">
+        {/* LEFT — Video */}
+        <div className="flex-1 w-[55%] bg-[#ffffff] dark:bg-[#292D4A] px-5 rounded-md flex flex-col gap-4">
 
-          {/* Title row */}
+          {/* Title */}
           <div className="rounded-md p-4 flex items-start justify-between gap-3">
             <div className="flex flex-col gap-1">
               <h2 className="text-base font-bold text-header-text">
                 {liveClass?.title || 'Live Class'}
               </h2>
               <div className="flex items-center gap-3">
-                <span className="text-xs text-content-text">{instructorName}</span>
+                <span className="text-xs text-content-text">{instrName}</span>
                 <div className="flex items-center gap-1.5">
                   <FaUserFriends className="w-3 h-3 text-content-text" />
                   <span className="text-xs text-content-text">
@@ -315,14 +273,40 @@ export default function InstructorLiveClass() {
                 </div>
               </div>
             </div>
-            <button className="text-content-text hover:text-header-text transition-colors">
-              <BsThreeDots className="w-4 h-4" />
-            </button>
+
+            {/* Status */}
+            {isLive && (
+              <div className="flex items-center gap-1.5 bg-red-100 rounded-md px-2.5 py-1">
+                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                <span className="text-xs font-bold text-red-600">Live</span>
+              </div>
+            )}
+            {isEnded && (
+              <span className="text-xs font-bold text-gray-400 bg-gray-100 px-2.5 py-1 rounded-md">
+                Ended
+              </span>
+            )}
+            {liveClass?.status === 'scheduled' && (
+              <span className="text-xs font-bold text-yellow-600 bg-yellow-100 px-2.5 py-1 rounded-md">
+                Scheduled
+              </span>
+            )}
           </div>
 
-          {/* Video / Stream */}
-          <div className="object-top rounded-md overflow-hidden relative">
-            {liveClass?.streamUrl ? (
+          {/* Video Stream */}
+          <div className="rounded-md overflow-hidden relative">
+            {isEnded ? (
+              <div className="w-full h-80 bg-gray-900 flex items-center justify-center">
+                <div className="text-center">
+                  <p className="text-white text-lg font-bold opacity-50">
+                    Live session has ended
+                  </p>
+                  <p className="text-white text-sm opacity-30 mt-1">
+                    Thank you for joining!
+                  </p>
+                </div>
+              </div>
+            ) : liveClass?.streamUrl ? (
               <iframe
                 src={liveClass.streamUrl}
                 className="w-full h-80"
@@ -332,7 +316,7 @@ export default function InstructorLiveClass() {
             ) : (
               <div className="w-full h-80 bg-gray-900 flex items-center justify-center">
                 <p className="text-white text-sm opacity-50">
-                  {isLive ? 'Stream starting...' : 'No stream URL'}
+                  {isLive ? 'Stream loading...' : 'Waiting for stream to start...'}
                 </p>
               </div>
             )}
@@ -344,22 +328,12 @@ export default function InstructorLiveClass() {
                 <span className="text-xs font-semibold text-white">Live</span>
               </div>
             )}
-
-            {/* Scheduled badge */}
-            {liveClass?.status === 'scheduled' && (
-              <div className="absolute top-4 left-4 flex items-center gap-1.5 bg-black/50 backdrop-blur-sm rounded-md px-2.5 py-1">
-                <span className="w-2 h-2 rounded-full bg-yellow-400" />
-                <span className="text-xs font-semibold text-white">Scheduled</span>
-              </div>
-            )}
           </div>
 
-          {/* Students + Controls */}
-          <div className="rounded-md p-4 flex items-center justify-between gap-4">
-
-            {/* Students avatars */}
+          {/* Students row */}
+          <div className="rounded-md p-4">
             <div className="flex flex-col gap-1.5">
-              <span className="text-xs text-content-text">Students</span>
+              <span className="text-xs text-content-text">Students Joined</span>
               <div className="flex items-center">
                 {(liveClass?.students || []).slice(0, 5).map((s, i) => (
                   <img
@@ -380,60 +354,20 @@ export default function InstructorLiveClass() {
                     </span>
                   </div>
                 )}
+                {(!liveClass?.students || liveClass.students.length === 0) && (
+                  <span className="text-xs text-content-text opacity-50">
+                    No students yet
+                  </span>
+                )}
               </div>
-            </div>
-
-            {/* Control buttons */}
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setMuted(!muted)}
-                className={`w-10 h-10 rounded-md flex items-center justify-center transition-colors ${
-                  muted
-                    ? 'bg-gray-200 dark:bg-white/10 text-content-text'
-                    : 'bg-primary/10 text-primary'
-                }`}
-              >
-                <FaMicrophone className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => setCamOff(!camOff)}
-                className={`w-10 h-10 rounded-md flex items-center justify-center transition-colors ${
-                  camOff
-                    ? 'bg-gray-200 dark:bg-white/10 text-content-text'
-                    : 'bg-primary/10 text-primary'
-                }`}
-              >
-                <FaVideo className="w-4 h-4" />
-              </button>
-
-              {/* Start/End button */}
-              {liveClass?.status === 'scheduled' ? (
-                <button
-                  onClick={handleStartLive}
-                  className="px-4 h-10 rounded-md bg-green-500 text-white text-sm font-bold hover:bg-green-600 transition-colors"
-                >
-                  Go Live
-                </button>
-              ) : isLive ? (
-                <button
-                  onClick={handleEndLive}
-                  className="w-10 h-10 rounded-md bg-red-500 flex items-center justify-center hover:bg-red-600 transition-colors"
-                >
-                  <FaStop className="w-4 h-4 text-white" />
-                </button>
-              ) : (
-                <span className="text-xs text-gray-400 font-medium">
-                  Session Ended
-                </span>
-              )}
             </div>
           </div>
         </div>
 
-        {/* RIGHT — Courses Content + Live Chat */}
+        {/* RIGHT — Course Content + Chat */}
         <div className="w-[40%] flex flex-col gap-5">
 
-          {/* Courses Content */}
+          {/* Course Content */}
           <div className="bg-[#ffffff] dark:bg-[#292D4A] px-5 rounded-md flex flex-col gap-2">
             <span className="font-bold text-header-text mt-4">Courses Content</span>
             {chapters.length === 0 ? (
@@ -455,9 +389,8 @@ export default function InstructorLiveClass() {
           {/* Live Chat */}
           <div className="bg-[#ffffff] dark:bg-[#292D4A] rounded-md p-5">
             <LiveChat
-              liveClassId={id}
-              currentUser={currentUser}
               messages={messages}
+              currentUser={currentUser}
               onSend={handleSendMessage}
             />
           </div>

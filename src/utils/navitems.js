@@ -130,7 +130,7 @@ export const ALL_NAV_ITEMS = [
     id: 'instructor',
     label: 'nav.instructor',
     icon: BsPeople,
-    roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.INSTRUCTOR],
+    roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.INSTRUCTOR,ROLES.CUSTOMER],
     children: [
       { id: 'instructor-dashboard',    label: 'nav.instructorDashboard',    path: '/dashboard/instructor-dashboard',    roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.INSTRUCTOR] },
       { id: 'instructor-courses',      label: 'nav.instructorCourses',      path: '/dashboard/instructor-courses',      roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.INSTRUCTOR] },
@@ -138,7 +138,7 @@ export const ALL_NAV_ITEMS = [
       { id: 'instructor-students',     label: 'nav.instructorStudents',     path: '/dashboard/instructor-students',     roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.INSTRUCTOR] },
       { id: 'instructor-resources',    label: 'nav.instructorResources',    path: '/dashboard/instructor-resources',    roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.INSTRUCTOR] },
       { id: 'instructor-transactions', label: 'nav.instructorTransactions', path: '/dashboard/instructor-transactions', roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.INSTRUCTOR] },
-      { id: 'instructor-liveclass',    label: 'nav.instructorLiveclass',    path: '/dashboard/instructor-liveclass',    roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.INSTRUCTOR] },
+      { id: 'instructor-liveclass',    label: 'nav.instructorLiveclass',    path: '/dashboard/live-classes',    roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.INSTRUCTOR,ROLES.CUSTOMER] },
     ],
   },
 

@@ -71,6 +71,10 @@ import CourseForm from "../../Courses/Components/CourseForm";
 import Chapters from "../../Courses/Pages/Chapters";
 import Lessons from "../../Courses/Pages/Lessons";
 import BlogDetail from "../../Instructor/Pages/Blogdetail";
+import StudentLiveClass from "../../Instructor/Pages/StudentLiveClass";
+import LiveClassesList from "../../Instructor/Pages/LiveClassesList";
+import CreateLiveClass from "../../Instructor/Pages/CreateLiveClass";
+
 function DashboardRoutes() {
 
    const user = useSelector((state) => state.auth.user);
@@ -601,6 +605,14 @@ function DashboardRoutes() {
             </ProtectedRoute>
           }
         />
+        <Route path="/live-classes" element={<LiveClassesList />} />
+     
+<Route path="/create-live-class" element={<CreateLiveClass />} />
+
+<Route path="/instructor-live-class/:id" element={<InstructorLiveClass />} />
+
+<Route path="/student-live-class/:id" element={<StudentLiveClass />} />
+
       </Route>
     </Routes>
   );

@@ -1,5 +1,4 @@
-// components/ChatSidebar.jsx
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Search } from 'lucide-react'
 
 const ChatSidebar = ({
@@ -28,6 +27,12 @@ const ChatSidebar = ({
     `${u.firstName} ${u.lastName}`.toLowerCase().includes(search.toLowerCase())
   )
 
+  // Tab label role ke hisaab se
+  const usersTabLabel =
+    currentUser?.role === 'admin' ? 'All Users' :
+    currentUser?.role === 'instructor' ? 'Students' :
+    'Instructors'
+
   return (
     <div className="w-full lg:w-[35%] bg-white dark:bg-[#292D4A] rounded-lg shadow-sm overflow-hidden flex flex-col h-full">
 
@@ -48,8 +53,8 @@ const ChatSidebar = ({
         </div>
       </div>
 
-      {/* Contacts — horizontal scroll, sirf admin */}
-      {currentUser?.role === 'admin' && users.length > 0 && (
+      {/* Contacts — sab roles k liye */}
+      {users.length > 0 && (
         <div className="px-6 py-4 border-b border-sidebar-text/10">
           <div className="flex justify-between items-center mb-3">
             <h4 className="font-bold text-header-text text-sm">Contacts</h4>
@@ -117,18 +122,17 @@ const ChatSidebar = ({
           >
             Group
           </button>
-          {currentUser?.role === 'admin' && (
-            <button
-              onClick={() => setActiveTab('users')}
-              className={`flex-1 pb-3 text-sm font-bold transition-all border-b-2 ${
-                activeTab === 'users'
-                  ? 'text-primary border-primary'
-                  : 'text-sidebar-text opacity-50 border-transparent'
-              }`}
-            >
-              All Users
-            </button>
-          )}
+          {/* ✅ Sab roles k liye */}
+          <button
+            onClick={() => setActiveTab('users')}
+            className={`flex-1 pb-3 text-sm font-bold transition-all border-b-2 ${
+              activeTab === 'users'
+                ? 'text-primary border-primary'
+                : 'text-sidebar-text opacity-50 border-transparent'
+            }`}
+          >
+            {usersTabLabel}
+          </button>
         </div>
       </div>
 
@@ -211,12 +215,12 @@ const ChatSidebar = ({
           </p>
         )}
 
-        {/* All Users Tab — sirf admin */}
-        {activeTab === 'users' && currentUser?.role === 'admin' && (
+        {/* ✅ Users Tab — sab roles k liye */}
+        {activeTab === 'users' && (
           <>
             {filteredUsers.length === 0 ? (
               <p className="text-xs text-center text-content-text opacity-50 mt-8">
-                No users found
+                No {usersTabLabel.toLowerCase()} found
               </p>
             ) : (
               filteredUsers.map((user) => (
