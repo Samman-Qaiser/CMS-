@@ -70,6 +70,7 @@ import AdminReviews from "../../../components/SidePannel/AdminReviews";
 import CourseForm from "../../Courses/Components/CourseForm";
 import Chapters from "../../Courses/Pages/Chapters";
 import Lessons from "../../Courses/Pages/Lessons";
+import BlogDetail from "../../Instructor/Pages/Blogdetail";
 function DashboardRoutes() {
 
    const user = useSelector((state) => state.auth.user);
@@ -254,7 +255,14 @@ function DashboardRoutes() {
             </ProtectedRoute>
           }
         />
-
+ <Route
+          path="/blog/:id"
+          element={
+            <ProtectedRoute>
+              <BlogDetail />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/instructor-liveclass"
           element={

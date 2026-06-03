@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 
 const baseUrl = import.meta.env?.VITE_BACKEND_URL || "https://cms-backend-ashen.vercel.app";
 
-function TaskRow({ avatar, name, task, date, daysLeft, description }) {
+function TaskRow({ avatar, name, task, date, daysLeft, description, color }) {
   return (
     <div className="flex items-center gap-4 py-4 border-b border-white/5 last:border-none group hover:bg-black/5 dark:hover:bg-white/5 transition-colors rounded-lg px-2 -mx-2">
       <img
@@ -35,30 +35,7 @@ function TaskRow({ avatar, name, task, date, daysLeft, description }) {
 export default function UpcomingTask() {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [instructorsMap, setInstructorsMap] = useState({});
   const user = useSelector((state) => state.auth.user);
-
-  // Fetch instructor by ID
-  const fetchInstructorById = async (instructorId) => {
-    if (!instructorId) return null;
-    
-    // Check if already fetched
-    if (instructorsMap[instructorId]) return instructorsMap[instructorId];
-    
-    try {
-      const response = await axios.get(`${baseUrl}/api/instructors/${instructorId}`);
-      if (response.data.success) {
-        setInstructorsMap(prev => ({
-          ...prev,
-          [instructorId]: response.data.instructor
-        }));
-        return response.data.instructor;
-      }
-    } catch (error) {
-      console.error(`Error fetching instructor ${instructorId}:`, error);
-    }
-    return null;
-  };
 
   const fetchTasks = async () => {
     try {
@@ -73,13 +50,6 @@ export default function UpcomingTask() {
           .filter(schedule => schedule.type === 'task')
           .filter(schedule => new Date(schedule.endTime) >= now)
           .sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
-        
-        // Fetch instructor details for each task
-        for (const task of taskEvents) {
-          if (task.instructor) {
-            await fetchInstructorById(task.instructor);
-          }
-        }
         
         setTasks(taskEvents);
       }
@@ -114,27 +84,37 @@ export default function UpcomingTask() {
     }
   };
 
-  // Get instructor info from the map using instructor ID
-  const getInstructorInfo = (instructorId) => {
-    const instructor = instructorsMap[instructorId];
-    
-    if (!instructor || !instructorId) {
-      return {
-        name: "Unknown Instructor",
-        avatar: `https://ui-avatars.com/api/?name=Unknown&background=FF6F61&color=fff&bold=true&size=48`
-      };
+const getInstructorInfo = (instructor) => {
+  // ✅ Populated object check
+  if (instructor && typeof instructor === 'object') {
+    // ✅ Nested user object
+    if (instructor.user && typeof instructor.user === 'object') {
+      const userData = instructor.user
+      const name = `${userData.firstName || ''} ${userData.lastName || ''}`.trim()
+        || userData.username
+        || "Instructor"
+
+      const avatar = userData.profileImage ||
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=FF6F61&color=fff&bold=true&size=150`
+
+      return { name, avatar }
     }
-    
-    const name = instructor.user?.firstName && instructor.user?.lastName
-      ? `${instructor.user.firstName} ${instructor.user.lastName}`
-      : instructor.user?.username || "Instructor";
-    
-    const avatar = instructor.user?.profileImage || 
-                   instructor.profileImage || 
-                   `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=FF6F61&color=fff&bold=true&size=48`;
-    
-    return { name, avatar };
-  };
+
+    // ✅ Direct instructor fields
+    if (instructor.firstName || instructor.lastName) {
+      const name = `${instructor.firstName || ''} ${instructor.lastName || ''}`.trim()
+      const avatar = instructor.profileImage ||
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=FF6F61&color=fff&bold=true&size=150`
+      return { name, avatar }
+    }
+  }
+
+  // ✅ Default fallback
+  return {
+    name: "Instructor",
+    avatar: `https://ui-avatars.com/api/?name=Instructor&background=FF6F61&color=fff&bold=true&size=150`
+  }
+}
 
   if (loading) {
     return (
@@ -178,6 +158,7 @@ export default function UpcomingTask() {
               avatar={instructor.avatar}
               name={instructor.name}
               task={task.title}
+              color={task.color}
               date={formatDate(task.startTime)}
               daysLeft={getDaysLeft(task.endTime)}
               description={task.description}

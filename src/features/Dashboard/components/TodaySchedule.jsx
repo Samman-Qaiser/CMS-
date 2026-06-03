@@ -29,13 +29,14 @@ const EVENT_COLORS = [
 const baseUrl = import.meta.env?.VITE_BACKEND_URL || "https://cms-backend-ashen.vercel.app";
 
 // ─── Event Modal ─────────────────────────────────────────────────
+// In TodaySchedule.jsx, update the EventModal component
 function EventModal({ slot, event, onSave, onDelete, onClose }) {
   const isEdit = !!event;
   const user = useSelector((state) => state.auth.user);
   
-  const [title,  setTitle]  = useState(event?.title  ?? "");
-  const [desc,   setDesc]   = useState(event?.description  ?? event?.desc ?? "");
-  const [color,  setColor]  = useState(() => {
+  const [title, setTitle] = useState(event?.title ?? "");
+  const [desc, setDesc] = useState(event?.description ?? event?.desc ?? "");
+  const [color, setColor] = useState(() => {
     if (event?.color) {
       const found = EVENT_COLORS.find(c => c.hex === event.color);
       return found || EVENT_COLORS[0];
@@ -43,19 +44,51 @@ function EventModal({ slot, event, onSave, onDelete, onClose }) {
     return EVENT_COLORS[0];
   });
   const [allDay, setAllDay] = useState(event?.allDay ?? false);
-  const [start,  setStart]  = useState(() => {
+  const [start, setStart] = useState(() => {
     if (event?.start) return new Date(event.start);
     if (event?.startTime) return new Date(event.startTime);
     return slot?.start ?? new Date();
   });
-  const [end,    setEnd]    = useState(() => {
+  const [end, setEnd] = useState(() => {
     if (event?.end) return new Date(event.end);
     if (event?.endTime) return new Date(event.endTime);
     return slot?.end ?? addHours(new Date(), 1);
   });
-  const [type,   setType]   = useState(event?.type ?? "task");
+  const [type, setType] = useState(event?.type ?? "task");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [instructorId, setInstructorId] = useState(null);
+  const [fetchingInstructor, setFetchingInstructor] = useState(true);
+
+  // Fetch instructor ID when modal opens (for new events)
+  useEffect(() => {
+    const fetchInstructorId = async () => {
+      if (isEdit) {
+        // For edit, use existing event's instructor
+        setInstructorId(event?.instructor);
+        setFetchingInstructor(false);
+        return;
+      }
+      
+      if (!user?.id) {
+        setFetchingInstructor(false);
+        return;
+      }
+      
+      try {
+        const response = await axios.get(`${baseUrl}/api/instructors/user/${user.id}`);
+        if (response.data.success && response.data.instructor) {
+          setInstructorId(response.data.instructor._id);
+        }
+      } catch (error) {
+        console.error("Error fetching instructor:", error);
+      } finally {
+        setFetchingInstructor(false);
+      }
+    };
+    
+    fetchInstructorId();
+  }, [user?.id, isEdit, event]);
 
   const fmt = (d) => format(new Date(d), "yyyy-MM-dd'T'HH:mm");
 
@@ -78,8 +111,8 @@ function EventModal({ slot, event, onSave, onDelete, onClose }) {
       newErrors.end = "End time must be after start time";
     }
     
-    if (!user?.id) {
-      newErrors.instructor = "You must be logged in to create events";
+    if (!instructorId && !isEdit) {
+      newErrors.instructor = "Instructor not found. Please contact admin.";
     }
     
     setErrors(newErrors);
@@ -93,14 +126,13 @@ function EventModal({ slot, event, onSave, onDelete, onClose }) {
     
     try {
       const scheduleData = {
-        instructor: user.id,
+        instructor: instructorId,
         title: title.trim(),
         description: desc,
         startTime: new Date(start).toISOString(),
         endTime: new Date(end).toISOString(),
         type: type,
         color: color.hex,
-        allDay: allDay
       };
       
       let response;
@@ -119,6 +151,7 @@ function EventModal({ slot, event, onSave, onDelete, onClose }) {
           timer: 2000,
           showConfirmButton: false
         });
+        onClose();
       }
     } catch (error) {
       console.error("Save error:", error);
@@ -156,35 +189,46 @@ function EventModal({ slot, event, onSave, onDelete, onClose }) {
     }
   };
 
+  if (fetchingInstructor && !isEdit) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div className="bg-white dark:bg-[#292D4A] rounded-2xl p-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-center text-sm">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
       onClick={e => e.target === e.currentTarget && onClose()}
     >
-      <div className="w-full max-w-md bg-white dark:bg-[#292D4A] rounded-[2rem] shadow-2xl flex flex-col gap-4 p-6 border border-black/8 dark:border-white/8 max-h-[90vh] overflow-y-auto">
+      <div className="w-full max-w-md bg-white dark:bg-[#292D4A] rounded-2xl shadow-2xl flex flex-col gap-4 p-6 border border-black/8 dark:border-white/8 max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-header-text tracking-wide">
+          <h2 className="text-lg font-semibold text-header-text">
             {isEdit ? "Edit Event" : "New Event"}
           </h2>
           <button
             onClick={onClose}
-            className="w-7 h-7 flex items-center justify-center rounded-lg text-content cursor-pointer bg-transparent border-0 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-lg text-content hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
           >
-            <X size={14} />
+            <X size={18} />
           </button>
         </div>
 
-        {/* Instructor (Read-only) */}
+        {/* Instructor Field (Read-only) */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-[10px] font-semibold uppercase tracking-widest text-content opacity-60">
+          <label className="text-xs font-semibold uppercase tracking-widest text-content opacity-60">
             Instructor *
           </label>
           <input
             type="text"
             value={user?.firstName ? `${user.firstName} ${user.lastName}` : user?.email || "Loading..."}
             disabled
-            className="w-full rounded-lg px-3 py-2 text-sm text-header-text bg-black/5 dark:bg-white/5 border border-black/8 dark:border-white/8 outline-none cursor-not-allowed"
+            className="w-full rounded-lg px-3 py-2 text-sm text-header-text bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 outline-none cursor-not-allowed"
           />
           {errors.instructor && (
             <p className="text-xs text-red-500 mt-1">{errors.instructor}</p>
@@ -193,7 +237,7 @@ function EventModal({ slot, event, onSave, onDelete, onClose }) {
 
         {/* Title */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-[10px] font-semibold uppercase tracking-widest text-content opacity-60">
+          <label className="text-xs font-semibold uppercase tracking-widest text-content opacity-60">
             Title *
           </label>
           <input
@@ -203,28 +247,25 @@ function EventModal({ slot, event, onSave, onDelete, onClose }) {
               setTitle(e.target.value);
               if (errors.title) setErrors({ ...errors, title: null });
             }}
-            onKeyDown={e => e.key === "Enter" && handleSave()}
             placeholder="Event title..."
-            className={`w-full rounded-lg px-3 py-2 text-sm text-header-text bg-black/5 dark:bg-white/5 border ${errors.title ? 'border-red-500' : 'border-black/8 dark:border-white/8'} outline-none placeholder:text-content placeholder:opacity-30`}
+            className={`w-full rounded-lg px-3 py-2 text-sm text-header-text bg-black/5 dark:bg-white/5 border ${errors.title ? 'border-red-500' : 'border-black/8 dark:border-white/8'} outline-none`}
           />
-          {errors.title && (
-            <p className="text-xs text-red-500 mt-1">{errors.title}</p>
-          )}
+          {errors.title && <p className="text-xs text-red-500 mt-1">{errors.title}</p>}
         </div>
 
         {/* Type */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-[10px] font-semibold uppercase tracking-widest text-content opacity-60">
+          <label className="text-xs font-semibold uppercase tracking-widest text-content opacity-60">
             Event Type
           </label>
           <select
             value={type}
             onChange={e => setType(e.target.value)}
-            className="w-full rounded-lg px-3 py-2 text-sm text-header-text dark:bg-[#292D4A] bg-[#ffffff]  border border-black/8 dark:border-white/8 outline-none"
+            className="w-full rounded-lg px-3 py-2 text-sm text-header-text bg-white dark:bg-[#292D4A] border border-black/8 dark:border-white/8 outline-none"
           >
-           <option value="event">Event</option>
-            <option value="live_class">Live Class</option>
             <option value="task">Task</option>
+             <option value="live_class">Live Class</option>
+            <option value="event">Event</option>
             <option value="meeting">Meeting</option>
             <option value="reminder">Reminder</option>
             <option value="deadline">Deadline</option>
@@ -233,35 +274,35 @@ function EventModal({ slot, event, onSave, onDelete, onClose }) {
 
         {/* Description */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-[10px] font-semibold uppercase tracking-widest text-content opacity-60 flex items-center gap-1">
-            <AlignLeft size={10} /> Description
+          <label className="text-xs font-semibold uppercase tracking-widest text-content opacity-60">
+            Description
           </label>
           <textarea
             value={desc}
             onChange={e => setDesc(e.target.value)}
             placeholder="Add a description..."
             rows={2}
-            className="w-full rounded-lg px-3 py-2 text-sm text-header-text bg-black/5 dark:bg-white/5 border border-black/8 dark:border-white/8 outline-none resize-none placeholder:text-content placeholder:opacity-30"
+            className="w-full rounded-lg px-3 py-2 text-sm text-header-text bg-black/5 dark:bg-white/5 border border-black/8 dark:border-white/8 outline-none resize-none"
           />
         </div>
 
-        {/* All Day */}
+        {/* All Day Toggle */}
         <label className="flex items-center gap-3 cursor-pointer select-none">
           <div
             onClick={() => setAllDay(v => !v)}
-            className={`w-9 h-5 rounded-full relative cursor-pointer transition-colors border border-black/8 dark:border-white/8 ${allDay ? "bg-primary" : "bg-black/5 dark:bg-white/5"}`}
+            className={`w-9 h-5 rounded-full relative cursor-pointer transition-colors ${allDay ? "bg-primary" : "bg-gray-300 dark:bg-gray-600"}`}
           >
             <div className={`absolute top-0.5 w-4 h-4 rounded-full transition-all bg-white ${allDay ? "left-[18px]" : "left-0.5"}`} />
           </div>
-          <span className="text-xs text-content opacity-60">All Day</span>
+          <span className="text-sm text-content">All Day</span>
         </label>
 
-        {/* Time */}
-        {!allDay && (
+        {/* Date/Time Fields */}
+        {!allDay ? (
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-semibold uppercase tracking-widest text-content opacity-60 flex items-center gap-1">
-                <Clock size={10} /> Start Time *
+              <label className="text-xs font-semibold uppercase tracking-widest text-content opacity-60">
+                Start Time *
               </label>
               <input
                 type="datetime-local"
@@ -269,18 +310,14 @@ function EventModal({ slot, event, onSave, onDelete, onClose }) {
                 onChange={e => {
                   setStart(e.target.value);
                   if (errors.start) setErrors({ ...errors, start: null });
-                  if (errors.end) setErrors({ ...errors, end: null });
                 }}
-                className={`w-full rounded-lg px-3 py-2 text-xs text-header-text bg-black/5 dark:bg-white/5 border ${errors.start ? 'border-red-500' : 'border-black/8 dark:border-white/8'} outline-none dark:[color-scheme:dark]`}
+                className={`w-full rounded-lg px-3 py-2 text-sm text-header-text bg-black/5 dark:bg-white/5 border ${errors.start ? 'border-red-500' : 'border-black/8 dark:border-white/8'} outline-none`}
               />
-              {errors.start && (
-                <p className="text-xs text-red-500 mt-1">{errors.start}</p>
-              )}
+              {errors.start && <p className="text-xs text-red-500">{errors.start}</p>}
             </div>
-            
             <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-semibold uppercase tracking-widest text-content opacity-60 flex items-center gap-1">
-                <Clock size={10} /> End Time *
+              <label className="text-xs font-semibold uppercase tracking-widest text-content opacity-60">
+                End Time *
               </label>
               <input
                 type="datetime-local"
@@ -289,20 +326,15 @@ function EventModal({ slot, event, onSave, onDelete, onClose }) {
                   setEnd(e.target.value);
                   if (errors.end) setErrors({ ...errors, end: null });
                 }}
-                className={`w-full rounded-lg px-3 py-2 text-xs text-header-text bg-black/5 dark:bg-white/5 border ${errors.end ? 'border-red-500' : 'border-black/8 dark:border-white/8'} outline-none dark:[color-scheme:dark]`}
+                className={`w-full rounded-lg px-3 py-2 text-sm text-header-text bg-black/5 dark:bg-white/5 border ${errors.end ? 'border-red-500' : 'border-black/8 dark:border-white/8'} outline-none`}
               />
-              {errors.end && (
-                <p className="text-xs text-red-500 mt-1">{errors.end}</p>
-              )}
+              {errors.end && <p className="text-xs text-red-500">{errors.end}</p>}
             </div>
           </div>
-        )}
-
-        {/* All Day Time (if allDay is true) */}
-        {allDay && (
+        ) : (
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-semibold uppercase tracking-widest text-content opacity-60">
+              <label className="text-xs font-semibold uppercase tracking-widest text-content opacity-60">
                 Start Date *
               </label>
               <input
@@ -315,12 +347,11 @@ function EventModal({ slot, event, onSave, onDelete, onClose }) {
                   newDate.setDate(parseInt(e.target.value.split('-')[2]));
                   setStart(newDate);
                 }}
-                className="w-full rounded-lg px-3 py-2 text-xs text-header-text bg-black/5 dark:bg-white/5 border border-black/8 dark:border-white/8 outline-none"
+                className="w-full rounded-lg px-3 py-2 text-sm text-header-text bg-black/5 dark:bg-white/5 border border-black/8 dark:border-white/8 outline-none"
               />
             </div>
-            
             <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-semibold uppercase tracking-widest text-content opacity-60">
+              <label className="text-xs font-semibold uppercase tracking-widest text-content opacity-60">
                 End Date *
               </label>
               <input
@@ -333,53 +364,56 @@ function EventModal({ slot, event, onSave, onDelete, onClose }) {
                   newDate.setDate(parseInt(e.target.value.split('-')[2]));
                   setEnd(newDate);
                 }}
-                className="w-full rounded-lg px-3 py-2 text-xs text-header-text bg-black/5 dark:bg-white/5 border border-black/8 dark:border-white/8 outline-none"
+                className="w-full rounded-lg px-3 py-2 text-sm text-header-text bg-black/5 dark:bg-white/5 border border-black/8 dark:border-white/8 outline-none"
               />
             </div>
           </div>
         )}
 
-        {/* Color */}
+        {/* Color Selection */}
         <div className="flex flex-col gap-2">
-          <label className="text-[10px] font-semibold uppercase tracking-widest text-content opacity-60">
+          <label className="text-xs font-semibold uppercase tracking-widest text-content opacity-60">
             Color
           </label>
           <div className="flex gap-2 flex-wrap">
             {EVENT_COLORS.map(c => (
               <button
                 key={c.label}
+                type="button"
                 onClick={() => setColor(c)}
-                className={`w-7 h-7 rounded-full border-0 cursor-pointer transition-transform hover:scale-110 ${c.bg} ${color.bg === c.bg ? "ring-2 ring-offset-2 ring-offset-white dark:ring-offset-[#292D4A] ring-current" : ""}`}
+                className={`w-8 h-8 rounded-full transition-transform hover:scale-110 ${c.bg} ${color.bg === c.bg ? "ring-2 ring-offset-2 ring-offset-white dark:ring-offset-[#292D4A] ring-current" : ""}`}
               />
             ))}
           </div>
         </div>
 
-        {/* Actions */}
-        <div className="flex items-center gap-2 pt-1">
+        {/* Action Buttons */}
+        <div className="flex items-center gap-3 pt-4">
           {isEdit && (
             <button
+              type="button"
               onClick={handleDelete}
-              className="flex items-center gap-1.5 text-xs text-rose-500 cursor-pointer bg-transparent border-0 hover:opacity-70 transition-opacity"
+              className="px-4 py-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
             >
-              <Trash2 size={12} /> Delete
+              Delete
             </button>
           )}
-          <div className="ml-auto flex gap-2">
-            <button
-              onClick={onClose}
-              className="px-4 py-2 rounded-lg text-xs text-content cursor-pointer bg-black/5 dark:bg-white/5 border-0 hover:opacity-70 transition-opacity"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleSave}
-              disabled={!title.trim() || !start || !end || loading}
-              className={`px-5 py-2 rounded-lg text-xs text-white font-semibold cursor-pointer border-0 bg-primary transition-opacity ${(!title.trim() || !start || !end || loading) ? "opacity-40" : "hover:opacity-90"}`}
-            >
-              {loading ? "Saving..." : (isEdit ? "Update" : "Save")}
-            </button>
-          </div>
+          <div className="flex-1" />
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 text-sm text-content hover:bg-black/5 dark:hover:bg-white/5 rounded-lg transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={loading || fetchingInstructor}
+            className="px-6 py-2 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors"
+          >
+            {loading ? "Saving..." : (isEdit ? "Update" : "Save")}
+          </button>
         </div>
       </div>
     </div>
