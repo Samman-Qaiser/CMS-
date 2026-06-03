@@ -86,20 +86,17 @@ const UpcomingSchedule = () => {
     }
   };
 
-  const getEventColor = (type) => {
-    switch(type) {
-      case 'event':
-        return 'bg-[#FF4B7D]';
-      case 'meeting':
-        return 'bg-[#FF4B7D]';
-      case 'reminder':
-        return 'bg-[#FFB129]';
-      case 'deadline':
-        return 'bg-[#8E54E9]';
-      default:
-        return 'bg-[#10b981]';
-    }
-  };
+ const getEventColor = (type, color) => {
+  // ✅ Agar backend se color aaya hai toh woh use karo
+  if (color) return ''  // inline style use karein ge
+
+  switch (type) {
+    case 'event': return 'bg-[#FF4B7D]'
+    case 'live_class': return 'bg-[#8E54E9]'
+    case 'task': return 'bg-[#FFB129]'
+    default: return 'bg-[#10b981]'
+  }
+}
 
   const getEventTypeBadge = (type) => {
     switch(type) {
@@ -116,27 +113,38 @@ const UpcomingSchedule = () => {
     }
   };
 
-  // Get instructor info from the map using instructor ID
-  const getInstructorInfo = (instructorId) => {
-    const instructor = instructorsMap[instructorId];
-    
-    if (!instructor || !instructorId) {
-      return {
-        name: "Unknown Instructor",
-        avatar: `https://ui-avatars.com/api/?name=Unknown&background=FF6F61&color=fff&bold=true&size=150`
-      };
+
+const getInstructorInfo = (instructor) => {
+  // ✅ Populated object check
+  if (instructor && typeof instructor === 'object') {
+    // ✅ Nested user object
+    if (instructor.user && typeof instructor.user === 'object') {
+      const userData = instructor.user
+      const name = `${userData.firstName || ''} ${userData.lastName || ''}`.trim()
+        || userData.username
+        || "Instructor"
+
+      const avatar = userData.profileImage ||
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=FF6F61&color=fff&bold=true&size=150`
+
+      return { name, avatar }
     }
-    
-    const name = instructor.user?.firstName && instructor.user?.lastName
-      ? `${instructor.user.firstName} ${instructor.user.lastName}`
-      : instructor.user?.username || "Instructor";
-    
-    const avatar = instructor.user?.profileImage || 
-                   instructor.profileImage || 
-                   `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=FF6F61&color=fff&bold=true&size=150`;
-    
-    return { name, avatar };
-  };
+
+    // ✅ Direct instructor fields
+    if (instructor.firstName || instructor.lastName) {
+      const name = `${instructor.firstName || ''} ${instructor.lastName || ''}`.trim()
+      const avatar = instructor.profileImage ||
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=FF6F61&color=fff&bold=true&size=150`
+      return { name, avatar }
+    }
+  }
+
+  // ✅ Default fallback
+  return {
+    name: "Instructor",
+    avatar: `https://ui-avatars.com/api/?name=Instructor&background=FF6F61&color=fff&bold=true&size=150`
+  }
+}
 
   if (loading) {
     return (
@@ -189,7 +197,10 @@ const UpcomingSchedule = () => {
               key={item._id} 
               className="dark:bg-[#292D4A] bg-[#ffffff] rounded-2xl overflow-hidden flex items-stretch group cursor-pointer transition-transform hover:scale-[1.01] shadow-sm"
             >
-              <div className={`w-2 ${getEventColor(item.type)}`}></div>
+              <div
+  className={`w-2 ${!item.color ? getEventColor(item.type) : ''}`}
+  style={item.color ? { backgroundColor: item.color } : {}}
+></div>
 
               <div className="flex-1 p-5 flex items-center justify-between">
                 <div className="flex flex-col gap-3">
