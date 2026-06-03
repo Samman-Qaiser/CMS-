@@ -122,7 +122,7 @@ export default function InstructorCourses() {
         </div>
 
         {/* ── Row 2: Reviews ── */}
-        <div className="flex  flex-col gap-3">
+        <div className="flex w-[90%] flex-col gap-3">
           <span className="text-sm font-bold text-header-text">User Reviews</span>
           {reviews.length === 0 ? (
             <p className="text-content-text text-sm">No reviews yet</p>

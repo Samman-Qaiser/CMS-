@@ -120,8 +120,8 @@ export const ALL_NAV_ITEMS = [
     roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.CUSTOMER,ROLES.INSTRUCTOR],
     children: [
       { id: 'courses-all',       label: 'nav.courses',        path: '/dashboard/courses',          roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.CUSTOMER,ROLES.INSTRUCTOR] },
-      { id: 'chapters', label: 'Chapters',path: '/dashboard/chapters', roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.INSTRUCTOR,ROLES.CUSTOMER] },
-      { id: 'lessons', label: 'Lessons',path: '/dashboard/lessons', roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.INSTRUCTOR,ROLES.CUSTOMER] },
+      { id: 'chapters', label: 'Chapters',path: '/dashboard/chapters', roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.INSTRUCTOR] },
+      { id: 'lessons', label: 'Lessons',path: '/dashboard/lessons', roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.INSTRUCTOR] },
     ],
   },
 

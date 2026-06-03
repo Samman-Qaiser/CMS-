@@ -703,41 +703,63 @@ export default function CourseDetail1() {
                   <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
                 </div>
               ) : (
-                <>
-                  {isEnrolled ? (
-                    <div className="mt-2">
-                      <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-2">
-                        <div className="flex items-center gap-2">
-                          <FaCheckCircle className="w-5 h-5 text-green-500" />
-                          <p className="text-sm font-semibold text-green-700 dark:text-green-400">
-                            You are already enrolled in this course!
-                          </p>
-                        </div>
-                      </div>
-                      <button
-                        onClick={handleContinueLearning}
-                        className="w-full py-2.5 rounded-md bg-green-600 hover:bg-green-700 text-sm font-semibold text-white transition-colors duration-200"
-                      >
-                        Continue Learning
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex gap-3 pt-1">
-                      {/* <button
-                        onClick={handleAddToCart}
-                        className="flex-1 py-2.5 rounded-md border border-gray-300 dark:border-white/20 text-sm font-semibold text-header-text hover:bg-gray-50 dark:hover:bg-white/5 transition-colors duration-200"
-                      >
-                        Add to Cart
-                      </button> */}
-                      <button
-                        onClick={handleBuyNow}
-                        className="flex-1 py-2.5 rounded-md bg-primary hover:bg-primary/70 text-sm font-semibold text-white transition-colors duration-200"
-                      >
-                        Buy Now
-                      </button>
-                    </div>
-                  )}
-                </>
+               <>
+  {isEnrolled ? (
+    <div className="mt-2">
+      <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-2">
+        <div className="flex items-center gap-2">
+          <FaCheckCircle className="w-5 h-5 text-green-500" />
+          <p className="text-sm font-semibold text-green-700 dark:text-green-400">
+            You are already enrolled in this course!
+          </p>
+        </div>
+      </div>
+      <button
+        onClick={handleContinueLearning}
+        className="w-full py-2.5 rounded-md bg-green-600 hover:bg-green-700 text-sm font-semibold text-white transition-colors duration-200"
+      >
+        Continue Learning
+      </button>
+    </div>
+  ) : (
+    // Check if user is admin or course instructor
+    (user?.role === 'admin' || (user?.role === 'instructor' && course?.instructor?._id === user?.id)) ? (
+      // For admin or course instructor - show management options
+      <div className="mt-2">
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-2">
+          <div className="flex items-center gap-2">
+            <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            <p className="text-sm font-semibold text-blue-700 dark:text-blue-400">
+              {user?.role === 'admin' ? 'Admin Access' : 'You are the instructor of this course'}
+            </p>
+          </div>
+        </div>
+        <div className="flex gap-3">
+          <button
+            onClick={() => navigate(`/dashboard/course-details-2/${course._id}`)}
+            className="flex-1 py-2.5 rounded-md bg-blue-600 hover:bg-blue-700 text-sm font-semibold text-white transition-colors duration-200"
+          >
+        View Course
+          </button>
+        
+        </div>
+      </div>
+    ) : (
+      // Normal user - show buy button
+      <div className="flex gap-3 pt-1">
+    
+        <button
+          onClick={handleBuyNow}
+          className="flex-1 py-2.5 rounded-md bg-primary hover:bg-primary/70 text-sm font-semibold text-white transition-colors duration-200"
+        >
+          Buy Now
+        </button>
+      </div>
+    )
+  )}
+</>
               )}
             </div>
           </div>

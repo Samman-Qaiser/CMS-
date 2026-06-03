@@ -1,9 +1,11 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Calendar, dateFnsLocalizer, Views } from "react-big-calendar";
 import { format, parse, startOfWeek, getDay, addHours, startOfHour } from "date-fns";
 import { Plus, X, Clock, Trash2, AlignLeft, ChevronLeft, ChevronRight } from "lucide-react";
+import axios from "axios";
+import Swal from "sweetalert2";
+import { useSelector } from "react-redux";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-
 
 // ─── Localizer ───────────────────────────────────────────────────
 const localizer = dateFnsLocalizer({
@@ -24,48 +26,134 @@ const EVENT_COLORS = [
   { label: "Violet",  bg: "bg-violet-500",  hex: "#8b5cf6" },
 ];
 
-const SAMPLE_EVENTS = [
-  {
-    id: 1, title: "All Day Event",
-    start: (() => { const d = new Date(); d.setHours(0,0,0,0); return d; })(),
-    end:   (() => { const d = new Date(); d.setHours(23,59,0,0); return d; })(),
-    allDay: true, color: EVENT_COLORS[0], desc: "",
-  },
-  {
-    id: 2, title: "Team Standup",
-    start: addHours(startOfHour(new Date()), -3),
-    end:   addHours(startOfHour(new Date()), -2),
-    allDay: false, color: EVENT_COLORS[1], desc: "Daily sync",
-  },
-  {
-    id: 3, title: "Design Review",
-    start: addHours(startOfHour(new Date()), 1),
-    end:   addHours(startOfHour(new Date()), 2),
-    allDay: false, color: EVENT_COLORS[2], desc: "Review UI",
-  },
-  {
-    id: 4, title: "Client Call",
-    start: addHours(startOfHour(new Date()), 3),
-    end:   addHours(startOfHour(new Date()), 4),
-    allDay: false, color: EVENT_COLORS[5], desc: "",
-  },
-];
+const baseUrl = import.meta.env?.VITE_BACKEND_URL || "https://cms-backend-ashen.vercel.app";
 
 // ─── Event Modal ─────────────────────────────────────────────────
 function EventModal({ slot, event, onSave, onDelete, onClose }) {
   const isEdit = !!event;
+  const user = useSelector((state) => state.auth.user);
+  
   const [title,  setTitle]  = useState(event?.title  ?? "");
-  const [desc,   setDesc]   = useState(event?.desc   ?? "");
-  const [color,  setColor]  = useState(event?.color  ?? EVENT_COLORS[0]);
+  const [desc,   setDesc]   = useState(event?.description  ?? event?.desc ?? "");
+  const [color,  setColor]  = useState(() => {
+    if (event?.color) {
+      const found = EVENT_COLORS.find(c => c.hex === event.color);
+      return found || EVENT_COLORS[0];
+    }
+    return EVENT_COLORS[0];
+  });
   const [allDay, setAllDay] = useState(event?.allDay ?? false);
-  const [start,  setStart]  = useState(event?.start  ?? slot?.start ?? new Date());
-  const [end,    setEnd]    = useState(event?.end    ?? slot?.end   ?? addHours(new Date(), 1));
+  const [start,  setStart]  = useState(() => {
+    if (event?.start) return new Date(event.start);
+    if (event?.startTime) return new Date(event.startTime);
+    return slot?.start ?? new Date();
+  });
+  const [end,    setEnd]    = useState(() => {
+    if (event?.end) return new Date(event.end);
+    if (event?.endTime) return new Date(event.endTime);
+    return slot?.end ?? addHours(new Date(), 1);
+  });
+  const [type,   setType]   = useState(event?.type ?? "task");
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const fmt = (d) => format(new Date(d), "yyyy-MM-dd'T'HH:mm");
 
-  const handleSave = () => {
-    if (!title.trim()) return;
-    onSave({ id: event?.id ?? Date.now(), title: title.trim(), desc, color, allDay, start: new Date(start), end: new Date(end) });
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!title.trim()) {
+      newErrors.title = "Title is required";
+    }
+    
+    if (!start) {
+      newErrors.start = "Start time is required";
+    }
+    
+    if (!end) {
+      newErrors.end = "End time is required";
+    }
+    
+    if (start && end && new Date(start) >= new Date(end)) {
+      newErrors.end = "End time must be after start time";
+    }
+    
+    if (!user?.id) {
+      newErrors.instructor = "You must be logged in to create events";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSave = async () => {
+    if (!validateForm()) return;
+    
+    setLoading(true);
+    
+    try {
+      const scheduleData = {
+        instructor: user.id,
+        title: title.trim(),
+        description: desc,
+        startTime: new Date(start).toISOString(),
+        endTime: new Date(end).toISOString(),
+        type: type,
+        color: color.hex,
+        allDay: allDay
+      };
+      
+      let response;
+      if (isEdit) {
+        response = await axios.put(`${baseUrl}/api/schedules/${event._id || event.id}`, scheduleData);
+      } else {
+        response = await axios.post(`${baseUrl}/api/schedules`, scheduleData);
+      }
+      
+      if (response.data.success) {
+        onSave(response.data.schedule);
+        Swal.fire({
+          title: "Success!",
+          text: `Event ${isEdit ? "updated" : "created"} successfully`,
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false
+        });
+      }
+    } catch (error) {
+      console.error("Save error:", error);
+      Swal.fire({
+        title: "Error!",
+        text: error.response?.data?.message || "Failed to save event",
+        icon: "error",
+        confirmButtonColor: "#FF6F61"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    const result = await Swal.fire({
+      title: "Delete Event?",
+      text: "This action cannot be undone",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!"
+    });
+    
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`${baseUrl}/api/schedules/${event._id || event.id}`);
+        onDelete(event._id || event.id);
+        Swal.fire("Deleted!", "Event has been deleted.", "success");
+      } catch (error) {
+        console.error("Delete error:", error);
+        Swal.fire("Error!", "Failed to delete event", "error");
+      }
+    }
   };
 
   return (
@@ -73,9 +161,7 @@ function EventModal({ slot, event, onSave, onDelete, onClose }) {
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
       onClick={e => e.target === e.currentTarget && onClose()}
     >
-      <div className="w-full max-w-md bg-white dark:bg-[#292D4A] 
-      rounded-[2rem] shadow-2xl flex flex-col  gap-4 p-6 border border-black/8 dark:border-white/8">
-
+      <div className="w-full max-w-md bg-white dark:bg-[#292D4A] rounded-[2rem] shadow-2xl flex flex-col gap-4 p-6 border border-black/8 dark:border-white/8 max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-header-text tracking-wide">
@@ -89,30 +175,71 @@ function EventModal({ slot, event, onSave, onDelete, onClose }) {
           </button>
         </div>
 
+        {/* Instructor (Read-only) */}
+        <div className="flex flex-col gap-1.5">
+          <label className="text-[10px] font-semibold uppercase tracking-widest text-content opacity-60">
+            Instructor *
+          </label>
+          <input
+            type="text"
+            value={user?.firstName ? `${user.firstName} ${user.lastName}` : user?.email || "Loading..."}
+            disabled
+            className="w-full rounded-lg px-3 py-2 text-sm text-header-text bg-black/5 dark:bg-white/5 border border-black/8 dark:border-white/8 outline-none cursor-not-allowed"
+          />
+          {errors.instructor && (
+            <p className="text-xs text-red-500 mt-1">{errors.instructor}</p>
+          )}
+        </div>
+
         {/* Title */}
         <div className="flex flex-col gap-1.5">
           <label className="text-[10px] font-semibold uppercase tracking-widest text-content opacity-60">
-            Title
+            Title *
           </label>
           <input
             autoFocus
             value={title}
-            onChange={e => setTitle(e.target.value)}
+            onChange={e => {
+              setTitle(e.target.value);
+              if (errors.title) setErrors({ ...errors, title: null });
+            }}
             onKeyDown={e => e.key === "Enter" && handleSave()}
             placeholder="Event title..."
-            className="w-full rounded-lg px-3 py-2 text-sm text-header-text bg-black/5 dark:bg-white/5 border border-black/8 dark:border-white/8 outline-none placeholder:text-content placeholder:opacity-30"
+            className={`w-full rounded-lg px-3 py-2 text-sm text-header-text bg-black/5 dark:bg-white/5 border ${errors.title ? 'border-red-500' : 'border-black/8 dark:border-white/8'} outline-none placeholder:text-content placeholder:opacity-30`}
           />
+          {errors.title && (
+            <p className="text-xs text-red-500 mt-1">{errors.title}</p>
+          )}
+        </div>
+
+        {/* Type */}
+        <div className="flex flex-col gap-1.5">
+          <label className="text-[10px] font-semibold uppercase tracking-widest text-content opacity-60">
+            Event Type
+          </label>
+          <select
+            value={type}
+            onChange={e => setType(e.target.value)}
+            className="w-full rounded-lg px-3 py-2 text-sm text-header-text dark:bg-[#292D4A] bg-[#ffffff]  border border-black/8 dark:border-white/8 outline-none"
+          >
+           <option value="event">Event</option>
+            <option value="live_class">Live Class</option>
+            <option value="task">Task</option>
+            <option value="meeting">Meeting</option>
+            <option value="reminder">Reminder</option>
+            <option value="deadline">Deadline</option>
+          </select>
         </div>
 
         {/* Description */}
         <div className="flex flex-col gap-1.5">
           <label className="text-[10px] font-semibold uppercase tracking-widest text-content opacity-60 flex items-center gap-1">
-            <AlignLeft size={10} /> Note
+            <AlignLeft size={10} /> Description
           </label>
           <textarea
             value={desc}
             onChange={e => setDesc(e.target.value)}
-            placeholder="Add a note..."
+            placeholder="Add a description..."
             rows={2}
             className="w-full rounded-lg px-3 py-2 text-sm text-header-text bg-black/5 dark:bg-white/5 border border-black/8 dark:border-white/8 outline-none resize-none placeholder:text-content placeholder:opacity-30"
           />
@@ -132,19 +259,83 @@ function EventModal({ slot, event, onSave, onDelete, onClose }) {
         {/* Time */}
         {!allDay && (
           <div className="grid grid-cols-2 gap-3">
-            {[["Start", start, setStart], ["End", end, setEnd]].map(([lbl, val, setter]) => (
-              <div key={lbl} className="flex flex-col gap-1.5">
-                <label className="text-[10px] font-semibold uppercase tracking-widest text-content opacity-60 flex items-center gap-1">
-                  <Clock size={10} /> {lbl}
-                </label>
-                <input
-                  type="datetime-local"
-                  value={fmt(val)}
-                  onChange={e => setter(e.target.value)}
-                  className="w-full rounded-lg px-3 py-2 text-xs text-header-text bg-black/5 dark:bg-white/5 border border-black/8 dark:border-white/8 outline-none dark:[color-scheme:dark]"
-                />
-              </div>
-            ))}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-semibold uppercase tracking-widest text-content opacity-60 flex items-center gap-1">
+                <Clock size={10} /> Start Time *
+              </label>
+              <input
+                type="datetime-local"
+                value={fmt(start)}
+                onChange={e => {
+                  setStart(e.target.value);
+                  if (errors.start) setErrors({ ...errors, start: null });
+                  if (errors.end) setErrors({ ...errors, end: null });
+                }}
+                className={`w-full rounded-lg px-3 py-2 text-xs text-header-text bg-black/5 dark:bg-white/5 border ${errors.start ? 'border-red-500' : 'border-black/8 dark:border-white/8'} outline-none dark:[color-scheme:dark]`}
+              />
+              {errors.start && (
+                <p className="text-xs text-red-500 mt-1">{errors.start}</p>
+              )}
+            </div>
+            
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-semibold uppercase tracking-widest text-content opacity-60 flex items-center gap-1">
+                <Clock size={10} /> End Time *
+              </label>
+              <input
+                type="datetime-local"
+                value={fmt(end)}
+                onChange={e => {
+                  setEnd(e.target.value);
+                  if (errors.end) setErrors({ ...errors, end: null });
+                }}
+                className={`w-full rounded-lg px-3 py-2 text-xs text-header-text bg-black/5 dark:bg-white/5 border ${errors.end ? 'border-red-500' : 'border-black/8 dark:border-white/8'} outline-none dark:[color-scheme:dark]`}
+              />
+              {errors.end && (
+                <p className="text-xs text-red-500 mt-1">{errors.end}</p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* All Day Time (if allDay is true) */}
+        {allDay && (
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-semibold uppercase tracking-widest text-content opacity-60">
+                Start Date *
+              </label>
+              <input
+                type="date"
+                value={format(new Date(start), "yyyy-MM-dd")}
+                onChange={e => {
+                  const newDate = new Date(start);
+                  newDate.setFullYear(parseInt(e.target.value.split('-')[0]));
+                  newDate.setMonth(parseInt(e.target.value.split('-')[1]) - 1);
+                  newDate.setDate(parseInt(e.target.value.split('-')[2]));
+                  setStart(newDate);
+                }}
+                className="w-full rounded-lg px-3 py-2 text-xs text-header-text bg-black/5 dark:bg-white/5 border border-black/8 dark:border-white/8 outline-none"
+              />
+            </div>
+            
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-semibold uppercase tracking-widest text-content opacity-60">
+                End Date *
+              </label>
+              <input
+                type="date"
+                value={format(new Date(end), "yyyy-MM-dd")}
+                onChange={e => {
+                  const newDate = new Date(end);
+                  newDate.setFullYear(parseInt(e.target.value.split('-')[0]));
+                  newDate.setMonth(parseInt(e.target.value.split('-')[1]) - 1);
+                  newDate.setDate(parseInt(e.target.value.split('-')[2]));
+                  setEnd(newDate);
+                }}
+                className="w-full rounded-lg px-3 py-2 text-xs text-header-text bg-black/5 dark:bg-white/5 border border-black/8 dark:border-white/8 outline-none"
+              />
+            </div>
           </div>
         )}
 
@@ -153,7 +344,7 @@ function EventModal({ slot, event, onSave, onDelete, onClose }) {
           <label className="text-[10px] font-semibold uppercase tracking-widest text-content opacity-60">
             Color
           </label>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             {EVENT_COLORS.map(c => (
               <button
                 key={c.label}
@@ -168,7 +359,7 @@ function EventModal({ slot, event, onSave, onDelete, onClose }) {
         <div className="flex items-center gap-2 pt-1">
           {isEdit && (
             <button
-              onClick={() => onDelete(event.id)}
+              onClick={handleDelete}
               className="flex items-center gap-1.5 text-xs text-rose-500 cursor-pointer bg-transparent border-0 hover:opacity-70 transition-opacity"
             >
               <Trash2 size={12} /> Delete
@@ -183,10 +374,10 @@ function EventModal({ slot, event, onSave, onDelete, onClose }) {
             </button>
             <button
               onClick={handleSave}
-              disabled={!title.trim()}
-              className={`px-5 py-2 rounded-lg text-xs text-white font-semibold cursor-pointer border-0 bg-primary transition-opacity ${!title.trim() ? "opacity-40" : "hover:opacity-90"}`}
+              disabled={!title.trim() || !start || !end || loading}
+              className={`px-5 py-2 rounded-lg text-xs text-white font-semibold cursor-pointer border-0 bg-primary transition-opacity ${(!title.trim() || !start || !end || loading) ? "opacity-40" : "hover:opacity-90"}`}
             >
-              {isEdit ? "Update" : "Save"}
+              {loading ? "Saving..." : (isEdit ? "Update" : "Save")}
             </button>
           </div>
         </div>
@@ -209,10 +400,47 @@ function EventPill({ event }) {
 
 // ─── Main Component ──────────────────────────────────────────────
 export default function TodaySchedule() {
-  const [events, setEvents] = useState(SAMPLE_EVENTS);
-  const [view,   setView]   = useState(Views.MONTH);
-  const [date,   setDate]   = useState(new Date());
-  const [modal,  setModal]  = useState(null);
+  const [events, setEvents] = useState([]);
+  const [view, setView] = useState(Views.MONTH);
+  const [date, setDate] = useState(new Date());
+  const [modal, setModal] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const user = useSelector((state) => state.auth.user);
+
+  // Fetch schedules from backend
+  const fetchSchedules = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${baseUrl}/api/schedules`);
+      
+      if (response.data.success) {
+        // Transform backend data to calendar format
+        const calendarEvents = response.data.schedules.map(schedule => ({
+          id: schedule._id,
+          title: schedule.title,
+          description: schedule.description,
+          start: new Date(schedule.startTime),
+          end: new Date(schedule.endTime),
+          allDay: schedule.allDay || false,
+          color: EVENT_COLORS.find(c => c.hex === schedule.color) || EVENT_COLORS[0],
+          type: schedule.type,
+          instructor: schedule.instructor
+        }));
+        setEvents(calendarEvents);
+      }
+    } catch (error) {
+      console.error("Error fetching schedules:", error);
+      if (error.response?.status !== 404) {
+        Swal.fire("Error", "Failed to load schedules", "error");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchSchedules();
+  }, []);
 
   const handleNavigate = (direction) => {
     const newDate = new Date(date);
@@ -227,7 +455,7 @@ export default function TodaySchedule() {
   };
 
   const headerLabel = () => {
-    if (view === Views.DAY)  return format(date, "MMMM d, yyyy").toUpperCase();
+    if (view === Views.DAY) return format(date, "MMMM d, yyyy").toUpperCase();
     if (view === Views.WEEK) {
       const s = startOfWeek(date, { weekStartsOn: 0 });
       const e = addHours(s, 24 * 6);
@@ -236,58 +464,90 @@ export default function TodaySchedule() {
     return format(date, "MMMM yyyy").toUpperCase();
   };
 
-  const handleSelectSlot  = useCallback(slot  => setModal({ type: "new",  slot  }), []);
-  const handleSelectEvent = useCallback(event => setModal({ type: "edit", event }), []);
+  const handleSelectSlot = useCallback(slot => {
+    if (!user?.id) {
+      Swal.fire({
+        title: "Login Required",
+        text: "Please login to create events",
+        icon: "warning",
+        confirmButtonColor: "#FF6F61"
+      });
+      return;
+    }
+    setModal({ type: "new", slot });
+  }, [user]);
+
+  const handleSelectEvent = useCallback(event => {
+    setModal({ type: "edit", event });
+  }, []);
 
   const handleSave = (data) => {
-    setEvents(ev =>
-      modal.type === "edit"
-        ? ev.map(e => e.id === data.id ? data : e)
-        : [...ev, data]
-    );
+    const calendarEvent = {
+      id: data._id,
+      title: data.title,
+      description: data.description,
+      start: new Date(data.startTime),
+      end: new Date(data.endTime),
+      allDay: data.allDay || false,
+      color: EVENT_COLORS.find(c => c.hex === data.color) || EVENT_COLORS[0],
+      type: data.type
+    };
+    
+    setEvents(prev => {
+      const exists = prev.find(e => e.id === calendarEvent.id);
+      if (exists) {
+        return prev.map(e => e.id === calendarEvent.id ? calendarEvent : e);
+      }
+      return [...prev, calendarEvent];
+    });
     setModal(null);
+    fetchSchedules();
   };
 
   const handleDelete = (id) => {
-    setEvents(ev => ev.filter(e => e.id !== id));
+    setEvents(prev => prev.filter(e => e.id !== id));
     setModal(null);
+    fetchSchedules();
   };
 
   const eventPropGetter = (event) => ({
     style: { backgroundColor: event.color?.hex ?? "#6366f1" },
   });
 
-  const views   = [Views.MONTH, Views.WEEK, Views.DAY];
-  const isDark  = document.documentElement.classList.contains("dark");
+  const views = [Views.MONTH, Views.WEEK, Views.DAY];
+  const isDark = document.documentElement.classList.contains("dark");
+
+  if (loading) {
+    return (
+      <div className="w-full h-[600px] flex items-center justify-center bg-white dark:bg-[#292D4A]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-gray-500">Loading schedules...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`w-full h-auto flex flex-col bg-white dark:bg-[#292D4A] overflow-x-auto ${isDark ? "" : "scheduler-light"}`}>
-      <div className="w-[100%] flex shrink-0  flex-col">
-
-        {/* ── Toolbar ── */}
+      <div className="w-[100%] flex shrink-0 flex-col">
+        {/* Toolbar */}
         <div className="flex items-center px-5 py-3 gap-4 border-b border-black/8 dark:border-white/8">
-
-          {/* Navigation and Today section */}
           <div className="flex items-center gap-2">
-            {/* Previous button */}
             <button
               onClick={() => handleNavigate(-1)}
               className="w-8 h-8 flex items-center justify-center rounded-lg text-content bg-transparent border-0 cursor-pointer hover:bg-primary hover:text-white transition-all duration-200"
-              aria-label="Previous"
             >
               <ChevronLeft size={18} />
             </button>
             
-            {/* Next button */}
             <button
               onClick={() => handleNavigate(1)}
               className="w-8 h-8 flex items-center justify-center rounded-lg text-content bg-transparent border-0 cursor-pointer hover:bg-primary hover:text-white transition-all duration-200"
-              aria-label="Next"
             >
               <ChevronRight size={18} />
             </button>
             
-            {/* Today button */}
             <button
               onClick={() => setDate(new Date())}
               className="px-4 py-1.5 rounded-lg text-xs font-semibold text-white bg-primary border-0 cursor-pointer hover:opacity-90 transition-opacity ml-2"
@@ -296,14 +556,12 @@ export default function TodaySchedule() {
             </button>
           </div>
 
-          {/* Month label */}
           <div className="flex-1 text-center">
             <span className="text-sm font-semibold tracking-widest text-header-text">
               {headerLabel()}
             </span>
           </div>
 
-          {/* View switcher */}
           <div className="flex rounded-lg overflow-hidden border border-black/8 dark:border-white/8">
             {views.map(v => (
               <button
@@ -320,16 +578,26 @@ export default function TodaySchedule() {
             ))}
           </div>
 
-          {/* Add */}
           <button
-            onClick={() => setModal({ type: "new", slot: { start: startOfHour(new Date()), end: addHours(startOfHour(new Date()), 1) } })}
+            onClick={() => {
+              if (!user?.id) {
+                Swal.fire({
+                  title: "Login Required",
+                  text: "Please login to create events",
+                  icon: "warning",
+                  confirmButtonColor: "#FF6F61"
+                });
+                return;
+              }
+              setModal({ type: "new", slot: { start: startOfHour(new Date()), end: addHours(startOfHour(new Date()), 1) } });
+            }}
             className="w-8 h-8 flex items-center justify-center rounded-lg text-white bg-primary border-0 cursor-pointer hover:opacity-90 transition-opacity"
           >
             <Plus size={15} strokeWidth={2.5} />
           </button>
         </div>
 
-        {/* ── Calendar ── */}
+        {/* Calendar */}
         <div className="flex-1">
           <Calendar
             localizer={localizer}
@@ -352,7 +620,7 @@ export default function TodaySchedule() {
         </div>
       </div>
 
-      {/* ── Modal ── */}
+      {/* Modal */}
       {modal && (
         <EventModal
           slot={modal.type === "new" ? modal.slot : null}
