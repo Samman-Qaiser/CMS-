@@ -251,7 +251,7 @@ const BlogForm = () => {
           {screenOptions.Author && (
             <FormSection title="Author">
               <div className="p-2 border rounded-lg bg-gray-50 dark:bg-[#1e2235] text-gray-500">
-                {user?.id})
+                {user?.username}
               </div>
               <input type="hidden" {...register("author")} value={user?.id} />
             </FormSection>
