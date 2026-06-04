@@ -9,171 +9,12 @@ import {
   FaChevronLeft,
   FaChevronDown,
   FaChevronUp,
-  FaComment,
 } from "react-icons/fa";
 import BlogCard from "../Components/BlogCard";
 import axios from "axios";
 
 const baseUrl =
   import.meta.env?.VITE_BACKEND_URL || "https://cms-backend-ashen.vercel.app";
-
-// ── Comment Modal Component ─────────────────────────────────────────────────────
-function CommentModal({ blog, isOpen, onClose, onCommentAdded }) {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [content, setContent] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState("");
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!name.trim() || !email.trim() || !content.trim()) {
-      setError("Please enter your name, email, and comment");
-      return;
-    }
-
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setError("Please enter a valid email address");
-      return;
-    }
-
-    setIsSubmitting(true);
-    setError("");
-
-    try {
-      const response = await axios.post(`${baseUrl}/api/comments`, {
-        blog: blog._id, // This matches your schema (blog, not blogId)
-        name: name.trim(),
-        email: email.trim().toLowerCase(),
-        content: content.trim(),
-        status: "pending", // Default status as per your schema
-      });
-
-      if (response.data) {
-        // Reset form
-        setName("");
-        setEmail("");
-        setContent("");
-        onCommentAdded(response.data);
-        onClose();
-      }
-    } catch (error) {
-      console.error("Error adding comment:", error);
-      setError(
-        error.response?.data?.message ||
-          "Failed to add comment. Please try again.",
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
-      onClick={onClose}
-    >
-      <div
-        className="bg-white dark:bg-[#292D4A] rounded-md max-w-md w-full p-6"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-bold text-header-text">
-            Add Comment to "{blog.title}"
-          </h3>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-          >
-            ✕
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-content-text mb-2">
-              Your Name *
-            </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#1E2139] text-header-text focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="Enter your name"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-content-text mb-2">
-              Your Email *
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#1E2139] text-header-text focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="Enter your email"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-content-text mb-2">
-              Your Comment *
-            </label>
-            <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              rows="4"
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#1E2139] text-header-text focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="Write your comment here..."
-              required
-            />
-          </div>
-
-          {error && <div className="text-red-500 text-sm">{error}</div>}
-
-          <div className="flex gap-3 justify-end">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 rounded-md transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSubmitting ? "Adding..." : "Add Comment"}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-// ── Success Toast Component ────────────────────────────────────────────────────
-function SuccessToast({ message, onClose }) {
-  useEffect(() => {
-    const timer = setTimeout(onClose, 3000);
-    return () => clearTimeout(timer);
-  }, [onClose]);
-
-  return (
-    <div className="fixed bottom-4 right-4 z-50 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg animate-fade-in-up">
-      {message}
-    </div>
-  );
-}
 
 // ── FAQ Accordion Item ────────────────────────────────────────────────────────
 function FaqItem({ q, a, defaultOpen = false }) {
@@ -253,49 +94,6 @@ function Pagination({ page, totalPages, onChange }) {
   );
 }
 
-// ── Updated BlogCard with Comment Button ──────────────────────────────────────
-function BlogCardWithComment({ blog, onCommentClick }) {
-  const navigate = useNavigate();
-
-  const handleBlogClick = () => {
-    navigate(`/dashboard/blog/${blog._id}`);
-  };
-
-  return (
-    <div className="relative">
-      <div onClick={handleBlogClick} className="cursor-pointer">
-        <BlogCard
-          image={blog.featuredImage}
-          title={blog.title}
-          excerpt={blog.excerpt}
-          author={blog.author?.firstName || "Admin"}
-          date={
-            blog.publishedAt
-              ? new Date(blog.publishedAt).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })
-              : "Recent"
-          }
-        />
-      </div>
-      <div className="mt-2 flex justify-end">
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onCommentClick(blog);
-          }}
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary bg-primary/10 hover:bg-primary/20 rounded-md transition-all duration-200"
-        >
-          <FaComment className="w-4 h-4" />
-          Add Comment
-        </button>
-      </div>
-    </div>
-  );
-}
-
 // ── Main Component ────────────────────────────────────────────────────────────
 export default function InstructorResources() {
   const navigate = useNavigate();
@@ -303,9 +101,6 @@ export default function InstructorResources() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [adminData, setAdminData] = useState(null);
-  const [selectedBlog, setSelectedBlog] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
 
   const PAGE_SIZE = 3;
 
@@ -355,15 +150,8 @@ export default function InstructorResources() {
     fetchAdminInfo();
   }, []);
 
-  const handleCommentClick = (blog) => {
-    setSelectedBlog(blog);
-    setIsModalOpen(true);
-  };
-
-  const handleCommentAdded = (newComment) => {
-    setToastMessage(
-      "Comment added successfully! It will appear after admin approval.",
-    );
+  const handleBlogClick = (blogId) => {
+    navigate(`/dashboard/blog/${blogId}`);
   };
 
   const totalPages = Math.ceil(blogs.length / PAGE_SIZE);
@@ -397,11 +185,30 @@ export default function InstructorResources() {
                 </div>
               ) : (
                 paginatedBlogs.map((blog) => (
-                  <BlogCardWithComment
+                  <div
                     key={blog._id}
-                    blog={blog}
-                    onCommentClick={handleCommentClick}
-                  />
+                    onClick={() => handleBlogClick(blog._id)}
+                    className="cursor-pointer"
+                  >
+                    <BlogCard
+                      image={blog.featuredImage}
+                      title={blog.title}
+                      excerpt={blog.excerpt}
+                      author={blog.author?.firstName || "Admin"}
+                      date={
+                        blog.publishedAt
+                          ? new Date(blog.publishedAt).toLocaleDateString(
+                              "en-US",
+                              {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              },
+                            )
+                          : "Recent"
+                      }
+                    />
+                  </div>
                 ))
               )}
             </div>
@@ -472,25 +279,6 @@ export default function InstructorResources() {
           </div>
         </div>
       </div>
-
-      {/* Comment Modal */}
-      <CommentModal
-        blog={selectedBlog}
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setSelectedBlog(null);
-        }}
-        onCommentAdded={handleCommentAdded}
-      />
-
-      {/* Success Toast */}
-      {toastMessage && (
-        <SuccessToast
-          message={toastMessage}
-          onClose={() => setToastMessage("")}
-        />
-      )}
     </div>
   );
 }
