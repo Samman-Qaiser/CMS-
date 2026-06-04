@@ -168,12 +168,19 @@ const navigate = useNavigate();
                 <td className="py-4 px-2 text-[12px] font-medium text-gray-700 dark:text-gray-200">
                   {blog.title}
                 </td>
-                <td className="py-4 px-2 text-[12px] text-gray-500">
-                  {blog.status}
-                </td>
+                <td >
+<span className={`py-1 px-2 text-[12px] font-bold text-white rounded-full ${
+  blog.status === "draft" ? "bg-gray-500" : 
+  blog.status === "pending" ? "bg-yellow-500" : 
+  "bg-blue-500"
+}`}>
+   {blog.status}
+</span>
+ 
+</td>
                 <td className="py-4 px-2 text-[12px]">
                   <span
-                    className={`px-3 py-1 rounded-full font-bold text-white ${blog.visibility === "Public" ? "bg-green-500" : "bg-cyan-500"}`}
+                    className={`px-3 py-1 rounded-full font-bold text-white ${blog.visibility === "public" ? "bg-green-500" : "bg-red-500"}`}
                   >
                     {blog.visibility}
                   </span>
