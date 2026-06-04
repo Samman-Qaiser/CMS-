@@ -128,9 +128,7 @@ export default function InstructorResources() {
     fetchAdminInfo();
   }, []);
 
-  const handleBlogClick = (blogId) => {
-    navigate(`/dashboard/blog/${blogId}`);
-  };
+
 
   const totalPages = Math.ceil(blogs.length / PAGE_SIZE);
   const paginatedBlogs = blogs.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);

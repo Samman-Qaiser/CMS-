@@ -204,7 +204,7 @@ const navigate = useNavigate();
                 <td className="py-4 px-4">
                   <div className="flex gap-2 items-center">
                  
-                      <BsEye className="text-primary cursor-pointer" size={16} onClick={() => navigate(`/dashboard/blog/${blog._id}`)} />
+                      <BsEye className="p-1.5 bg-secondary text-white rounded shadow-sm  cursor-pointer" size={26} onClick={() => navigate(`/dashboard/blog/${blog._id}`)} />
                  
                     <Link
                       to={`/dashboard/edit-blog/${blog._id}`}

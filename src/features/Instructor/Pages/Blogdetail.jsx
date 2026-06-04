@@ -64,7 +64,7 @@ export default function BlogDetail() {
         <div className="text-center">
           <p className="text-red-500">{error || 'Blog not found'}</p>
           <button
-            onClick={() => navigate('/dashboard/resources')}
+            onClick={() => navigate('/dashboard/instructor-resources')}
             className="mt-4 px-4 py-2 bg-primary text-white rounded-lg"
           >
             Back to Resources
@@ -79,7 +79,7 @@ export default function BlogDetail() {
       <div className="max-w-4xl mx-auto">
         {/* Back Button */}
         <button
-          onClick={() => navigate('/dashboard/resources')}
+          onClick={() => navigate('/dashboard/instructor-resources')}
           className="flex items-center gap-2 text-content-text hover:text-primary transition-colors mb-6"
         >
           <FaArrowLeft className="w-4 h-4" />
