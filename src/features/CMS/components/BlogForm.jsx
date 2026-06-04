@@ -286,7 +286,7 @@ const BlogForm = () => {
             <div className="space-y-4">
               <select
                 {...register("status")}
-                className="w-full border rounded-lg p-2 dark:bg-[#1e2235]"
+                className="w-full text-hedaer-text border rounded-lg p-2 dark:bg-[#1e2235]"
               >
                 <option value="published">Published</option>
                 <option value="pending">Pending</option>
