@@ -51,7 +51,7 @@ export default function MessagePanel({ onClose }) {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-white/10 shrink-0">
+      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:[#292D4A] shrink-0">
         <div className="flex items-center gap-2">
           <BsEnvelope className="w-5 h-5" style={{ color: "var(--primary)" }} />
           <h3 className="font-semibold text-base" style={{ color: "var(--content-text, #111827)" }}>

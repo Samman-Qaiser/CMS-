@@ -86,16 +86,22 @@ export default function NotificationPanel({ onClose, onBadgeUpdate }) {
         }
 
         // Instructor: own courses' reviews — approved or rejected
+        // Fetch all reviews, then filter by instructor ID on frontend
         const instructorRes = await axios.get(
           `${baseUrl}/api/instructors/user/${currentUser?.id}`
         );
-        const instructorId = instructorRes.data.instructor._id;
-        const { data: reviewData } = await axios.get(
-          `${baseUrl}/api/reviews?instructor=${instructorId}`
-        );
-        const resolvedReviews = (reviewData.reviews || []).filter(
-          (r) => r.status === "approved" || r.status === "rejected"
-        );
+        const instructorId = String(instructorRes.data.instructor._id);
+        const { data: reviewData } = await axios.get(`${baseUrl}/api/reviews`);
+        const resolvedReviews = (reviewData.reviews || []).filter((r) => {
+          // course.instructor can be populated object or plain ID string
+          const courseInstructorId =
+            typeof r.course?.instructor === "object"
+              ? String(r.course?.instructor?._id)
+              : String(r.course?.instructor);
+          const isOwner = courseInstructorId === instructorId;
+          const isResolved = r.status === "approved" || r.status === "rejected";
+          return isOwner && isResolved;
+        });
         setReviewNotifications(resolvedReviews);
       } else if (isCustomer) {
         // Customer: own application — show only if approved or rejected
@@ -110,12 +116,16 @@ export default function NotificationPanel({ onClose, onBadgeUpdate }) {
         }
 
         // Customer: own submitted reviews — approved or rejected
-        const { data: reviewData } = await axios.get(
-          `${baseUrl}/api/reviews?user=${currentUser?.id}`
-        );
-        const resolvedReviews = (reviewData.reviews || []).filter(
-          (r) => r.status === "approved" || r.status === "rejected"
-        );
+        // No backend filter available, fetch all and filter by user ID on frontend
+        const { data: reviewData } = await axios.get(`${baseUrl}/api/reviews`);
+        const resolvedReviews = (reviewData.reviews || []).filter((r) => {
+          // r.user can be populated object or plain ID string
+          const reviewUserId =
+            typeof r.user === "object" ? String(r.user?._id) : String(r.user);
+          const isOwner = reviewUserId === String(currentUser?.id);
+          const isResolved = r.status === "approved" || r.status === "rejected";
+          return isOwner && isResolved;
+        });
         setReviewNotifications(resolvedReviews);
       }
     } catch (error) {
@@ -255,7 +265,7 @@ export default function NotificationPanel({ onClose, onBadgeUpdate }) {
   const totalBadge = allNotifications.filter((n) => !readIds.has(n._id)).length;
 
   return (
-    <div className="flex flex-col my-auto h-[90%] bg-white dark:bg-[#292D4A] rounded-lg shadow-xl">
+    <div className="flex flex-col  my-auto h-[90%] bg-white dark:bg-[#292D4A] rounded-lg shadow-xl">
 
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-white/10 shrink-0">

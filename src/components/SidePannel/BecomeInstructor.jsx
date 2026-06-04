@@ -90,7 +90,7 @@ const BecomeInstructor = ({ userId }) => {
                 Application Rejected
               </p>
               <p className="text-xs text-gray-400">
-                Aapki application reject ho gayi — dobara apply kar sakte hain!
+            Your application was rejected — you can apply again.
               </p>
             </div>
           </div>

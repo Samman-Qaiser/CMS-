@@ -315,7 +315,7 @@ export default function RightPanel() {
         </div>
 
         <div className="space-y-4">
-          <div className="w-6 h-px bg-gray-200 dark:bg-white/10" />
+          <div className=" h-px  " />
           
           {/* Notification Bell - Shows total pending count */}
           <div className="relative group">

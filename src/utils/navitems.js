@@ -106,6 +106,7 @@ export const ALL_NAV_ITEMS = [
       { id: 'dashboard-dark',        label: 'nav.dashboardDark',  path: '/dashboard/index-2',      roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.CUSTOMER,ROLES.INSTRUCTOR] },
       { id: 'dashboard-schedule',    label: 'nav.schedule',       path: '/dashboard/schedule',     roles: [ROLES.ADMIN, ROLES.MANAGER] },
       { id: 'dashboard-instructors', label: 'nav.instructors',    path: '/dashboard/instructors',  roles: [ROLES.ADMIN, ROLES.MANAGER] },
+            { id: 'dashboard-profile',     label: 'nav.profile',        path: '/dashboard/admin/instructor-applications',      roles: [ROLES.ADMIN] },
       { id: 'dashboard-message',     label: 'nav.message',        path: '/dashboard/message',      roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.CUSTOMER,ROLES.INSTRUCTOR] },
       { id: 'dashboard-activity',    label: 'nav.activity',       path: '/dashboard/activity',     roles: [ROLES.ADMIN, ROLES.MANAGER] },
       { id: 'dashboard-profile',     label: 'nav.profile',        path: '/dashboard/profile',      roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.CUSTOMER,ROLES.INSTRUCTOR] },
