@@ -239,7 +239,7 @@
  
 /* 3. Scrollbar ka Handle (Thumb - jisko aap drag karte hain) */
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2); /* Semi-transparent white handle */
+  background: var(--primary); /* Semi-transparent white handle */
   border-radius: 8px;
   border: 2px solid #0f172a;  /* Thumb ke aas-paas padding effect ke liye */
   transition: background 0.3s ease;
@@ -247,7 +247,7 @@
 
 /* 4. Handle on Hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.4); /* Hover par thoda zyada visible ho jayega */
+  background: var(--secondary); /* Hover par thoda zyada visible ho jayega */
 }
 
 /* Firefox ke liye fallback support */
