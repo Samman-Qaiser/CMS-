@@ -19,6 +19,7 @@ const Comments = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedComments, setSelectedComments] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
   const itemsPerPage = 5;
 
   const baseUrl =
@@ -34,10 +35,13 @@ const Comments = () => {
   // --- Fetch Comments ---
   const fetchComments = async () => {
     try {
+      setLoading(true);
       const res = await axios.get(`${baseUrl}/api/comments`);
       setComments(res.data.comments || res.data || []);
     } catch (err) {
       console.error("Error fetching comments:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -47,7 +51,6 @@ const Comments = () => {
 
   const onSubmit = (data) => {
     const filtered = comments.filter((item) => {
-      // Use item.name instead of item.author
       const nameMatch = item.name
         ?.toLowerCase()
         .includes(data.name.toLowerCase());
@@ -84,7 +87,12 @@ const Comments = () => {
         Swal.fire("Deleted!", "Comment removed successfully.", "success");
         fetchComments();
       } catch (err) {
-        Swal.fire("Error", "Failed to delete comment.", err.response?.data?.message || err.message, "error");
+        Swal.fire(
+          "Error",
+          "Failed to delete comment.",
+          err.response?.data?.message || err.message,
+          "error",
+        );
       }
     }
   };
@@ -130,6 +138,14 @@ const Comments = () => {
         return "bg-gray-500";
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6">
@@ -290,7 +306,7 @@ const Comments = () => {
                     {item.blog ? (
                       <Link
                         to="#"
-                        className="text-primary font-semibold hover:underline"
+                        className="text-primary font-semibold "
                       >
                         {item.blog.title}
                       </Link>
