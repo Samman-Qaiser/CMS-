@@ -1,11 +1,11 @@
 import axios from "axios";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { BsTrash, BsPencilSquare, BsPlusLg, BsCopy } from "react-icons/bs";
+import { BsTrash, BsPencilSquare, BsPlusLg, BsCopy, BsEye } from "react-icons/bs";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
-
+import { useNavigate } from "react-router-dom";
 const BlogTable = ({ blogs = [], onDeleteSuccess }) => {
   const [selectedBlogs, setSelectedBlogs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -53,7 +53,9 @@ const BlogTable = ({ blogs = [], onDeleteSuccess }) => {
       Swal.fire("Oops...", "Please Select Blogs To Delete", "info");
       return;
     }
-
+ const handleBlogClick = (blogId) => {
+    navigate(`/dashboard/blog/${blogId}`);
+  };
     const result = await Swal.fire({
       title: "Are you sure?",
       text: `Deleting ${selectedBlogs.length} blogs!`,
@@ -98,7 +100,7 @@ const BlogTable = ({ blogs = [], onDeleteSuccess }) => {
       }
     }
   };
-
+const navigate = useNavigate();
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -200,7 +202,10 @@ const BlogTable = ({ blogs = [], onDeleteSuccess }) => {
                   </button>
                 </td>
                 <td className="py-4 px-4">
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 items-center">
+                 
+                      <BsEye className="text-primary cursor-pointer" size={16} onClick={() => navigate(`/dashboard/blog/${blog._id}`)} />
+                 
                     <Link
                       to={`/dashboard/edit-blog/${blog._id}`}
                       className="p-1.5 bg-primary text-white rounded shadow-sm cursor-pointer transition-colors"

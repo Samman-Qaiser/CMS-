@@ -228,7 +228,7 @@
 ::-webkit-scrollbar {
   width: 10px;               /* Vertical scrollbar ki width */
   height: 10px;              /* Horizontal scrollbar ki height */
-  background: #0f172a;       /* Track ka background color (Dark theme background) */
+  background: var(--bg-main);       /* Track ka background color (Dark theme background) */
 }
 
 /* 2. Scrollbar ka Track (jo rasta hota hai) */
@@ -241,7 +241,7 @@
 ::-webkit-scrollbar-thumb {
   background: var(--primary); /* Semi-transparent white handle */
   border-radius: 8px;
-  border: 2px solid #0f172a;  /* Thumb ke aas-paas padding effect ke liye */
+  border: 2px solid var(--bg-main);  /* Thumb ke aas-paas padding effect ke liye */
   transition: background 0.3s ease;
 }
 
