@@ -75,6 +75,7 @@ import StudentLiveClass from "../../Instructor/Pages/StudentLiveClass";
 import LiveClassesList from "../../Instructor/Pages/LiveClassesList";
 import CreateLiveClass from "../../Instructor/Pages/CreateLiveClass";
 import CreateProduct from "../../Apps/Pages/CreateProduct";
+import Coupons from "../../Apps/Pages/Coupons";
 
 function DashboardRoutes() {
 
@@ -474,6 +475,14 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="coupons"
+          element={
+            <ProtectedRoute>
+              <Coupons />
             </ProtectedRoute>
           }
         />

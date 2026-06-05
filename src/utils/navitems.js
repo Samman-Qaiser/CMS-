@@ -331,6 +331,12 @@ export const ALL_NAV_ITEMS = [
         roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.CUSTOMER, ROLES.INSTRUCTOR],
       },
       {
+        id: "coupons",
+        label: "Coupons",
+        path: "/dashboard/coupons",
+        roles: [ROLES.ADMIN],
+      },
+      {
         id: "apps-post-details",
         label: "nav.postDetails",
         path: "/dashboard/post-details",
