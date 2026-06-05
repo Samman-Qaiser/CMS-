@@ -169,7 +169,7 @@ export const ALL_NAV_ITEMS = [
         label: 'nav.shop',
         roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER,ROLES.INSTRUCTOR],
         children: [
-        { id: 'shop-create-product',   label: 'nav.createProduct',    path: '/dashboard/ecom-create-product',   roles: [ROLES.ADMIN] },
+          { id: 'shop-product-create', label: 'nav.createproduct',  path: '/dashboard/', roles: [ROLES.ADMIN] },
           { id: 'shop-product-grid',   label: 'nav.productGrid',    path: '/dashboard/ecom-product-grid',   roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER,ROLES.INSTRUCTOR] },
           { id: 'shop-product-list',   label: 'nav.productList',    path: '/dashboard/ecom-product-list',   roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER,ROLES.INSTRUCTOR] },
           { id: 'shop-product-detail', label: 'nav.productDetails', path: '/dashboard/ecom-product-detail', roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER,ROLES.INSTRUCTOR] },
