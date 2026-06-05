@@ -26,7 +26,6 @@ const ProductGrid = () => {
       const response = await axios.get(`${baseUrl}/api/products`);
       console.log("Products API response:", response.data);
 
-      // Handle different response structures
       let productsData = [];
       if (response.data) {
         if (Array.isArray(response.data)) {
@@ -91,51 +90,137 @@ const ProductGrid = () => {
     }
   };
 
-  // Helper function to get category ID from product 
+  // Build a map of parent to child categories
+  const buildCategoryTree = (categoriesList) => {
+    const tree = {};
+    const categoryMap = {};
+
+    // First, create a map of all categories
+    categoriesList.forEach((category) => {
+      const categoryId = category._id || category.id;
+      categoryMap[categoryId] = {
+        ...category,
+        children: [],
+      };
+    });
+
+    // Build the tree structure
+    categoriesList.forEach((category) => {
+      const categoryId = category._id || category.id;
+      const parentId = category.parentCategory
+        ? typeof category.parentCategory === "object"
+          ? category.parentCategory._id
+          : category.parentCategory
+        : null;
+
+      if (parentId && categoryMap[parentId]) {
+        categoryMap[parentId].children.push(categoryMap[categoryId]);
+      } else {
+        tree[categoryId] = categoryMap[categoryId];
+      }
+    });
+
+    return { tree, categoryMap };
+  };
+
+  // Get all child category IDs recursively
+  const getAllChildCategoryIds = (categoryId, categoryMap) => {
+    const childIds = [categoryId];
+    const category = categoryMap[categoryId];
+
+    if (category && category.children) {
+      category.children.forEach((child) => {
+        const childId = child._id || child.id;
+        childIds.push(...getAllChildCategoryIds(childId, categoryMap));
+      });
+    }
+
+    return childIds;
+  };
+
+  // Helper function to get category ID from product
   const getProductCategoryId = (product) => {
     if (!product.category) return null;
 
-    // If category is an object with _id property
     if (typeof product.category === "object" && product.category._id) {
       return product.category._id;
     }
-    // If category is a string (ObjectId)
     if (typeof product.category === "string") {
       return product.category;
     }
     return null;
   };
 
-  // Filter products based on search and category
+  // Function to get all categories in hierarchical order for dropdown
+  const getHierarchicalCategories = (categoriesList) => {
+    const { categoryMap } = buildCategoryTree(categoriesList);
+    const hierarchicalList = [];
+
+    // Recursive function to add categories with indentation
+    const addCategoryWithChildren = (category, level = 0) => {
+      const categoryId = category._id || category.id;
+      hierarchicalList.push({
+        ...category,
+        level: level,
+        displayName:
+          "  ".repeat(level) + (level > 0 ? "└─ " : "") + category.name,
+      });
+
+      // Sort children by name
+      const sortedChildren = [...category.children].sort((a, b) =>
+        a.name.localeCompare(b.name),
+      );
+
+      sortedChildren.forEach((child) => {
+        addCategoryWithChildren(child, level + 1);
+      });
+    };
+
+    // Get root categories (those with no parent)
+    const rootCategories = Object.values(categoryMap).filter(
+      (cat) =>
+        !cat.parentCategory ||
+        (typeof cat.parentCategory === "object" && !cat.parentCategory._id) ||
+        (typeof cat.parentCategory === "string" && !cat.parentCategory),
+    );
+
+    // Sort root categories by name
+    rootCategories.sort((a, b) => a.name.localeCompare(b.name));
+
+    // Add each root category and its children
+    rootCategories.forEach((category) => {
+      addCategoryWithChildren(category, 0);
+    });
+
+    return hierarchicalList;
+  };
+
+  // Build category tree for filtering
+  const { categoryMap } = buildCategoryTree(categories);
+
+  // Get hierarchical categories for dropdown
+  const hierarchicalCategories = getHierarchicalCategories(categories);
+
+  // Filter products based on search and category (including child categories)
   const filteredProducts = products.filter((product) => {
-    // Search filter
     const matchesSearch =
       product.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.brand?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.productCode?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description?.toLowerCase().includes(searchTerm.toLowerCase());
 
-    // Category filter
     let matchesCategory = true;
     if (selectedCategory) {
       const productCategoryId = getProductCategoryId(product);
-      matchesCategory = productCategoryId === selectedCategory;
-
-      // Debug logging (remove in production)
-      if (searchTerm || selectedCategory) {
-        console.log(
-          `Product: ${product.title}, Category ID: ${productCategoryId}, Selected: ${selectedCategory}, Matches: ${matchesCategory}`,
-        );
-      }
+      const validCategoryIds = getAllChildCategoryIds(
+        selectedCategory,
+        categoryMap,
+      );
+      matchesCategory = validCategoryIds.includes(productCategoryId);
     }
 
     return matchesSearch && matchesCategory;
   });
-
-  // Debug logging for filtered products count
-  console.log(
-    `Total products: ${products.length}, Filtered: ${filteredProducts.length}`,
-  );
 
   if (loading) {
     return (
@@ -188,18 +273,23 @@ const ProductGrid = () => {
           </div>
 
           {/* Category Filter */}
-          <div className="min-w-[200px]">
+          <div className="min-w-[250px]">
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white dark:border-gray-600"
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white dark:border-gray-600 font-mono text-sm"
             >
-              <option value="">All Categories</option>
-              {categories.map((category) => (
+              <option value="">📁 All Categories</option>
+              {hierarchicalCategories.map((category) => (
                 <option
                   key={category._id || category.id}
                   value={category._id || category.id}
+                  style={{ paddingLeft: `${category.level * 20}px` }}
                 >
+                  {category.level === 0 ? "📁 " : "📄 "}
+                  {category.level > 0
+                    ? "  ".repeat(category.level) + "   "
+                    : ""}
                   {category.name}
                 </option>
               ))}
@@ -251,7 +341,7 @@ const ProductGrid = () => {
             <ProductCard
               key={product._id || product.id}
               product={product}
-              categories={categories} 
+              categories={categories}
             />
           ))}
         </div>
