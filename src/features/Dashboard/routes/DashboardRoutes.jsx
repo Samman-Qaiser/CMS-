@@ -74,6 +74,7 @@ import BlogDetail from "../../Instructor/Pages/Blogdetail";
 import StudentLiveClass from "../../Instructor/Pages/StudentLiveClass";
 import LiveClassesList from "../../Instructor/Pages/LiveClassesList";
 import CreateLiveClass from "../../Instructor/Pages/CreateLiveClass";
+import CreateProduct from "../../Apps/Pages/CreateProduct";
 
 function DashboardRoutes() {
 
@@ -123,11 +124,11 @@ function DashboardRoutes() {
             </ProtectedRoute>
           }
         />
-            <Route
+        <Route
           path="/lesson/:lessonId"
           element={
             <ProtectedRoute>
-             <LessonPlayer/>
+              <LessonPlayer />
             </ProtectedRoute>
           }
         />
@@ -259,7 +260,7 @@ function DashboardRoutes() {
             </ProtectedRoute>
           }
         />
- <Route
+        <Route
           path="/blog/:id"
           element={
             <ProtectedRoute>
@@ -540,6 +541,14 @@ function DashboardRoutes() {
             </ProtectedRoute>
           }
         />
+        <Route 
+          path="ecom-product-create" 
+          element={
+            <ProtectedRoute>
+              <CreateProduct />
+            </ProtectedRoute>
+          } 
+        />
         <Route
           path="ecom-product-list"
           element={
@@ -606,13 +615,15 @@ function DashboardRoutes() {
           }
         />
         <Route path="/live-classes" element={<LiveClassesList />} />
-     
-<Route path="/create-live-class" element={<CreateLiveClass />} />
 
-<Route path="/instructor-live-class/:id" element={<InstructorLiveClass />} />
+        <Route path="/create-live-class" element={<CreateLiveClass />} />
 
-<Route path="/student-live-class/:id" element={<StudentLiveClass />} />
+        <Route
+          path="/instructor-live-class/:id"
+          element={<InstructorLiveClass />}
+        />
 
+        <Route path="/student-live-class/:id" element={<StudentLiveClass />} />
       </Route>
     </Routes>
   );
