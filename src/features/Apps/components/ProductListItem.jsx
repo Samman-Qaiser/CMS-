@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
 // ── Reusable Star Rating ──────────────────────────────────────────────
 function StarRating({ rating = 5, max = 5 }) {
@@ -23,6 +24,7 @@ function StarRating({ rating = 5, max = 5 }) {
 
 // ── Main Reusable Component ───────────────────────────────────────────
 export default function ProductListItem({ product }) {
+  const navigate = useNavigate();
   const [imgError, setImgError] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [glarePos, setGlarePos] = useState({ x: 50, y: 30 });
@@ -52,14 +54,20 @@ export default function ProductListItem({ product }) {
     setGlarePos({ x, y });
   };
 
-  const handleWriteReview = () => {
-    // You can implement review modal or redirect to review page
+  const handleCardClick = () => {
+    navigate(`/dashboard/ecom-product-detail/${product._id || product.id}`);
+  };
+
+  const handleWriteReview = (e) => {
+    e.stopPropagation(); // Prevent card click when clicking on write review button
     console.log("Write review for product:", product._id);
+    // You can implement review modal or redirect to review page
   };
 
   return (
     <div
-      className="bg-[#ffffff] dark:bg-[#292D4A] rounded-2xl p-5 flex gap-5 w-full shadow-lg max-w-xl"
+      onClick={handleCardClick}
+      className="bg-[#ffffff] dark:bg-[#292D4A] rounded-2xl p-5 flex gap-5 w-full shadow-lg max-w-xl cursor-pointer hover:scale-[1.02] transition-all duration-300"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onMouseMove={handleMouseMove}
@@ -101,7 +109,7 @@ export default function ProductListItem({ product }) {
       {/* ── Product Details ── */}
       <div className="flex flex-col gap-2 flex-1 min-w-0">
         {/* Name */}
-        <h2 className="text-header-text font-bold text-base leading-snug">
+        <h2 className="text-header-text font-bold text-base leading-snug hover:text-primary transition-colors">
           {productName}
         </h2>
 

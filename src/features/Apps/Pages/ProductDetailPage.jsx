@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ShoppingCart, Star, ArrowLeft } from "lucide-react";
 import Swal from "sweetalert2";
+import ReviewModal from "../components/ReviewModal";
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -17,11 +18,11 @@ const ProductDetailPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState("");
   const [categories, setCategories] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
 
-  useEffect(() => {
-    fetchProduct();
-    fetchCategories();
-  }, [id]);
+  // Review Modal States
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
 
   const fetchProduct = async () => {
     setLoading(true);
@@ -78,6 +79,71 @@ const ProductDetailPage = () => {
     }
   };
 
+  const fetchReviews = async () => {
+    setReviewsLoading(true);
+    try {
+      // Only fetch from the working endpoint that returns all reviews
+      const response = await axios.get(`${baseUrl}/api/products/reviews/all`);
+
+      console.log("Current Product ID:", id);
+      console.log("All Reviews API response:", response.data);
+
+      let allReviews = [];
+
+      // Parse the response - your API returns { success: true, total: 1, reviews: [...] }
+      if (response.data) {
+        if (response.data.reviews && Array.isArray(response.data.reviews)) {
+          allReviews = response.data.reviews;
+        } else if (response.data.data && Array.isArray(response.data.data)) {
+          allReviews = response.data.data;
+        } else if (Array.isArray(response.data)) {
+          allReviews = response.data;
+        }
+      }
+
+      console.log("Parsed all reviews array:", allReviews);
+
+      // Filter reviews that belong to this product
+      const productReviews = allReviews.filter((review) => {
+        // Get product ID from review (handles both populated and unpopulated)
+        let reviewProductId = null;
+        if (review.product) {
+          if (typeof review.product === "object" && review.product._id) {
+            reviewProductId = review.product._id;
+          } else if (typeof review.product === "string") {
+            reviewProductId = review.product;
+          }
+        }
+
+        console.log(
+          `Review product ID: ${reviewProductId}, Current product ID: ${id}, Match: ${reviewProductId === id}`,
+        );
+        return reviewProductId === id;
+      });
+
+      // Sort reviews by date (newest first)
+      const sortedReviews = productReviews.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+      );
+
+      setReviews(sortedReviews);
+      console.log("Filtered reviews for this product:", sortedReviews);
+      console.log("Total reviews to display:", sortedReviews.length);
+    } catch (error) {
+      console.error("Error fetching reviews:", error);
+      setReviews([]);
+    } finally {
+      setReviewsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProduct();
+    fetchCategories();
+    fetchReviews();
+    console.log("Current product ID from URL:", id);
+  }, [id]);
+
   const getCategoryName = () => {
     if (!product?.category) return null;
 
@@ -115,6 +181,12 @@ const ProductDetailPage = () => {
     });
   };
 
+  // Calculate average rating from reviews
+  const averageRating =
+    reviews.length > 0
+      ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
+      : product?.rating || 0;
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -151,7 +223,7 @@ const ProductDetailPage = () => {
         <div>
           <span
             onClick={() => navigate("/dashboard/ecom-product-grid")}
-            className=" font-bold cursor-pointer text-primary"
+            className="font-bold cursor-pointer text-primary"
           >
             Shop
           </span>
@@ -184,7 +256,7 @@ const ProductDetailPage = () => {
               />
             </div>
 
-            {/* Thumbnail Images - Show ALL images */}
+            {/* Thumbnail Images */}
             {product.images && product.images.length > 0 && (
               <div className="grid grid-cols-4 gap-3">
                 {product.images.map((img, idx) => (
@@ -211,7 +283,6 @@ const ProductDetailPage = () => {
               </div>
             )}
 
-            {/* Show message if only one image */}
             {product.images && product.images.length === 1 && (
               <p className="text-xs text-gray-500 text-center">
                 Only one image available
@@ -233,22 +304,21 @@ const ProductDetailPage = () => {
                     key={i}
                     size={16}
                     fill={
-                      i < Math.floor(product.rating || 0)
-                        ? "currentColor"
-                        : "none"
+                      i < Math.floor(averageRating) ? "currentColor" : "none"
                     }
                     className={
-                      i < (product.rating || 0)
-                        ? "text-yellow-500"
-                        : "text-slate-600"
+                      i < averageRating ? "text-yellow-500" : "text-slate-600"
                     }
                   />
                 ))}
               </div>
               <span className="text-xs text-content-text">
-                ({product.totalReviews || 0} reviews) /
+                ({reviews.length} reviews) /
               </span>
-              <button className="text-xs text-primary border-b border-primary/30 hover:text-primary-dark transition-colors">
+              <button
+                onClick={() => setIsReviewModalOpen(true)}
+                className="text-xs text-primary border-b border-primary/30 hover:text-primary-dark transition-colors"
+              >
                 Write a review?
               </button>
             </div>
@@ -369,7 +439,7 @@ const ProductDetailPage = () => {
                 disabled={product.availability !== "in_stock"}
                 className={`flex-1 bg-primary hover:opacity-90 text-white font-bold py-3.5 px-8 rounded-lg flex items-center justify-center gap-2 transition-all uppercase tracking-wide ${
                   product.availability !== "in_stock"
-                    ? "text-content-text cursor-not-allowed"
+                    ? "opacity-50 cursor-not-allowed"
                     : ""
                 }`}
               >
@@ -383,7 +453,101 @@ const ProductDetailPage = () => {
             </div>
           </div>
         </div>
+
+        {/* Reviews Section */}
+        <div className="mt-12 pt-8 border-t border-slate-700">
+          <h2 className="text-xl font-bold text-primary mb-6">
+            Customer Reviews
+          </h2>
+
+          {reviewsLoading ? (
+            <div className="text-center py-8">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              <p className="mt-2 text-sm text-content-text">
+                Loading reviews...
+              </p>
+            </div>
+          ) : reviews.length === 0 ? (
+            <div className="text-center py-8 bg-gray-50 dark:bg-[#1a1c2e] rounded-lg">
+              <p className="text-content-text">
+                No reviews yet. Be the first to review this product!
+              </p>
+              <button
+                onClick={() => setIsReviewModalOpen(true)}
+                className="mt-3 text-primary hover:text-primary-dark text-sm font-medium"
+              >
+                Write a review →
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {reviews.map((review, index) => (
+                <div
+                  key={review._id || index}
+                  className="bg-gray-50 dark:bg-[#1a1c2e] rounded-lg p-4"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="flex text-yellow-500">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            size={14}
+                            fill={i < review.rating ? "currentColor" : "none"}
+                            className={
+                              i < review.rating
+                                ? "text-yellow-500"
+                                : "text-slate-600"
+                            }
+                          />
+                        ))}
+                      </div>
+                      <span className="text-xs text-content-text">
+                        {new Date(review.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <span
+                      className={`text-xs px-2 py-1 rounded ${
+                        review.status === "approved"
+                          ? "bg-green-500/20 text-green-400"
+                          : review.status === "pending"
+                            ? "bg-yellow-500/20 text-yellow-400"
+                            : "bg-red-500/20 text-red-400"
+                      }`}
+                    >
+                      {review.status || "approved"}
+                    </span>
+                  </div>
+
+                  {/* User info if available */}
+                  {review.user && (
+                    <p className="text-xs text-content-text mb-2">
+                      By:{" "}
+                      {typeof review.user === "object"
+                        ? review.user.name || review.user.email
+                        : review.user}
+                    </p>
+                  )}
+
+                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                    {review.comment}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
+      
+      <ReviewModal
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+        productId={id}
+        onReviewSubmitted={() => {
+          fetchReviews(); 
+          fetchProduct(); 
+        }}
+      />
     </div>
   );
 };

@@ -77,6 +77,7 @@ import CreateLiveClass from "../../Instructor/Pages/CreateLiveClass";
 import CreateProduct from "../../Apps/Pages/CreateProduct";
 import WishlistPage from "../../Apps/Pages/Wishlist";
 import CartPage from "../../Apps/Pages/CartPage";
+import Coupons from "../../Apps/Pages/Coupons";
 
 function DashboardRoutes() {
 
@@ -476,6 +477,14 @@ function DashboardRoutes() {
           element={
             <ProtectedRoute>
               <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="coupons"
+          element={
+            <ProtectedRoute>
+              <Coupons />
             </ProtectedRoute>
           }
         />

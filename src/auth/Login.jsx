@@ -36,17 +36,14 @@ const Login = () => {
     setValue("role", role);
   };
 
-  // 3. Modified onSubmit to handle Async Axios request
   const onSubmit = async (data) => {
     setLoading(true);
 
-    // Safely detect your Vite environment backend URL
     const baseUrl =
       import.meta.env?.VITE_BACKEND_URL ||
       "https://cms-backend-ashen.vercel.app";
 
     try {
-      // 4. Send POST request with email and password to the signin route
       const response = await axios.post(`${baseUrl}/api/auth/signin`, {
         email: data.email,
         password: data.password,
@@ -54,18 +51,27 @@ const Login = () => {
 
       console.log("API Response Success:", response.data);
 
-      // 5. Save the data to Redux on success
+      // Store complete user object in localStorage
+      if (response.data.user) {
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+      }
+
+      // Store token
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+      }
+
+      // Dispatch to Redux
       dispatch(
         setCredentials({
-          user: response.data.user || data.email,
-          role: response.data.user.role || data.role,
-          token: response.data.token || null,  
+          user: response.data.user,
+          role: response.data.user?.role || data.role,
+          token: response.data.token,
         }),
       );
-localStorage.setItem('token', response.data.token)
+
       navigate("/dashboard");
     } catch (error) {
-      // 6. Handle errors 
       console.error(
         "API Response Error:",
         error.response?.data || error.message,
