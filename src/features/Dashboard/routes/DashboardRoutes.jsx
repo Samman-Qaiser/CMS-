@@ -518,7 +518,7 @@ function DashboardRoutes() {
           }
         />
         <Route
-          path="ecom-product-detail"
+          path="ecom-product-detail/:id"
           element={
             <ProtectedRoute>
               <ProductDetailPage />
