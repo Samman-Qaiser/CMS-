@@ -176,11 +176,11 @@ const CreateCategoryModal = ({ isOpen, onClose, onCategoryCreated }) => {
         </span>
 
         <div
-          className="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full relative z-10"
+          className="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white dark:bg-[#21233E] rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full relative z-10"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">
+            <h3 className="text-lg font-semibold text-header-text">
               Create Product Category
             </h3>
           </div>
@@ -249,7 +249,7 @@ const CreateCategoryModal = ({ isOpen, onClose, onCategoryCreated }) => {
                   name="parentCategory"
                   value={formData.parentCategory}
                   onChange={handleInputChange}
-                  className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full  dark:bg-[#21233E] border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">None (Top Level Category)</option>
                   {categories.map((category) => (
@@ -302,7 +302,7 @@ const CreateCategoryModal = ({ isOpen, onClose, onCategoryCreated }) => {
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 px-6 py-4 bg-gray-50 rounded-b-lg">
+            <div className="flex justify-end gap-3 px-6 py-4 bg-gray-50  dark:bg-[#21233E] rounded-b-lg">
               <button
                 type="button"
                 onClick={onClose}

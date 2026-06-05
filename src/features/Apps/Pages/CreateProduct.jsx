@@ -84,12 +84,30 @@ const CreateProduct = () => {
     }
   };
 
+  const generateSlug = (title) => {
+    return title
+      .toLowerCase()
+      .replace(/[^a-zA-Z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
+  };
+
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+
+    if (name === "title") {
+      // Auto-generate slug when title changes
+      const newSlug = generateSlug(value);
+      setFormData((prev) => ({
+        ...prev,
+        title: value,
+        slug: newSlug,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: type === "checkbox" ? checked : value,
+      }));
+    }
   };
 
   // Handle sizes input - allows typing with commas
@@ -171,22 +189,6 @@ const CreateProduct = () => {
     moveImage(index, 0);
   };
 
-  const generateSlug = (title) => {
-    return title
-      .toLowerCase()
-      .replace(/[^a-zA-Z0-9]+/g, "-")
-      .replace(/^-|-$/g, "");
-  };
-
-  const handleTitleBlur = () => {
-    if (formData.title && !formData.slug) {
-      setFormData((prev) => ({
-        ...prev,
-        slug: generateSlug(prev.title),
-      }));
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -238,7 +240,7 @@ const CreateProduct = () => {
       });
 
       // Append all images
-      imageFiles.forEach((file, index) => {
+      imageFiles.forEach((file) => {
         submitData.append("images", file);
       });
 
@@ -309,7 +311,7 @@ const CreateProduct = () => {
     return (
       <div className="max-w-4xl mx-auto p-6">
         <div className="text-center py-12">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           <p className="mt-2 text-gray-600">Loading categories...</p>
         </div>
       </div>
@@ -317,10 +319,12 @@ const CreateProduct = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-4xl text-header-text mx-auto p-6">
       {/* Header with Create Category Button */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Create New Product</h1>
+        <h1 className="text-2xl text-header-text font-bold">
+          Create New Product
+        </h1>
         <button
           onClick={() => setIsModalOpen(true)}
           className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors flex items-center gap-2"
@@ -350,7 +354,7 @@ const CreateProduct = () => {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Information */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white dark:bg-[#21233E] rounded-lg shadow p-6">
           <h2 className="text-lg font-semibold mb-4">Basic Information</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -360,9 +364,9 @@ const CreateProduct = () => {
                 name="title"
                 value={formData.title}
                 onChange={handleInputChange}
-                onBlur={handleTitleBlur}
                 required
                 className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="Enter product name"
               />
             </div>
 
@@ -375,7 +379,11 @@ const CreateProduct = () => {
                 onChange={handleInputChange}
                 required
                 className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="Auto-generated from title"
               />
+              <p className="text-xs text-gray-500 mt-1">
+                Slug is automatically generated from the product name
+              </p>
             </div>
 
             <div className="md:col-span-2">
@@ -452,7 +460,7 @@ const CreateProduct = () => {
         </div>
 
         {/* Pricing */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white dark:bg-[#21233E] rounded-lg shadow p-6">
           <h2 className="text-lg font-semibold mb-4">Pricing</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -483,7 +491,7 @@ const CreateProduct = () => {
         </div>
 
         {/* Inventory */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white dark:bg-[#21233E] rounded-lg shadow p-6">
           <h2 className="text-lg font-semibold mb-4">Inventory</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -533,7 +541,7 @@ const CreateProduct = () => {
                   {formData.sizes.map((size, idx) => (
                     <span
                       key={idx}
-                      className="text-xs bg-primary text-content-text px-2 py-1 rounded"
+                      className="text-xs bg-primary text-white px-2 py-1 rounded"
                     >
                       {size}
                     </span>
@@ -559,7 +567,7 @@ const CreateProduct = () => {
                   {formData.tags.map((tag, idx) => (
                     <span
                       key={idx}
-                      className="text-xs bg-primary text-content-text px-2 py-1 rounded"
+                      className="text-xs bg-primary text-white px-2 py-1 rounded"
                     >
                       {tag}
                     </span>
@@ -571,7 +579,7 @@ const CreateProduct = () => {
         </div>
 
         {/* Images - Enhanced Multiple Upload */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white dark:bg-[#21233E] rounded-lg shadow p-6">
           <h2 className="text-lg font-semibold mb-4">Product Images</h2>
 
           {/* Upload Area */}
@@ -597,12 +605,12 @@ const CreateProduct = () => {
           {imagePreviews.length > 0 && (
             <div>
               <div className="flex justify-between items-center mb-3">
-                <p className="text-sm font-medium text-gray-700">
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   {imagePreviews.length} image
                   {imagePreviews.length !== 1 ? "s" : ""} selected
                 </p>
                 <p className="text-xs text-gray-500">
-                   Click ★ to set as primary
+                  ★ Click to set as primary
                 </p>
               </div>
 
@@ -631,7 +639,7 @@ const CreateProduct = () => {
                           <button
                             type="button"
                             onClick={() => setAsPrimary(index)}
-                            className="bg-primary text-white p-2 rounded-full  transition-colors"
+                            className="bg-primary text-white p-2 rounded-full hover:bg-primary-dark transition-colors"
                             title="Set as primary image"
                           >
                             <svg
@@ -711,7 +719,7 @@ const CreateProduct = () => {
         </div>
 
         {/* Status */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white dark:bg-[#21233E] rounded-lg shadow p-6">
           <h2 className="text-lg font-semibold mb-4">Status</h2>
           <div className="flex gap-6">
             <label className="flex items-center gap-2">
@@ -740,6 +748,12 @@ const CreateProduct = () => {
 
         {/* Submit Button */}
         <div className="flex justify-end gap-4">
+          {imagePreviews.length > 0 && (
+            <div className="text-sm text-gray-500 self-center">
+              {imagePreviews.length} image
+              {imagePreviews.length !== 1 ? "s" : ""} will be uploaded
+            </div>
+          )}
           <button
             type="submit"
             disabled={loading}
