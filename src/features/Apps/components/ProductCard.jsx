@@ -1,21 +1,21 @@
 import { useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { useState, useEffect } from 'react'
 import { Star, ShoppingBag, Heart, X } from 'lucide-react'
-import axios from 'axios'
 import Swal from 'sweetalert2'
+import { addToCart } from '../../../redux/Slice/cartSlice'
+import { addToWishlist, removeFromWishlist, fetchWishlist } from '../../../redux/Slice/wishlistSlice'
 
-const baseUrl =
-  import.meta.env?.VITE_BACKEND_URL ||
-  "https://cms-backend-ashen.vercel.app";
-
-const ProductCard = ({ product, categories = [], onAddToCart, onWishlistUpdate }) => {
+const ProductCard = ({ product, categories = [] }) => {
   const navigate = useNavigate()
-  const user = useSelector((state) => state.auth.user)
+  const dispatch = useDispatch()
+  const { user } = useSelector((state) => state.auth)
+  const { items: wishlistItems, loading: wishlistLoading } = useSelector((state) => state.wishlist)
+  const { loading: cartLoading } = useSelector((state) => state.cart)
+  
   const [addingToCart, setAddingToCart] = useState(false)
   const [addedToCart, setAddedToCart] = useState(false)
   const [isInWishlist, setIsInWishlist] = useState(false)
-  const [wishlistLoading, setWishlistLoading] = useState(false)
   
   // Size selection modal state
   const [showSizeModal, setShowSizeModal] = useState(false)
@@ -34,12 +34,20 @@ const ProductCard = ({ product, categories = [], onAddToCart, onWishlistUpdate }
   const stockStatus = product.stock > 0 ? product.stock : 0
   const hasSizes = product.sizes && product.sizes.length > 0
 
-  // Check if product is in wishlist on component mount
+  // Check if product is in wishlist from Redux state
   useEffect(() => {
-    if (user?.id && product._id) {
-      checkWishlistStatus()
+    if (user?.id && product._id && wishlistItems) {
+      const exists = wishlistItems.some(item => item._id === product._id)
+      setIsInWishlist(exists)
     }
-  }, [user?.id, product._id])
+  }, [user?.id, product._id, wishlistItems])
+
+  // Fetch wishlist if not loaded
+  useEffect(() => {
+    if (user?.id && wishlistItems.length === 0 && !wishlistLoading) {
+      dispatch(fetchWishlist(user.id))
+    }
+  }, [user?.id, dispatch, wishlistItems.length, wishlistLoading])
 
   const getCategoryName = () => {
     if (!product.category) return null
@@ -65,24 +73,7 @@ const ProductCard = ({ product, categories = [], onAddToCart, onWishlistUpdate }
         )
       : 0
 
-  // ─── Check Wishlist Status ──────────────────────────
-  const checkWishlistStatus = async () => {
-    if (!user?.id) return
-    
-    try {
-      const response = await axios.get(`${baseUrl}/api/wishlist/${user.id}`)
-      if (response.data && response.data.items) {
-        const isProductInWishlist = response.data.items.some(
-          item => item.productId === product._id || item.product?._id === product._id
-        )
-        setIsInWishlist(isProductInWishlist)
-      }
-    } catch (error) {
-      console.error("Error checking wishlist status:", error)
-    }
-  }
-
-  // ─── Add to Wishlist ─────────────────────────────────
+  // ─── Add to Wishlist using Redux ─────────────────────────────────
   const handleAddToWishlist = async (e) => {
     e.stopPropagation()
 
@@ -102,20 +93,14 @@ const ProductCard = ({ product, categories = [], onAddToCart, onWishlistUpdate }
       return
     }
 
-    if (wishlistLoading) return
-
     try {
-      setWishlistLoading(true)
-
       if (isInWishlist) {
         // Remove from wishlist
-        await axios.delete(`${baseUrl}/api/wishlist/remove`, {
-          data: {
-            userId: user.id,
-            productId: product._id
-          }
-        })
-
+        const result = await dispatch(removeFromWishlist({
+          userId: user.id,
+          productId: product._id
+        })).unwrap()
+        
         setIsInWishlist(false)
         
         Swal.fire({
@@ -129,11 +114,11 @@ const ProductCard = ({ product, categories = [], onAddToCart, onWishlistUpdate }
         })
       } else {
         // Add to wishlist
-        await axios.post(`${baseUrl}/api/wishlist/add`, {
+        await dispatch(addToWishlist({
           userId: user.id,
           productId: product._id
-        })
-
+        })).unwrap()
+        
         setIsInWishlist(true)
         
         Swal.fire({
@@ -146,21 +131,51 @@ const ProductCard = ({ product, categories = [], onAddToCart, onWishlistUpdate }
           position: 'top-end',
         })
       }
-
-      if (onWishlistUpdate) {
-        onWishlistUpdate(product._id, !isInWishlist)
-      }
-
     } catch (error) {
       console.error("Wishlist operation error:", error)
       Swal.fire({
         title: 'Error!',
-        text: error.response?.data?.message || 'Something went wrong',
+        text: error || 'Something went wrong',
+        icon: 'error',
+        confirmButtonColor: 'var(--primary)',
+      })
+    }
+  }
+
+  // ─── Add to Cart using Redux ─────────────────────────────────
+  const addToCartWithRedux = async (size, quantity) => {
+    try {
+      setAddingToCart(true)
+
+      await dispatch(addToCart({
+        userId: user.id,
+        productId: product._id,
+        quantity: quantity,
+        size: size || null,
+      })).unwrap()
+
+      setAddedToCart(true)
+      setTimeout(() => setAddedToCart(false), 2000)
+
+      Swal.fire({
+        title: 'Added to Cart!',
+        text: `${productTitle} ${size ? `(${size})` : ''} added successfully`,
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false,
+        toast: true,
+        position: 'top-end',
+      })
+    } catch (error) {
+      Swal.fire({
+        title: 'Error!',
+        text: error || 'Something went wrong',
         icon: 'error',
         confirmButtonColor: 'var(--primary)',
       })
     } finally {
-      setWishlistLoading(false)
+      setAddingToCart(false)
+      setShowSizeModal(false)
     }
   }
 
@@ -187,46 +202,7 @@ const ProductCard = ({ product, categories = [], onAddToCart, onWishlistUpdate }
       setShowSizeModal(true)
     } else {
       // If no sizes, add directly to cart
-      addToCart(null, 1)
-    }
-  }
-
-  // ─── Add to Cart with Selected Size ──────────────────
-  const addToCart = async (size, quantity) => {
-    try {
-      setAddingToCart(true)
-
-      await axios.post(`${baseUrl}/api/cart/add`, {
-        userId: user.id,
-        productId: product._id,
-        quantity: quantity,
-        size: size || null,
-      })
-
-      setAddedToCart(true)
-      setTimeout(() => setAddedToCart(false), 2000)
-
-      if (onAddToCart) onAddToCart(product)
-
-      Swal.fire({
-        title: 'Added to Cart!',
-        text: `${productTitle} ${size ? `(${size})` : ''} added successfully`,
-        icon: 'success',
-        timer: 1500,
-        showConfirmButton: false,
-        toast: true,
-        position: 'top-end',
-      })
-    } catch (error) {
-      Swal.fire({
-        title: 'Error!',
-        text: error.response?.data?.message || 'Something went wrong',
-        icon: 'error',
-        confirmButtonColor: 'var(--primary)',
-      })
-    } finally {
-      setAddingToCart(false)
-      setShowSizeModal(false)
+      addToCartWithRedux(null, 1)
     }
   }
 
@@ -241,7 +217,7 @@ const ProductCard = ({ product, categories = [], onAddToCart, onWishlistUpdate }
       })
       return
     }
-    addToCart(selectedSize, selectedQuantity)
+    addToCartWithRedux(selectedSize, selectedQuantity)
   }
 
   // ─── Handle Quantity Change ──────────────────────────
@@ -257,6 +233,9 @@ const ProductCard = ({ product, categories = [], onAddToCart, onWishlistUpdate }
   const handleCardClick = () => {
     navigate(`/dashboard/ecom-product-detail/${product._id}`)
   }
+
+  // Check if wishlist operation is loading for this specific product
+  const isWishlistLoading = wishlistLoading && false // You can track specific product loading if needed
 
   return (
     <>
@@ -305,14 +284,14 @@ const ProductCard = ({ product, categories = [], onAddToCart, onWishlistUpdate }
           {/* Wishlist button */}
           <button
             onClick={handleAddToWishlist}
-            disabled={wishlistLoading}
+            disabled={isWishlistLoading}
             className={`absolute top-3 right-3 w-8 h-8 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-sm z-10 ${
               isInWishlist 
                 ? 'opacity-100 scale-100' 
                 : 'opacity-0 group-hover:opacity-100'
             }`}
           >
-            {wishlistLoading ? (
+            {isWishlistLoading ? (
               <div className="w-3 h-3 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
             ) : (
               <Heart 
@@ -430,7 +409,7 @@ const ProductCard = ({ product, categories = [], onAddToCart, onWishlistUpdate }
             {/* Add To Cart Button */}
             <button
               onClick={openSizeModal}
-              disabled={!isInStock || addingToCart}
+              disabled={!isInStock || addingToCart || cartLoading}
               className={`flex items-center gap-2 px-3 h-9 rounded-xl font-bold text-xs transition-all duration-200 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed ${
                 addedToCart
                   ? 'bg-green-500 text-white scale-95'
@@ -572,9 +551,14 @@ const ProductCard = ({ product, categories = [], onAddToCart, onWishlistUpdate }
               </button>
               <button
                 onClick={handleConfirmAddToCart}
-                className="flex-1 px-4 py-2 rounded-xl bg-primary text-white font-semibold hover:bg-primary-dark transition-colors shadow-md"
+                disabled={addingToCart}
+                className="flex-1 px-4 py-2 rounded-xl bg-primary text-white font-semibold hover:bg-primary-dark transition-colors shadow-md disabled:opacity-50"
               >
-                Add to Cart
+                {addingToCart ? (
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" />
+                ) : (
+                  'Add to Cart'
+                )}
               </button>
             </div>
           </div>

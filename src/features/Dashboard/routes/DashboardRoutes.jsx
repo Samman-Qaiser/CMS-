@@ -75,6 +75,8 @@ import StudentLiveClass from "../../Instructor/Pages/StudentLiveClass";
 import LiveClassesList from "../../Instructor/Pages/LiveClassesList";
 import CreateLiveClass from "../../Instructor/Pages/CreateLiveClass";
 import CreateProduct from "../../Apps/Pages/CreateProduct";
+import WishlistPage from "../../Apps/Pages/Wishlist";
+import CartPage from "../../Apps/Pages/CartPage";
 
 function DashboardRoutes() {
 
@@ -523,6 +525,22 @@ function DashboardRoutes() {
             <ProtectedRoute>
               <ProductDetailPage />
             </ProtectedRoute>
+           }
+        />
+        <Route
+         path="ecom-product-wishlist"
+          element={
+            <ProtectedRoute>
+              <WishlistPage />
+            </ProtectedRoute>
+          }
+        />
+         <Route
+         path="ecom-product-cart"
+          element={
+            <ProtectedRoute>
+              <CartPage />
+            </ProtectedRoute>
           }
         />
         <Route
@@ -541,13 +559,13 @@ function DashboardRoutes() {
             </ProtectedRoute>
           }
         />
-        <Route 
-          path="ecom-product-create" 
+        <Route
+          path="ecom-product-create"
           element={
             <ProtectedRoute>
               <CreateProduct />
             </ProtectedRoute>
-          } 
+          }
         />
         <Route
           path="ecom-product-list"
