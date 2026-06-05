@@ -1,20 +1,17 @@
-import React from "react";
 import { Star } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const ProductCard = ({ product, categories = [] }) => {
+  const navigate = useNavigate();
+
   // Get the first image from the images array or use a placeholder
   const productImage =
     product.images && product.images.length > 0
       ? product.images[0]
       : "https://via.placeholder.com/400x400?text=No+Image";
 
-  // Get product title (API uses 'title' field)
   const productTitle = product.title || product.name || "Untitled Product";
-
-  // Get price (API uses 'price' field)
   const productPrice = product.price || 0;
-
-  // Get rating (API uses 'rating' field)
   const productRating = product.rating || 0;
 
   // Check if product is in stock
@@ -43,8 +40,15 @@ const ProductCard = ({ product, categories = [] }) => {
 
   const categoryName = getCategoryName();
 
+  const handleCardClick = () => {
+    navigate(`/dashboard/ecom-product-detail/${product._id || product.id}`);
+  };
+
   return (
-    <div className="bg-white dark:bg-[#292D4A] rounded-lg p-6 flex flex-col items-center shadow-lg hover:shadow-2xl transition-shadow duration-300 relative">
+    <div
+      onClick={handleCardClick}
+      className="bg-white dark:bg-[#292D4A] rounded-lg p-6 flex flex-col items-center shadow-lg hover:shadow-2xl transition-all duration-300 relative cursor-pointer hover:scale-[1.02]"
+    >
       {/* Stock Badge */}
       {!isInStock && (
         <div className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded z-10">

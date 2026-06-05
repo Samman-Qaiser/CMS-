@@ -172,7 +172,6 @@ export const ALL_NAV_ITEMS = [
           { id: 'shop-product-create', label: 'nav.createproduct',  path: '/dashboard/ecom-product-create', roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER,ROLES.INSTRUCTOR] },
           { id: 'shop-product-grid',   label: 'nav.productGrid',    path: '/dashboard/ecom-product-grid',   roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER,ROLES.INSTRUCTOR] },
           { id: 'shop-product-list',   label: 'nav.productList',    path: '/dashboard/ecom-product-list',   roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER,ROLES.INSTRUCTOR] },
-          { id: 'shop-product-detail', label: 'nav.productDetails', path: '/dashboard/ecom-product-detail', roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER,ROLES.INSTRUCTOR] },
           { id: 'shop-order',          label: 'nav.order',          path: '/dashboard/ecom-product-order',  roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER,ROLES.INSTRUCTOR] },
           { id: 'shop-checkout',       label: 'nav.checkout',       path: '/dashboard/ecom-checkout',       roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.INSTRUCTOR] },
           { id: 'shop-invoice',        label: 'nav.invoice',        path: '/dashboard/ecom-invoice',        roles: [ROLES.ADMIN, ROLES.MANAGER,ROLES.CUSTOMER,ROLES.INSTRUCTOR] },
