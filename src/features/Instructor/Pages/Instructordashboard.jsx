@@ -1,8 +1,8 @@
-import TotalStudentsChart  from '../Components/TotalStudentsChart'
-import CoursesChart        from '../Components/CoursesChart'
-import EarningsChart       from '../Components/EarningsChart'
-import WorkingActivityChart from '../Components/WorkingActivityChart'
-import MiniCalendar        from '../Components/MiniCalendar'
+import TotalStudentsChart  from '../Components/TotalStudentschart'
+import CoursesChart        from '../Components/Courseschart'
+import EarningsChart       from '../Components/Earningschart'
+import WorkingActivityChart from '../Components/WorkingActivitychart'
+import MiniCalendar        from '../Components/Minicalendar'
 import UpcomingEvents      from '../Components/UpcomingEvents'
 
 export default function InstructorDashboard() {
