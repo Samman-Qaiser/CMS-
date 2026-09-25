@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { getNavItemsByRole } from "../../utils/navItems";
+import { getNavItemsByRole } from "../../utils/navitems";
 import { BsChevronRight } from "react-icons/bs";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next"; // ← add
