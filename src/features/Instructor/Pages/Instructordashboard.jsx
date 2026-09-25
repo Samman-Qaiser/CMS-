@@ -1,10 +1,11 @@
-import TotalStudentsChart  from '../Components/TotalStudentschart'
+
 import CoursesChart        from '../Components/Courseschart'
 import EarningsChart       from '../Components/Earningschart'
-import WorkingActivityChart from '../Components/WorkingActivitychart'
+
 import MiniCalendar        from '../Components/Minicalendar'
 import UpcomingEvents      from '../Components/UpcomingEvents'
-
+import TotalStudentsChart from "../Components/TotalStudentsChart";
+import WorkingActivityChart from "../Components/WorkingActivityChart";
 export default function InstructorDashboard() {
   return (
     <div className="min-h-screen space-y-3 bg-gray-100 dark:bg-[#1E2139] p-2">
