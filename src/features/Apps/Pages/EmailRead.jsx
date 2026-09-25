@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { LuReply, LuForward, LuTrash2, LuDownload } from "react-icons/lu";
 import { EmailLayout } from "../layout/EmailLayout";
-import { emails } from "../components/email";
+import { emails }           from '../components/Email'
 
 const EmailRead = () => {
   const { id } = useParams();
