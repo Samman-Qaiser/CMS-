@@ -1,7 +1,7 @@
 import React from 'react'
 import TodaySchedule from '../../Dashboard/components/TodaySchedule'
 import UpcomingSchedule from '../../Dashboard/components/UpcomingSchedule'
-import UpcomingEvents from '../Components/UpcomingEvents'
+
 import UpcomingTask from '../Components/UpcomingTask'
 const InstructorSchedule = () => {
   return (
